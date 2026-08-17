@@ -4,18 +4,19 @@ This file governs all human and agent contributors.
 
 ## Mission
 
-Build portable economic coordination primitives whose semantics survive implementation across environments.
+Build portable economic coordination primitives whose semantics survive implementation across environments, with GenLayer as the mandatory reference implementation environment.
 
 ## Before changing code
 
 1. Read `CONSTITUTION.md`.
 2. Read the target primitive's `SPEC.md`, `INVARIANTS.md`, `THREAT_MODEL.md`, and `DECISION_BOUNDARY.md`.
-3. Read the target environment profile.
+3. Read `environments/genlayer/PROFILE.md` and the target environment profile.
 4. Check `nomos.manifest.json` for claimed status and capabilities.
 5. Inspect existing research/experiment evidence before inventing a new mechanism.
 
 ## Non-negotiable rules
 
+- Every primitive MUST have an executable GenLayer implementation.
 - Do not redefine a primitive to fit a VM or library.
 - Do not introduce AI/LLM judgment into deterministic safety properties.
 - Do not let judgment directly move money.
@@ -31,6 +32,8 @@ Build portable economic coordination primitives whose semantics survive implemen
 
 ## Required implementation pattern
 
+Every mature primitive MUST contain `implementations/genlayer/`.
+
 Every environment implementation must contain adjacent usage documentation describing:
 
 - public modules/interfaces;
@@ -44,11 +47,11 @@ Every environment implementation must contain adjacent usage documentation descr
 
 If a module is reusable by a frontend, SDK, agent, service, or another primitive, its usage documentation is part of the module's definition of done.
 
-## GenLayer profile rule
+## GenLayer implementation rule
 
-Use GenLayer only for the explicitly declared judgment boundary.
+GenLayer implementation is mandatory for every primitive.
 
-A GenLayer implementation must document:
+For a judgment-bearing primitive, document and implement:
 
 ```text
 DETERMINISTIC PRECONDITIONS
@@ -61,16 +64,19 @@ DETERMINISTIC POSTCONDITIONS
 INVARIANTS JUDGMENT CANNOT OVERRIDE
 ```
 
+For a deterministic primitive, explicitly declare `JUDGMENT_BOUNDARY = NONE` and implement the canonical deterministic semantics on GenLayer without adding artificial LLM/validator judgment.
+
 Run GenVM linting, direct tests, integration tests and deployment/CLI checks appropriate to the implementation. The GenLayer implementation must still pass canonical Nomos vectors.
 
 ## Testing order
 
 1. unit/property tests;
 2. canonical conformance vectors;
-3. environment-specific integration tests;
-4. adversarial tests;
-5. Experiment Foundry benchmark when a research claim is involved;
-6. release receipt.
+3. GenLayer direct/integration tests;
+4. optional additional environment integration tests;
+5. adversarial tests;
+6. Experiment Foundry benchmark when a research claim is involved;
+7. release receipt.
 
 ## Required adversarial questions
 
@@ -103,6 +109,7 @@ Never use "works", "production ready", "secure", or "supported" without identify
 A change is done when:
 
 - semantics remain compliant;
+- the GenLayer implementation is present and updated where relevant;
 - relevant tests pass;
 - new behavior has vectors;
 - failure modes are explicit;
