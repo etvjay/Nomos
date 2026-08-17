@@ -32,6 +32,7 @@ EVIDENCE = json.dumps(
 
 
 def _mock_result(direct_vm, status: str, reason: str):
+    direct_vm.clear_mocks()
     direct_vm.mock_llm(
         r".*",
         json.dumps(
@@ -139,3 +140,71 @@ def test_invalid_evaluator_status_is_not_accepted(
 
     with pytest.raises(Exception):
         _verify(contract)
+
+
+def test_validator_accepts_same_bounded_financial_decision_despite_analysis_change(
+    direct_vm, direct_deploy, direct_alice
+):
+    """Prose is non-canonical: validators may phrase analysis differently."""
+    direct_vm.sender = direct_alice
+    _mock_result(direct_vm, "VERIFIED", "EVIDENCE_SUPPORTS_CLAIM")
+    contract = direct_deploy(CONTRACT)
+    _verify(contract, "V-equivalent")
+
+    direct_vm.clear_mocks()
+    direct_vm.mock_llm(
+        r".*",
+        json.dumps(
+            {
+                "status": "VERIFIED",
+                "reason_code": "EVIDENCE_SUPPORTS_CLAIM",
+                "analysis": "different prose from another validator",
+            }
+        ),
+    )
+
+    assert direct_vm.run_validator() is True
+
+
+def test_validator_rejects_material_decision_disagreement(
+    direct_vm, direct_deploy, direct_alice
+):
+    """A leader VERIFIED result cannot be accepted by a CONFLICTED validator."""
+    direct_vm.sender = direct_alice
+    _mock_result(direct_vm, "VERIFIED", "EVIDENCE_SUPPORTS_CLAIM")
+    contract = direct_deploy(CONTRACT)
+    _verify(contract, "V-disagreement")
+
+    # The validator independently sees/evaluates the same evidence differently.
+    _mock_result(direct_vm, "CONFLICTED", "MATERIAL_CONFLICT")
+
+    assert direct_vm.run_validator() is False
+
+
+def test_validator_rejects_leader_error(
+    direct_vm, direct_deploy, direct_alice
+):
+    """Leader failure is never treated as an affirmative verification."""
+    direct_vm.sender = direct_alice
+    _mock_result(direct_vm, "VERIFIED", "EVIDENCE_SUPPORTS_CLAIM")
+    contract = direct_deploy(CONTRACT)
+    _verify(contract, "V-leader-error")
+
+    assert direct_vm.run_validator(leader_error=Exception("leader failed")) is False
+
+
+def test_payload_size_limits_are_deterministic(direct_vm, direct_deploy, direct_alice):
+    direct_vm.sender = direct_alice
+    contract = direct_deploy(CONTRACT)
+
+    oversized_claim = json.dumps({"payload": "x" * 16_384})
+    with direct_vm.expect_revert("ClaimVerification: claim payload too large"):
+        contract.verify_claim(
+            "V-big-claim", "C123", "digest", oversized_claim, EVIDENCE
+        )
+
+    oversized_evidence = json.dumps({"payload": "x" * 32_768})
+    with direct_vm.expect_revert("ClaimVerification: evidence payload too large"):
+        contract.verify_claim(
+            "V-big-evidence", "C123", "digest", CLAIM, oversized_evidence
+        )
