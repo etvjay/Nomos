@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-"""Nomos constitutional repository linter.
-
-This intentionally checks governance structure and machine-readable truth before
-language- or environment-specific test suites run.
-"""
+"""Nomos constitutional repository linter."""
 
 from __future__ import annotations
 
@@ -20,6 +16,7 @@ REQUIRED_ROOT = [
     "AGENTS.md",
     "nomos.manifest.json",
     "environments/README.md",
+    "environments/genlayer/PROFILE.md",
     "conformance/README.md",
     "experiments/README.md",
     "templates/PRIMITIVE_SPEC.md",
@@ -71,6 +68,13 @@ def fail(errors: list[str]) -> int:
     return 1
 
 
+def has_executable_content(path: Path) -> bool:
+    if not path.exists() or not path.is_dir():
+        return False
+    ignored = {"README.md", ".gitkeep"}
+    return any(p.is_file() and p.name not in ignored for p in path.rglob("*"))
+
+
 def main() -> int:
     errors: list[str] = []
 
@@ -89,6 +93,10 @@ def main() -> int:
 
     if manifest.get("constitutionalAuthority") != "CONSTITUTION.md":
         errors.append("constitutionalAuthority must be CONSTITUTION.md")
+    if manifest.get("mandatoryReferenceEnvironment") != "genlayer":
+        errors.append("mandatoryReferenceEnvironment must be 'genlayer'")
+    if manifest.get("referenceJudgmentSubstrate") != "genlayer":
+        errors.append("referenceJudgmentSubstrate must remain 'genlayer' unless constitutionally changed")
 
     primitives = manifest.get("primitives")
     if not isinstance(primitives, list):
@@ -116,9 +124,12 @@ def main() -> int:
         status = primitive.get("status")
         path = primitive.get("canonicalPath")
         judgment = primitive.get("judgmentBearing")
+        genlayer_required = primitive.get("genlayerRequired")
 
         if status not in ALLOWED_STATUS:
             errors.append(f"{pid}: invalid status {status!r}")
+        if genlayer_required is not True:
+            errors.append(f"{pid}: every Nomos primitive must set genlayerRequired=true")
 
         if pid in JUDGMENT_EXPECTED and judgment is not True:
             errors.append(f"{pid}: expected judgmentBearing=true")
@@ -134,18 +145,25 @@ def main() -> int:
                 if not (capsule / required).exists():
                     errors.append(f"{pid}: {status} requires {path}/{required}")
 
-        if status in {"CONFORMANT", "RELEASED"}:
-            receipt_dir = ROOT / path / "receipts" if path else None
-            if not receipt_dir or not receipt_dir.exists() or not any(receipt_dir.iterdir()):
-                errors.append(f"{pid}: {status} requires at least one release/conformance receipt")
+        if status in {"IMPLEMENTING", "CONFORMANT", "RELEASED"} and path:
+            genlayer = ROOT / path / "implementations" / "genlayer"
+            if not genlayer.exists():
+                errors.append(f"{pid}: {status} requires {path}/implementations/genlayer/")
+            elif not (genlayer / "README.md").exists():
+                errors.append(f"{pid}: GenLayer implementation requires adjacent README.md")
 
-    if manifest.get("referenceJudgmentSubstrate") != "genlayer":
-        errors.append("referenceJudgmentSubstrate must remain 'genlayer' unless constitutionally changed")
+        if status in {"CONFORMANT", "RELEASED"} and path:
+            genlayer = ROOT / path / "implementations" / "genlayer"
+            if not has_executable_content(genlayer):
+                errors.append(f"{pid}: {status} requires executable GenLayer implementation content")
+            receipt_dir = ROOT / path / "receipts"
+            if not receipt_dir.exists() or not any(receipt_dir.iterdir()):
+                errors.append(f"{pid}: {status} requires at least one release/conformance receipt")
 
     if errors:
         return fail(errors)
 
-    print("NOMOS-LINT PASS: constitutional repository structure and manifest are consistent")
+    print("NOMOS-LINT PASS: constitutional repository structure and GenLayer mandate are consistent")
     return 0
 
 
