@@ -10,9 +10,13 @@ No VM, chain, account model, SDK, standard, AI model, oracle, bridge, wallet, da
 
 Environment adapters may implement, approximate, or declare a semantic requirement unsupported. They may not silently weaken it.
 
-## Article II — Portable Primitive, Environment-Specific Mechanism
+## Article II — Portable Primitive, Mandatory GenLayer Implementation
 
 Canonical specifications are environment-neutral.
+
+Every Nomos primitive MUST have an executable GenLayer implementation. GenLayer is therefore the mandatory reference implementation environment for the primitive stack.
+
+Additional EVM, offchain, Move, Solana, or other implementations are valid where they preserve the same canonical semantics.
 
 Each implementation MUST identify its execution profile and explain:
 
@@ -21,7 +25,11 @@ Each implementation MUST identify its execution profile and explain:
 - which guarantees are unsupported;
 - which environment-specific assumptions are introduced.
 
-GenLayer is the reference judgment substrate for judgment-bearing Nomos primitives. EVM and offchain implementations remain valid where they preserve the same canonical semantics.
+A primitive may not reach `CONFORMANT` or `RELEASED` without executable GenLayer implementation evidence.
+
+GenLayer is also the reference judgment substrate for judgment-bearing Nomos primitives.
+
+Mandatory GenLayer implementation does NOT imply mandatory non-deterministic judgment. A deterministic primitive MUST remain deterministic where its safety properties require determinism and MUST NOT introduce artificial LLM/validator judgment solely to satisfy the GenLayer requirement.
 
 ## Article III — Judgment Boundary
 
@@ -141,6 +149,8 @@ Every primitive MUST expose environment-independent conformance vectors wherever
 
 Environment-specific tests supplement canonical vectors; they do not replace them.
 
+GenLayer conformance is mandatory. Other environment conformance is additive.
+
 ## Article XI — Explicit Unsupported State
 
 An implementation MUST say `UNSUPPORTED`, `NOT_IMPLEMENTED`, `BLOCKED`, or `FAIL` when appropriate.
@@ -180,6 +190,8 @@ Every claimed release MUST produce a receipt containing:
 - deployment/runtime identifiers where applicable;
 - timestamp.
 
+Every release receipt MUST include a GenLayer implementation receipt.
+
 ## Article XIV — Interface Follows Capability
 
 Frontends, SDKs, APIs, MCP surfaces, demos, docs, and agent skills may expose only capabilities that exist in the implementation registry.
@@ -190,7 +202,7 @@ Every reusable implementation module MUST include adjacent usage documentation s
 
 A change to implementation code is ordinary engineering.
 
-A change to canonical semantics, invariants, authority boundaries, identity rules, or failure semantics is a constitutional/specification change and MUST include:
+A change to canonical semantics, invariants, authority boundaries, identity rules, failure semantics, or the mandatory GenLayer implementation requirement is a constitutional/specification change and MUST include:
 
 - rationale;
 - compatibility analysis;
