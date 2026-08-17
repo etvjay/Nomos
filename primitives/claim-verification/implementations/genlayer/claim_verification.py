@@ -9,7 +9,6 @@ reasoning is not part of the financial state machine.
 
 import json
 from genlayer import *
-import genlayer.gl.vm as glvm
 
 
 _ALLOWED_STATUS = (
@@ -78,14 +77,14 @@ UNDETERMINED -> EVIDENCE_AMBIGUOUS
         def leader_fn() -> dict:
             result = gl.nondet.exec_prompt(prompt, response_format="json")
             if not isinstance(result, dict):
-                raise glvm.UserError("ClaimVerification: evaluator returned non-object")
+                raise gl.vm.UserError("ClaimVerification: evaluator returned non-object")
 
             status = str(result.get("status", ""))
             reason = str(result.get("reason_code", ""))
             if status not in _ALLOWED_STATUS:
-                raise glvm.UserError("ClaimVerification: invalid status")
+                raise gl.vm.UserError("ClaimVerification: invalid status")
             if reason not in _ALLOWED_REASON:
-                raise glvm.UserError("ClaimVerification: invalid reason_code")
+                raise gl.vm.UserError("ClaimVerification: invalid reason_code")
 
             expected_reason = {
                 "VERIFIED": "EVIDENCE_SUPPORTS_CLAIM",
@@ -94,7 +93,7 @@ UNDETERMINED -> EVIDENCE_AMBIGUOUS
                 "UNDETERMINED": "EVIDENCE_AMBIGUOUS",
             }[status]
             if reason != expected_reason:
-                raise glvm.UserError("ClaimVerification: inconsistent status/reason_code")
+                raise gl.vm.UserError("ClaimVerification: inconsistent status/reason_code")
 
             return {
                 "status": status,
@@ -103,7 +102,7 @@ UNDETERMINED -> EVIDENCE_AMBIGUOUS
             }
 
         def validator_fn(leader_result) -> bool:
-            if not isinstance(leader_result, glvm.Return):
+            if not isinstance(leader_result, gl.vm.Return):
                 return False
 
             validator_result = leader_fn()
@@ -115,7 +114,7 @@ UNDETERMINED -> EVIDENCE_AMBIGUOUS
                 and leader_data["reason_code"] == validator_result["reason_code"]
             )
 
-        return glvm.run_nondet_unsafe(leader_fn, validator_fn)
+        return gl.vm.run_nondet_unsafe(leader_fn, validator_fn)
 
     @gl.public.write
     def verify_claim(
@@ -138,29 +137,29 @@ UNDETERMINED -> EVIDENCE_AMBIGUOUS
         evidence_digest = evidence_digest.strip()
 
         if not verification_id:
-            raise glvm.UserError("ClaimVerification: verification_id required")
+            raise gl.vm.UserError("ClaimVerification: verification_id required")
         if not claim_id:
-            raise glvm.UserError("ClaimVerification: claim_id required")
+            raise gl.vm.UserError("ClaimVerification: claim_id required")
         if not evidence_digest:
-            raise glvm.UserError("ClaimVerification: evidence_digest required")
+            raise gl.vm.UserError("ClaimVerification: evidence_digest required")
         if verification_id in self.decisions:
-            raise glvm.UserError("ClaimVerification: verification_id already exists")
+            raise gl.vm.UserError("ClaimVerification: verification_id already exists")
         if len(claim_json.encode("utf-8")) > _MAX_CLAIM_BYTES:
-            raise glvm.UserError("ClaimVerification: claim payload too large")
+            raise gl.vm.UserError("ClaimVerification: claim payload too large")
         if len(evidence_json.encode("utf-8")) > _MAX_EVIDENCE_BYTES:
-            raise glvm.UserError("ClaimVerification: evidence payload too large")
+            raise gl.vm.UserError("ClaimVerification: evidence payload too large")
 
         # Deterministically reject malformed JSON before any non-deterministic work.
         try:
             claim_obj = json.loads(claim_json)
             evidence_obj = json.loads(evidence_json)
         except Exception:
-            raise glvm.UserError("ClaimVerification: malformed JSON")
+            raise gl.vm.UserError("ClaimVerification: malformed JSON")
 
         if not isinstance(claim_obj, dict):
-            raise glvm.UserError("ClaimVerification: claim must be an object")
+            raise gl.vm.UserError("ClaimVerification: claim must be an object")
         if not isinstance(evidence_obj, (dict, list)):
-            raise glvm.UserError("ClaimVerification: evidence must be object or list")
+            raise gl.vm.UserError("ClaimVerification: evidence must be object or list")
 
         result = self._evaluate(claim_json, evidence_json)
 
