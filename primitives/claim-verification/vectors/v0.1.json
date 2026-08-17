@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "0.1.0",
+  "primitive": "claim-verification",
+  "vectors": [
+    {
+      "id": "cv-verified-001",
+      "claim": {"claim_id":"C123","amount":"100000","asset":"USD","obligor":"Acme Buyer","beneficiary":"Supplier A"},
+      "evidence": {"invoice":{"amount":"100000"},"delivery":{"status":"accepted"}},
+      "expected": {"status":"VERIFIED","reason_code":"EVIDENCE_SUPPORTS_CLAIM"}
+    },
+    {
+      "id": "cv-conflicted-001",
+      "claim": {"claim_id":"C124","amount":"100000","asset":"USD"},
+      "evidence": {"invoice":{"amount":"100000"},"delivery":{"status":"rejected","note":"goods not accepted"}},
+      "expected": {"status":"CONFLICTED","reason_code":"MATERIAL_CONFLICT"}
+    },
+    {
+      "id": "cv-insufficient-001",
+      "claim": {"claim_id":"C125","amount":"100000","asset":"USD"},
+      "evidence": {"invoice":{"amount":"100000"}},
+      "expected": {"status":"INSUFFICIENT","reason_code":"MISSING_ESSENTIAL_EVIDENCE"}
+    },
+    {
+      "id": "cv-undetermined-001",
+      "claim": {"claim_id":"C126","amount":"100000","asset":"USD"},
+      "evidence": {"invoice":{"amount":"100000"},"delivery":{"status":"pending_review"}},
+      "expected": {"status":"UNDETERMINED","reason_code":"EVIDENCE_AMBIGUOUS"}
+    }
+  ]
+}
