@@ -1,21 +1,22 @@
 {
-  "schemaVersion": "0.1.0",
+  "schemaVersion": "0.2.0",
   "repository": "etvjay/Nomos",
   "constitutionalAuthority": "CONSTITUTION.md",
   "statusVocabulary": ["DISCOVERY", "RESEARCHING", "SPECIFIED", "IMPLEMENTING", "CONFORMANT", "RELEASED", "BLOCKED"],
   "evidenceVocabulary": ["PASS", "FAIL", "NOT_IMPLEMENTED", "BLOCKED"],
+  "mandatoryReferenceEnvironment": "genlayer",
   "referenceJudgmentSubstrate": "genlayer",
   "environments": ["genlayer", "evm", "offchain"],
   "primitives": [
-    {"id":"proof-of-payable","name":"Proof of Payable","status":"RESEARCHING","judgmentBearing":true,"canonicalPath":"primitives/proof-of-payable"},
-    {"id":"claim-verification","name":"Claim Verification","status":"RESEARCHING","judgmentBearing":true,"canonicalPath":"primitives/claim-verification"},
-    {"id":"policy-envelope","name":"Policy Envelope","status":"RESEARCHING","judgmentBearing":true,"canonicalPath":"primitives/policy-envelope"},
-    {"id":"workflow-authorization","name":"Workflow Authorization","status":"RESEARCHING","judgmentBearing":true,"components":["Path","Pact"],"canonicalPath":"primitives/workflow-authorization"},
-    {"id":"daa","name":"Dynamic Authority Allocation","status":"RESEARCHING","judgmentBearing":true,"canonicalPath":"primitives/daa"},
-    {"id":"claim-encumbrance","name":"Claim Encumbrance","status":"RESEARCHING","judgmentBearing":false,"canonicalPath":"primitives/claim-encumbrance"},
-    {"id":"capital-commitment","name":"Capital Commitment","status":"RESEARCHING","judgmentBearing":false,"canonicalPath":"primitives/capital-commitment"},
-    {"id":"dal","name":"Dynamic Authorization Lanes","status":"RESEARCHING","judgmentBearing":false,"canonicalPath":"primitives/dal"},
-    {"id":"financial-contract","name":"Financial Contract","status":"RESEARCHING","judgmentBearing":true,"canonicalPath":"primitives/financial-contract"},
-    {"id":"gaia","name":"Gaia","status":"RESEARCHING","judgmentBearing":true,"canonicalPath":"primitives/gaia"}
+    {"id":"proof-of-payable","name":"Proof of Payable","status":"RESEARCHING","judgmentBearing":true,"genlayerRequired":true,"canonicalPath":"primitives/proof-of-payable"},
+    {"id":"claim-verification","name":"Claim Verification","status":"RESEARCHING","judgmentBearing":true,"genlayerRequired":true,"canonicalPath":"primitives/claim-verification"},
+    {"id":"policy-envelope","name":"Policy Envelope","status":"RESEARCHING","judgmentBearing":true,"genlayerRequired":true,"canonicalPath":"primitives/policy-envelope"},
+    {"id":"workflow-authorization","name":"Workflow Authorization","status":"RESEARCHING","judgmentBearing":true,"genlayerRequired":true,"components":["Path","Pact"],"canonicalPath":"primitives/workflow-authorization"},
+    {"id":"daa","name":"Dynamic Authority Allocation","status":"RESEARCHING","judgmentBearing":true,"genlayerRequired":true,"canonicalPath":"primitives/daa"},
+    {"id":"claim-encumbrance","name":"Claim Encumbrance","status":"RESEARCHING","judgmentBearing":false,"genlayerRequired":true,"canonicalPath":"primitives/claim-encumbrance"},
+    {"id":"capital-commitment","name":"Capital Commitment","status":"RESEARCHING","judgmentBearing":false,"genlayerRequired":true,"canonicalPath":"primitives/capital-commitment"},
+    {"id":"dal","name":"Dynamic Authorization Lanes","status":"RESEARCHING","judgmentBearing":false,"genlayerRequired":true,"canonicalPath":"primitives/dal"},
+    {"id":"financial-contract","name":"Financial Contract","status":"RESEARCHING","judgmentBearing":true,"genlayerRequired":true,"canonicalPath":"primitives/financial-contract"},
+    {"id":"gaia","name":"Gaia","status":"RESEARCHING","judgmentBearing":true,"genlayerRequired":true,"canonicalPath":"primitives/gaia"}
   ]
 }
