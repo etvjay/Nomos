@@ -2,72 +2,84 @@
 
 This document is the highest-authority engineering document in the Nomos repository.
 
-## Article I — Semantic Sovereignty
+## Article I — Product Purpose
+
+Nomos exists to provide **reusable financial primitives for developers building applications on GenLayer**.
+
+A Nomos primitive is not merely a research abstraction. Its released form must be consumable as a GenLayer building block with explicit semantics, executable Intelligent Contract implementation, tests, developer documentation, and composition examples.
+
+Cross-environment implementations may exist for research, interoperability, reference modeling, or conformance comparison. They are secondary to the GenLayer product target.
+
+## Article II — Semantic Sovereignty
 
 A Nomos primitive is defined by its economic meaning, state model, invariants, authority boundaries, failure semantics, and observable guarantees.
 
-No VM, chain, account model, SDK, standard, AI model, oracle, bridge, wallet, database, or product interface may redefine those semantics.
+GenLayer, GenVM, Intelligent Contracts, Optimistic Democracy, SDKs, standards, account models, wallets, bridges, AI models, or product interfaces may implement or validate a primitive; they may not silently redefine its economic semantics.
 
-Environment adapters may implement, approximate, or declare a semantic requirement unsupported. They may not silently weaken it.
+This semantic separation exists to make GenLayer implementations correct and composable, not to make GenLayer optional.
 
-## Article II — Portable Primitive, Mandatory GenLayer Implementation
+## Article III — Mandatory GenLayer Implementation
 
-Canonical specifications are environment-neutral.
+Every Nomos primitive MUST have an executable GenLayer implementation before it may be `CONFORMANT` or `RELEASED`.
 
-Every Nomos primitive MUST have an executable GenLayer implementation. GenLayer is therefore the mandatory reference implementation environment for the primitive stack.
+The primary implementation model is:
 
-Additional EVM, offchain, Move, Solana, or other implementations are valid where they preserve the same canonical semantics.
+```text
+Nomos financial primitive
+        ↓
+Intelligent Contract
+        ↓
+GenVM execution
+        ↓
+Optimistic Democracy
+        ↓
+finalized GenLayer state
+```
 
-Each implementation MUST identify its execution profile and explain:
+Intelligent Contracts are the programmable implementation surface. Optimistic Democracy is the network consensus mechanism used to validate GenLayer execution, including non-deterministic operations.
 
-- which canonical guarantees it implements directly;
-- which guarantees depend on another system;
-- which guarantees are unsupported;
-- which environment-specific assumptions are introduced.
+Neither is itself a Nomos financial primitive.
 
-A primitive may not reach `CONFORMANT` or `RELEASED` without executable GenLayer implementation evidence.
+## Article IV — Intelligence and Equivalence Boundary
 
-GenLayer is also the reference judgment substrate for judgment-bearing Nomos primitives.
-
-Mandatory GenLayer implementation does NOT imply mandatory non-deterministic judgment. A deterministic primitive MUST remain deterministic where its safety properties require determinism and MUST NOT introduce artificial LLM/validator judgment solely to satisfy the GenLayer requirement.
-
-## Article III — Judgment Boundary
-
-Intelligence is allowed only where the primitive requires judgment that cannot be reduced to deterministic computation without changing the problem.
+Non-deterministic intelligence is allowed only where the primitive intrinsically requires judgment that cannot be reduced to deterministic computation without changing the problem.
 
 Every judgment-bearing primitive MUST specify:
 
 1. the exact question requiring judgment;
 2. admissible evidence;
 3. deterministic preconditions;
-4. validator/evaluator output schema;
-5. equivalence/consensus criterion;
+4. structured decision schema;
+5. the Equivalence Principle / validator acceptance criterion;
 6. deterministic postconditions;
-7. invariants that judgment can never override;
-8. `UNDETERMINED` behavior.
+7. invariants judgment can never override;
+8. `UNDETERMINED` or disagreement behavior.
 
 Canonical pattern:
 
 ```text
 DETERMINISTIC PRECONDITIONS
           ↓
-INTELLIGENT JUDGMENT
+NON-DETERMINISTIC OPERATION
           ↓
-EQUIVALENCE / CONSENSUS
+EQUIVALENCE / VALIDATOR ACCEPTANCE
           ↓
 CANONICAL DECISION
           ↓
 DETERMINISTIC STATE TRANSITION
 ```
 
-`LLM output → money movement` is not a valid Nomos architecture.
+A deterministic primitive still implements as an Intelligent Contract, but MUST NOT invent unnecessary LLM judgment.
 
-## Article IV — Authority Separation
+`free-form model output → unrestricted money movement` is forbidden.
+
+## Article V — Authority Separation
 
 Nomos MUST preserve the distinction:
 
 ```text
-Evidence ≠ Policy ≠ Standing Authority ≠ Allocation
+Evidence ≠ Verification ≠ Policy ≠ Recommendation
+         ≠ Standing Authority ≠ Authority Allocation
          ≠ Agreement ≠ Encumbrance ≠ Commitment
          ≠ Replay Authority ≠ Settlement ≠ Rectification
 ```
@@ -76,44 +88,48 @@ A primitive may compose with another; it may not inherit another primitive's aut
 
 Examples:
 
+- Mandate Allocation produces recommendation/evaluation, not authority.
+- DAA creates bounded authority but does not reserve capital.
 - Path does not allocate capital.
-- DAA does not establish standing delegation.
 - Pact does not guarantee backing capital.
+- Claim Encumbrance does not reserve pool capital.
 - Capital Commitment does not grant replay authority.
+- DAL does not prove economic independence of authorizations.
 - Gaia does not gain execution authority from exception state.
 
-## Article V — Evidence Before Assertion
+## Article VI — Evidence Before Assertion
 
-Claims about implementation, security, compatibility, novelty, performance, or production status require evidence.
+Claims about implementation, security, compatibility, performance, GenLayer behavior, consensus behavior, or production status require evidence.
 
 Acceptable evidence includes:
 
-- executable tests;
-- canonical test vectors;
-- experiment receipts;
-- official protocol documentation;
+- executable direct tests;
+- GenVM linting;
+- canonical conformance vectors;
+- equivalence/validator experiments;
+- integration tests;
+- adversarial experiment receipts;
+- official GenLayer documentation;
 - standards specifications;
 - reproducible deployment receipts;
 - source-linked research records.
 
 A demo is not evidence of a guarantee unless the guarantee is directly measured by the demo.
 
-## Article VI — Research Before Reinvention
+## Article VII — Research Before Reinvention
 
-Before introducing a primitive or mechanism, Research Foundry MUST establish:
+Before introducing or materially changing a primitive, Research Foundry MUST establish:
 
-- exact problem statement;
+- exact financial/coordination problem;
 - existing standards and prior art;
 - closest semantic equivalents;
-- what is transport/mechanism versus actual primitive meaning;
+- what is GenLayer machinery versus actual Nomos primitive meaning;
 - novelty claims that must NOT be made;
 - surviving research question;
 - falsifiers;
 - smallest discriminating experiment.
 
-Standards provide machinery. Nomos primitives provide economic semantics.
-
-## Article VII — Identity and Lineage
+## Article VIII — Identity and Lineage
 
 Economic identity MUST remain distinct from evidence snapshots.
 
@@ -127,13 +143,13 @@ A lifecycle update may create a new immutable proof without creating a new econo
 
 Any primitive with mutable evidence MUST define stable identity, versioning, lineage, amendment semantics, and supersession rules.
 
-## Article VIII — Deterministic Economic Safety
+## Article IX — Deterministic Economic Safety
 
 Capacity, conservation, replay, uniqueness, accounting, expiry, reservation, encumbrance, and authority checks MUST remain deterministic unless the canonical specification proves why deterministic treatment is impossible.
 
 Subjective judgment may determine a bounded decision. It may not mutate unrelated accounting or bypass the safety core.
 
-## Article IX — Exception Does Not Suspend Authorization
+## Article X — Exception Does Not Suspend Authorization
 
 Failure, dispute, mismatch, or rectification does not create authority.
 
@@ -141,27 +157,34 @@ Gaia may prescribe a resolution obligation. Corrective execution MUST pass the s
 
 Historical truth is append-only. Rectification creates new evidence and state transitions; it does not rewrite confirmed prior events.
 
-## Article X — Conformance Over Implementation Similarity
+## Article XI — GenLayer Conformance
 
-Two implementations are equivalent Nomos implementations if they preserve the same canonical observable guarantees, even if their mechanisms differ.
+A released primitive MUST demonstrate that its GenLayer implementation preserves the canonical observable guarantees.
 
-Every primitive MUST expose environment-independent conformance vectors wherever possible.
+Conformance must include, as applicable:
 
-Environment-specific tests supplement canonical vectors; they do not replace them.
+- canonical state-transition vectors;
+- deterministic invariant tests;
+- direct GenVM tests;
+- non-deterministic operation tests;
+- Equivalence Principle / validator-quality tests;
+- integration tests;
+- adversarial tests;
+- deployment/runtime evidence.
 
-GenLayer conformance is mandatory. Other environment conformance is additive.
+Additional environment conformance is additive and does not replace GenLayer conformance.
 
-## Article XI — Explicit Unsupported State
+## Article XII — Explicit Unsupported State
 
 An implementation MUST say `UNSUPPORTED`, `NOT_IMPLEMENTED`, `BLOCKED`, or `FAIL` when appropriate.
 
-It is forbidden to simulate support by weakening a requirement, omitting the hard case, returning optimistic defaults, or substituting documentation for execution evidence.
+It is forbidden to simulate support by weakening a requirement, omitting the hard case, returning optimistic defaults, substituting documentation for execution evidence, or treating validator disagreement as approval.
 
-## Article XII — Adversarial Completion
+## Article XIII — Adversarial Completion
 
-A primitive is not implementation-grade until it has been tested against its own invariants and adversarial model.
+A primitive is not implementation-grade until tested against its own invariants and adversarial model.
 
-Minimum adversarial categories:
+Minimum adversarial categories include:
 
 - replay;
 - stale evidence;
@@ -172,43 +195,53 @@ Minimum adversarial categories:
 - partial execution;
 - external dependency failure;
 - contradictory evidence;
+- validator disagreement/equivalence instability where applicable;
 - unauthorized recovery;
-- cross-environment semantic drift.
+- semantic drift between primitive specification and Intelligent Contract.
 
-## Article XIII — Receipts
+## Article XIV — Developer Consumption Is Part of Completion
+
+A released primitive MUST be usable by another GenLayer application developer without reverse-engineering its implementation.
+
+Where appropriate, releases must include:
+
+- canonical types/schemas;
+- public Intelligent Contract methods;
+- SDK/client helpers;
+- deployment instructions;
+- composition examples;
+- expected errors/failure states;
+- security assumptions;
+- conformance and deployment receipts.
+
+Every reusable module must include adjacent usage documentation.
+
+## Article XV — Receipts
 
 Every claimed release MUST produce a receipt containing:
 
 - primitive and version;
 - canonical spec version/hash;
-- environment profile and version;
-- source commit;
+- GenLayer implementation source commit;
+- Intelligent Contract/runtime identifier where applicable;
 - tests executed;
+- equivalence/consensus evidence where applicable;
 - conformance result;
 - adversarial experiment result;
 - known limitations;
-- deployment/runtime identifiers where applicable;
 - timestamp.
 
-Every release receipt MUST include a GenLayer implementation receipt.
-
-## Article XIV — Interface Follows Capability
-
-Frontends, SDKs, APIs, MCP surfaces, demos, docs, and agent skills may expose only capabilities that exist in the implementation registry.
-
-Every reusable implementation module MUST include adjacent usage documentation sufficient for another engineer or agent to consume it without guessing.
-
-## Article XV — Change Control
+## Article XVI — Change Control
 
 A change to implementation code is ordinary engineering.
 
-A change to canonical semantics, invariants, authority boundaries, identity rules, failure semantics, or the mandatory GenLayer implementation requirement is a constitutional/specification change and MUST include:
+A change to canonical semantics, invariants, authority boundaries, identity rules, failure semantics, GenLayer implementation requirements, or developer-facing guarantees is a specification/governance change and MUST include:
 
 - rationale;
 - compatibility analysis;
 - migration impact;
 - new/updated conformance vectors;
 - adversarial review;
-- research record where the change is substantive.
+- research record where substantive.
 
-No implementation convenience is sufficient reason to silently change a primitive.
+Implementation convenience is never sufficient reason to silently change a primitive.
