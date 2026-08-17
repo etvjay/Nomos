@@ -20,12 +20,45 @@ A deterministic Nomos primitive still implements on GenLayer. It MUST keep deter
 2. Claim Verification
 3. Policy Envelope
 4. Workflow Authorization — Path + Pact
-5. Dynamic Authority Allocation (DAA)
-6. Claim Encumbrance
-7. Capital Commitment
-8. Dynamic Authorization Lanes (DAL)
-9. Financial Contract
-10. Gaia — Exception, Reconciliation & Rectification
+5. Mandate Allocation
+6. Dynamic Authority Allocation (DAA)
+7. Claim Encumbrance
+8. Capital Commitment
+9. Dynamic Authorization Lanes (DAL)
+10. Financial Contract
+11. Gaia — Exception, Reconciliation & Rectification
+
+### Allocation taxonomy
+
+```text
+Mandate Allocation
+= evaluates/ranks opportunities under a mandate
+= recommendation/evaluation only
+= creates no authority
+
+DAA — Dynamic Authority Allocation
+= creates a bounded authority grant
+= determines who receives what authority, over what resource, for what purpose, under what bounds and validity
+
+DAL — Dynamic Authorization Lanes
+= gives independently granted authorizations appropriate replay/execution domains
+```
+
+Canonical progression:
+
+```text
+Evidence / Mandate
+      ↓
+Mandate Allocation?      # optional evaluation/recommendation
+      ↓
+DAA                      # authority exists here
+      ↓
+Encumbrance / Commitment
+      ↓
+DAL                      # replay/execution topology
+      ↓
+Execution
+```
 
 The machine-readable registry lives in `nomos.manifest.json`.
 
