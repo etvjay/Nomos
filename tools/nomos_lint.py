@@ -14,6 +14,7 @@ REQUIRED_ROOT = [
     "CONSTITUTION.md",
     "GOVERNANCE.md",
     "AGENTS.md",
+    "PRIMITIVE_QUALIFICATION.md",
     "nomos.manifest.json",
     "environments/README.md",
     "environments/genlayer/PROFILE.md",
@@ -44,6 +45,12 @@ ALLOWED_STATUS = {
     "CONFORMANT",
     "RELEASED",
     "BLOCKED",
+}
+
+ALLOWED_QUALIFICATION = {
+    "QUALIFIED",
+    "QUALIFIED_EXTENSION",
+    "SCOPE_PROVISIONAL",
 }
 
 JUDGMENT_EXPECTED = {
@@ -124,14 +131,26 @@ def main() -> int:
 
         pid = primitive.get("id")
         status = primitive.get("status")
+        qualification = primitive.get("qualification")
         path = primitive.get("canonicalPath")
         judgment = primitive.get("judgmentBearing")
         genlayer_required = primitive.get("genlayerRequired")
 
         if status not in ALLOWED_STATUS:
             errors.append(f"{pid}: invalid status {status!r}")
+        if qualification not in ALLOWED_QUALIFICATION:
+            errors.append(f"{pid}: invalid or missing qualification {qualification!r}")
         if genlayer_required is not True:
             errors.append(f"{pid}: every Nomos primitive must set genlayerRequired=true")
+
+        if qualification == "SCOPE_PROVISIONAL" and status in {
+            "IMPLEMENTING",
+            "CONFORMANT",
+            "RELEASED",
+        }:
+            errors.append(
+                f"{pid}: SCOPE_PROVISIONAL primitives may not advance to {status}; narrow and re-qualify the public state model first"
+            )
 
         if pid in JUDGMENT_EXPECTED and judgment is not True:
             errors.append(f"{pid}: expected judgmentBearing=true")
@@ -153,11 +172,10 @@ def main() -> int:
                 errors.append(f"{pid}: {status} requires {path}/implementations/genlayer/")
             elif not (genlayer / "README.md").exists():
                 errors.append(f"{pid}: GenLayer implementation requires adjacent README.md")
+            elif not has_executable_content(genlayer):
+                errors.append(f"{pid}: {status} requires executable GenLayer implementation content")
 
         if status in {"CONFORMANT", "RELEASED"} and path:
-            genlayer = ROOT / path / "implementations" / "genlayer"
-            if not has_executable_content(genlayer):
-                errors.append(f"{pid}: {status} requires executable GenLayer implementation content")
             receipt_dir = ROOT / path / "receipts"
             if not receipt_dir.exists() or not any(receipt_dir.iterdir()):
                 errors.append(f"{pid}: {status} requires at least one release/conformance receipt")
@@ -165,7 +183,7 @@ def main() -> int:
     if errors:
         return fail(errors)
 
-    print("NOMOS-LINT PASS: constitutional repository structure and GenLayer mandate are consistent")
+    print("NOMOS-LINT PASS: constitutional structure, qualification gates and GenLayer mandate are consistent")
     return 0
 
 
