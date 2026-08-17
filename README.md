@@ -6,9 +6,13 @@ It defines the semantics, invariants, evidence requirements, conformance tests, 
 
 ## Core rule
 
-> Specify the economic primitive first. Implement the same primitive across environments. Use intelligence only where judgment is intrinsic.
+> Specify the economic primitive first. Every Nomos primitive must implement on GenLayer. Additional environments may implement the same canonical semantics. Use intelligence only where judgment is intrinsic.
 
-GenLayer is the reference judgment substrate for primitives that require non-deterministic evidence evaluation, natural-language interpretation, or validator-mediated judgment. GenLayer is not a branding requirement and Nomos primitives are not GenLayer-exclusive.
+GenLayer is the mandatory reference implementation environment for every Nomos primitive and the reference judgment substrate where a primitive requires non-deterministic evidence evaluation, natural-language interpretation, or validator-mediated judgment.
+
+Nomos primitives are not GenLayer-exclusive: EVM, offchain, Move, Solana, or other environment implementations may coexist when they preserve canonical semantics. But no primitive may become `CONFORMANT` or `RELEASED` without an executable GenLayer implementation.
+
+A deterministic Nomos primitive still implements on GenLayer. It MUST keep deterministic safety properties deterministic and MUST NOT invent an LLM/validator judgment step merely to appear "intelligent".
 
 ## Initial instrument registry
 
@@ -42,7 +46,7 @@ A lower layer may never silently redefine a higher layer.
 
 ## Build lifecycle
 
-`PRODUCT TRUTH → RESEARCH → SPEC → ENVIRONMENT PROFILE → IMPLEMENT → CONFORMANCE → ADVERSARIAL EXPERIMENT → RELEASE RECEIPT → INTERFACE/DEMO`
+`PRODUCT TRUTH → RESEARCH → SPEC → GENLAYER IMPLEMENTATION → OPTIONAL OTHER ENVIRONMENTS → CONFORMANCE → ADVERSARIAL EXPERIMENT → RELEASE RECEIPT → INTERFACE/DEMO`
 
 No implementation is called a Nomos implementation merely because it compiles. It must pass the canonical conformance suite for the guarantees it claims.
 
@@ -58,14 +62,30 @@ primitives/<primitive>/
   DECISION_BOUNDARY.md
   vectors/
   implementations/
-    genlayer/
-    evm/
-    offchain/
+    genlayer/        # mandatory
+      README.md
+      ...executable implementation...
+    evm/             # optional additional profile
+    offchain/        # optional additional profile
   conformance/
   receipts/
 ```
 
 An environment that cannot preserve a required invariant must report `UNSUPPORTED`; it must not reinterpret the invariant.
+
+## GenLayer completion gate
+
+Every primitive must have a GenLayer implementation before it may be `CONFORMANT` or `RELEASED`.
+
+The GenLayer implementation must:
+
+- implement the canonical state model and observable guarantees;
+- pass applicable environment-neutral conformance vectors;
+- document how canonical semantics map to GenLayer;
+- use Intelligent Contract judgment only for the declared judgment boundary;
+- preserve deterministic accounting, authority, replay, capacity, identity and conservation invariants;
+- include adjacent usage documentation;
+- produce executable test/deployment evidence appropriate to its maturity.
 
 ## Status language
 
