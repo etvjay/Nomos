@@ -1,20 +1,42 @@
 # Nomos
 
-Nomos is the constitutional monorepo for portable economic coordination primitives.
+Nomos is a **financial primitive stack for building applications on GenLayer**.
 
-It defines the semantics, invariants, evidence requirements, conformance tests, environment profiles, experiments, and release receipts that govern every Nomos instrument. Implementations may differ by execution environment; the primitive meaning may not.
+It defines reusable economic objects, state machines, authority models, invariants, conformance tests, implementation contracts, and developer-facing modules that application builders can compose into lending, receivables, treasury, trade-finance, insurance, capital-allocation, agentic-finance, and other financial systems.
 
-## Core rule
+## Product goal
 
-> Specify the economic primitive first. Every Nomos primitive must implement on GenLayer. Additional environments may implement the same canonical semantics. Use intelligence only where judgment is intrinsic.
+> Build primitives developers can use to build financial applications on GenLayer without repeatedly re-inventing evidence, authority, allocation, commitment, replay, financial-obligation, and rectification machinery.
 
-GenLayer is the mandatory reference implementation environment for every Nomos primitive and the reference judgment substrate where a primitive requires non-deterministic evidence evaluation, natural-language interpretation, or validator-mediated judgment.
+Nomos' product target is GenLayer.
 
-Nomos primitives are not GenLayer-exclusive: EVM, offchain, Move, Solana, or other environment implementations may coexist when they preserve canonical semantics. But no primitive may become `CONFORMANT` or `RELEASED` without an executable GenLayer implementation.
+Canonical primitive specifications remain semantically explicit and mechanism-independent so that GenLayer implementation details cannot silently redefine the economic object. Cross-environment implementations may be used for research, reference models, interoperability, or conformance comparison, but they are not the primary product goal.
 
-A deterministic Nomos primitive still implements on GenLayer. It MUST keep deterministic safety properties deterministic and MUST NOT invent an LLM/validator judgment step merely to appear "intelligent".
+## GenLayer implementation model
 
-## Initial instrument registry
+Every Nomos primitive MUST ship an executable GenLayer implementation.
+
+Nomos uses GenLayer through two distinct protocol capabilities:
+
+```text
+Nomos financial primitive
+        ↓
+Intelligent Contract
+(programmable implementation surface)
+        ↓
+GenVM execution
+        ↓
+Optimistic Democracy
+(network consensus / validation)
+        ↓
+finalized GenLayer state
+```
+
+For non-deterministic operations, each primitive MUST define the evidence, bounded decision schema, and Equivalence Principle required for validators to determine whether outcomes are acceptable.
+
+For deterministic primitives, the Intelligent Contract implements the state machine and invariants without inventing unnecessary LLM judgment. Optimistic Democracy remains the network consensus mechanism validating execution; it is not itself a Nomos primitive.
+
+## Initial primitive registry
 
 1. Proof of Payable
 2. Claim Verification
@@ -47,20 +69,50 @@ DAL — Dynamic Authorization Lanes
 Canonical progression:
 
 ```text
-Evidence / Mandate
+Economic evidence
+      ↓
+Claim Verification
+      ↓
+Policy / Workflow Authorization
       ↓
 Mandate Allocation?      # optional evaluation/recommendation
       ↓
-DAA                      # authority exists here
+DAA                      # bounded authority exists here
       ↓
-Encumbrance / Commitment
+Claim Encumbrance
+      ↓
+Capital Commitment
       ↓
 DAL                      # replay/execution topology
       ↓
-Execution
+Financial Contract / execution
 ```
 
+Gaia is a cross-cutting exception, reconciliation and rectification plane.
+
 The machine-readable registry lives in `nomos.manifest.json`.
+
+## What application developers should eventually consume
+
+Nomos is not complete when contracts merely exist. A released primitive should expose a usable GenLayer developer surface:
+
+```text
+primitive specification
+      ↓
+Intelligent Contract implementation
+      ↓
+canonical types / schemas
+      ↓
+SDK / client helpers
+      ↓
+example composition
+      ↓
+conformance vectors
+      ↓
+receipts / deployment references
+```
+
+A developer should be able to import or deploy a primitive, understand its guarantees, compose it with another Nomos primitive, and connect it to an application without reconstructing the protocol semantics from source code.
 
 ## Authority order
 
@@ -68,24 +120,20 @@ When sources disagree, use this order:
 
 1. `CONSTITUTION.md` — non-negotiable system law.
 2. Canonical primitive `SPEC.md` — semantic meaning and invariants.
-3. Accepted Research Foundry evidence — what is known, prior art, falsifiers.
-4. Current official environment/standards sources — implementation truth.
-5. Environment profile — how the canonical primitive maps into a VM/runtime.
-6. Implementation code.
-7. Tests, experiments, and receipts.
-8. Interface/demo material.
+3. Accepted Research Foundry evidence — prior art, falsifiers, surviving research claims.
+4. Current official GenLayer documentation and implementation truth.
+5. GenLayer implementation profile.
+6. Intelligent Contract implementation code.
+7. Tests, experiments, receipts, and deployment evidence.
+8. SDK/API/interface/demo material.
 
 A lower layer may never silently redefine a higher layer.
 
 ## Build lifecycle
 
-`PRODUCT TRUTH → RESEARCH → SPEC → GENLAYER IMPLEMENTATION → OPTIONAL OTHER ENVIRONMENTS → CONFORMANCE → ADVERSARIAL EXPERIMENT → RELEASE RECEIPT → INTERFACE/DEMO`
+`RESEARCH → SPEC → GENLAYER CONTRACT → DIRECT TESTS → EQUIVALENCE/CONSENSUS TESTS → INTEGRATION → CONFORMANCE → ADVERSARIAL EXPERIMENT → RELEASE RECEIPT → SDK/EXAMPLES`
 
-No implementation is called a Nomos implementation merely because it compiles. It must pass the canonical conformance suite for the guarantees it claims.
-
-## Repository contract
-
-Every mature primitive capsule will have this shape:
+## Primitive capsule
 
 ```text
 primitives/<primitive>/
@@ -95,36 +143,22 @@ primitives/<primitive>/
   DECISION_BOUNDARY.md
   vectors/
   implementations/
-    genlayer/        # mandatory
+    genlayer/        # mandatory product implementation
       README.md
-      ...executable implementation...
-    evm/             # optional additional profile
-    offchain/        # optional additional profile
+      ...Intelligent Contract implementation...
+  sdk/
+  examples/
   conformance/
   receipts/
 ```
 
-An environment that cannot preserve a required invariant must report `UNSUPPORTED`; it must not reinterpret the invariant.
-
-## GenLayer completion gate
-
-Every primitive must have a GenLayer implementation before it may be `CONFORMANT` or `RELEASED`.
-
-The GenLayer implementation must:
-
-- implement the canonical state model and observable guarantees;
-- pass applicable environment-neutral conformance vectors;
-- document how canonical semantics map to GenLayer;
-- use Intelligent Contract judgment only for the declared judgment boundary;
-- preserve deterministic accounting, authority, replay, capacity, identity and conservation invariants;
-- include adjacent usage documentation;
-- produce executable test/deployment evidence appropriate to its maturity.
+Additional environment implementations may exist under `implementations/` for interoperability or research, but GenLayer is the required product implementation.
 
 ## Status language
 
 Evidence and tests use explicit states only: `PASS`, `FAIL`, `NOT_IMPLEMENTED`, `BLOCKED`.
 
-Lifecycle state is separate and machine-readable in `nomos.manifest.json`.
+Lifecycle state is machine-readable in `nomos.manifest.json`.
 
 ## Governance
 
@@ -133,7 +167,7 @@ Read, in order:
 - `CONSTITUTION.md`
 - `AGENTS.md`
 - `GOVERNANCE.md`
-- `environments/README.md`
+- `environments/genlayer/PROFILE.md`
 - `conformance/README.md`
 - `experiments/README.md`
 - `RESEARCH_LEDGER.md`
