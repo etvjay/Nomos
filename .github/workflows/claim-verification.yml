@@ -1,0 +1,36 @@
+name: Claim Verification
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "primitives/claim-verification/**"
+      - "requirements-genlayer.txt"
+      - ".github/workflows/claim-verification.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "primitives/claim-verification/**"
+      - "requirements-genlayer.txt"
+      - ".github/workflows/claim-verification.yml"
+
+jobs:
+  lint-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-genlayer.txt
+      - run: genvm-lint check primitives/claim-verification/implementations/genlayer/claim_verification.py
+
+  direct-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-genlayer.txt
+      - run: pytest primitives/claim-verification/implementations/genlayer/tests/ -v
