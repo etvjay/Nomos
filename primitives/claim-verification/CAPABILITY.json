@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "1.0.0",
+  "primitiveId": "claim-verification",
+  "name": "Claim Verification",
+  "capabilityVersion": "0.1.0",
+  "status": "IMPLEMENTING",
+  "convergenceMode": "SEMANTIC",
+  "judgmentBearing": true,
+  "implementation": {
+    "environment": "genlayer",
+    "path": "primitives/claim-verification/implementations/genlayer/claim_verification.py",
+    "contract": "ClaimVerification"
+  },
+  "publicMethods": [
+    {
+      "name": "verify_claim",
+      "kind": "write",
+      "inputs": [
+        {"name": "verification_id", "type": "string"},
+        {"name": "claim_id", "type": "string"},
+        {"name": "evidence_digest", "type": "string"},
+        {"name": "claim_json", "type": "json-object-as-string"},
+        {"name": "evidence_json", "type": "json-object-or-list-as-string"}
+      ],
+      "output": "canonical-verification-json-string"
+    },
+    {
+      "name": "get_verification",
+      "kind": "view",
+      "inputs": [{"name": "verification_id", "type": "string"}],
+      "output": "canonical-verification-json-string-or-empty"
+    },
+    {
+      "name": "has_verification",
+      "kind": "view",
+      "inputs": [{"name": "verification_id", "type": "string"}],
+      "output": "boolean"
+    }
+  ],
+  "canonicalDecision": {
+    "status": ["VERIFIED", "CONFLICTED", "INSUFFICIENT", "UNDETERMINED"],
+    "reasonCode": [
+      "EVIDENCE_SUPPORTS_CLAIM",
+      "MATERIAL_CONFLICT",
+      "MISSING_ESSENTIAL_EVIDENCE",
+      "EVIDENCE_AMBIGUOUS"
+    ],
+    "equivalenceFields": ["status", "reason_code"],
+    "nonCanonicalFields": ["analysis"]
+  },
+  "stateOwnership": {
+    "owns": ["immutable verification decision keyed by verification_id"],
+    "doesNotOwn": [
+      "claim identity creation",
+      "underwriting",
+      "capital allocation",
+      "claim encumbrance",
+      "capital commitment",
+      "replay lanes",
+      "settlement"
+    ]
+  },
+  "limits": {
+    "maxClaimBytes": 16384,
+    "maxEvidenceBytes": 32768,
+    "duplicateVerificationId": "rejected"
+  },
+  "vectors": [
+    "primitives/claim-verification/vectors/cv-verified-001.json",
+    "primitives/claim-verification/vectors/cv-conflicted-001.json",
+    "primitives/claim-verification/vectors/cv-insufficient-001.json",
+    "primitives/claim-verification/vectors/cv-undetermined-001.json"
+  ],
+  "reproduce": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "pytest primitives/claim-verification/implementations/genlayer/tests/ -v",
+    "genvm-lint check primitives/claim-verification/implementations/genlayer/claim_verification.py"
+  ],
+  "composition": {
+    "typicalUpstream": ["proof-of-payable"],
+    "typicalDownstream": ["policy-envelope", "daa", "claim-encumbrance", "capital-commitment"]
+  },
+  "unsupported": [
+    "live remote evidence fetching",
+    "source authenticity verification inside the primitive",
+    "creditworthiness scoring",
+    "capital movement",
+    "deployment/conformance guarantee until a release receipt exists"
+  ]
+}
