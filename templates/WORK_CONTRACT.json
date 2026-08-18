@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.0.0",
+  "workId": "WORK-EXAMPLE-001",
+  "baseCommit": "REPLACE_WITH_COMMIT_SHA",
+  "lane": "primitive",
+  "targets": ["claim-verification"],
+  "allowedPaths": [
+    "primitives/claim-verification/**"
+  ],
+  "changeClass": "PATCH",
+  "authorityFingerprint": "REPLACE_WITH_FINGERPRINT",
+  "capabilityVersion": "0.1.0",
+  "publicInterfaceMutationAllowed": false,
+  "dependencies": [],
+  "acceptanceGates": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "pytest primitives/claim-verification/implementations/genlayer/tests/ -v",
+    "genvm-lint check primitives/claim-verification/implementations/genlayer/claim_verification.py"
+  ],
+  "notes": "Copy this template into convergence/work/<workId>.json for material parallel work. Do not broaden allowedPaths without a new accepted Work Contract."
+}
