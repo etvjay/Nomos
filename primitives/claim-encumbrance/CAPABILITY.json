@@ -1,0 +1,126 @@
+{
+  "schemaVersion": "1.0.0",
+  "primitiveId": "claim-encumbrance",
+  "name": "Claim Encumbrance",
+  "capabilityVersion": "0.1.0",
+  "status": "SPECIFIED",
+  "convergenceMode": "EXACT",
+  "judgmentBearing": false,
+  "implementation": {
+    "environment": "genlayer",
+    "path": "primitives/claim-encumbrance/implementations/genlayer/claim_encumbrance.py",
+    "contract": "ClaimEncumbrance"
+  },
+  "publicMethods": [
+    {
+      "name": "set_financeable_amount",
+      "kind": "write",
+      "inputs": [
+        {"name": "claim_id", "type": "string"},
+        {"name": "amount", "type": "uint-string"}
+      ],
+      "output": "canonical-claim-json-string"
+    },
+    {
+      "name": "reserve",
+      "kind": "write",
+      "inputs": [
+        {"name": "reservation_id", "type": "string"},
+        {"name": "claim_id", "type": "string"},
+        {"name": "amount", "type": "uint-string"}
+      ],
+      "output": "canonical-encumbrance-json-string"
+    },
+    {
+      "name": "commit",
+      "kind": "write",
+      "inputs": [{"name": "reservation_id", "type": "string"}],
+      "output": "canonical-encumbrance-json-string"
+    },
+    {
+      "name": "release",
+      "kind": "write",
+      "inputs": [{"name": "reservation_id", "type": "string"}],
+      "output": "canonical-encumbrance-json-string"
+    },
+    {
+      "name": "settle",
+      "kind": "write",
+      "inputs": [{"name": "reservation_id", "type": "string"}],
+      "output": "canonical-encumbrance-json-string"
+    },
+    {
+      "name": "get_encumbrance",
+      "kind": "view",
+      "inputs": [{"name": "reservation_id", "type": "string"}],
+      "output": "canonical-encumbrance-json-string-or-empty"
+    },
+    {
+      "name": "active_encumbrances",
+      "kind": "view",
+      "inputs": [{"name": "claim_id", "type": "string"}],
+      "output": "uint-string"
+    },
+    {
+      "name": "financeable_amount",
+      "kind": "view",
+      "inputs": [{"name": "claim_id", "type": "string"}],
+      "output": "uint-string-or-empty"
+    }
+  ],
+  "canonicalDecision": {
+    "status": ["RESERVED", "COMMITTED", "RELEASED", "SETTLED"],
+    "equivalenceFields": [
+      "reservation_id",
+      "claim_id",
+      "amount",
+      "status",
+      "financeable_amount"
+    ],
+    "nonCanonicalFields": ["created_at", "created_by", "updated_at", "updated_by"]
+  },
+  "stateOwnership": {
+    "owns": [
+      "immutable financeable capacity per stable claim_id",
+      "reservation lifecycle keyed by reservation_id",
+      "active encumbrance sum per claim_id"
+    ],
+    "doesNotOwn": [
+      "claim identity creation",
+      "same-claim semantic adjudication",
+      "verification of whether two records represent the same claim",
+      "capital movement",
+      "settlement of the underlying financial contract"
+    ]
+  },
+  "limits": {
+    "maxAmountDigits": 39,
+    "duplicateReservationId": "rejected",
+    "duplicateFinanceableClaim": "rejected",
+    "reserveOnUnknownClaim": "rejected",
+    "releaseOrSettleTwice": "rejected",
+    "commitNonReserved": "rejected",
+    "overCapacity": "rejected"
+  },
+  "vectors": [
+    "primitives/claim-encumbrance/vectors/v0.1.json"
+  ],
+  "reproduce": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "python tools/nomos_run_vectors.py primitives/claim-encumbrance/implementations/genlayer/claim_encumbrance.py",
+    "genvm-lint check primitives/claim-encumbrance/implementations/genlayer/claim_encumbrance.py"
+  ],
+  "composition": {
+    "typicalUpstream": ["claim-verification", "daa"],
+    "typicalDownstream": ["capital-commitment", "financial-contract"]
+  },
+  "unsupported": [
+    "same-claim semantic adjudication",
+    "claim identity creation",
+    "underwriting",
+    "capital movement",
+    "settlement execution",
+    "deployment/conformance guarantee until a release receipt exists"
+  ]
+}

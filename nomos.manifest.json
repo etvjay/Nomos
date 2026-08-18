@@ -3,24 +3,146 @@
   "repository": "etvjay/Nomos",
   "constitutionalAuthority": "CONSTITUTION.md",
   "convergenceProtocol": "CONVERGENCE.md",
-  "statusVocabulary": ["DISCOVERY", "RESEARCHING", "SPECIFIED", "IMPLEMENTING", "CONFORMANT", "RELEASED", "BLOCKED"],
-  "evidenceVocabulary": ["PASS", "FAIL", "NOT_IMPLEMENTED", "BLOCKED"],
-  "qualificationVocabulary": ["QUALIFIED", "QUALIFIED_EXTENSION", "SCOPE_PROVISIONAL"],
-  "convergenceVocabulary": ["EXACT", "SEMANTIC"],
+  "statusVocabulary": [
+    "DISCOVERY",
+    "RESEARCHING",
+    "SPECIFIED",
+    "IMPLEMENTING",
+    "CONFORMANT",
+    "RELEASED",
+    "BLOCKED"
+  ],
+  "evidenceVocabulary": [
+    "PASS",
+    "FAIL",
+    "NOT_IMPLEMENTED",
+    "BLOCKED"
+  ],
+  "qualificationVocabulary": [
+    "QUALIFIED",
+    "QUALIFIED_EXTENSION",
+    "SCOPE_PROVISIONAL"
+  ],
+  "convergenceVocabulary": [
+    "EXACT",
+    "SEMANTIC"
+  ],
   "mandatoryReferenceEnvironment": "genlayer",
   "referenceJudgmentSubstrate": "genlayer",
-  "environments": ["genlayer", "evm", "offchain"],
+  "environments": [
+    "genlayer",
+    "evm",
+    "offchain"
+  ],
   "primitives": [
-    {"id":"proof-of-payable","name":"Proof of Payable","status":"RESEARCHING","qualification":"QUALIFIED","judgmentBearing":true,"genlayerRequired":true,"canonicalPath":"primitives/proof-of-payable"},
-    {"id":"claim-verification","name":"Claim Verification","status":"IMPLEMENTING","qualification":"QUALIFIED","judgmentBearing":true,"genlayerRequired":true,"canonicalPath":"primitives/claim-verification","referenceSlice":"v0.1","capabilityVersion":"0.1.0","convergenceMode":"SEMANTIC"},
-    {"id":"policy-envelope","name":"Policy Envelope","status":"RESEARCHING","qualification":"QUALIFIED","judgmentBearing":true,"genlayerRequired":true,"canonicalPath":"primitives/policy-envelope"},
-    {"id":"workflow-authorization","name":"Workflow Authorization","status":"RESEARCHING","qualification":"QUALIFIED","judgmentBearing":true,"genlayerRequired":true,"components":["Path","Pact"],"canonicalPath":"primitives/workflow-authorization"},
-    {"id":"mandate-allocation","name":"Mandate Allocation","status":"RESEARCHING","qualification":"QUALIFIED_EXTENSION","judgmentBearing":true,"genlayerRequired":true,"canonicalPath":"primitives/mandate-allocation"},
-    {"id":"daa","name":"Dynamic Authority Allocation","status":"RESEARCHING","qualification":"QUALIFIED","judgmentBearing":true,"genlayerRequired":true,"canonicalPath":"primitives/daa"},
-    {"id":"claim-encumbrance","name":"Claim Encumbrance","status":"RESEARCHING","qualification":"QUALIFIED","judgmentBearing":false,"genlayerRequired":true,"canonicalPath":"primitives/claim-encumbrance"},
-    {"id":"capital-commitment","name":"Capital Commitment","status":"RESEARCHING","qualification":"QUALIFIED","judgmentBearing":false,"genlayerRequired":true,"canonicalPath":"primitives/capital-commitment"},
-    {"id":"dal","name":"Dynamic Authorization Lanes","status":"RESEARCHING","qualification":"QUALIFIED","judgmentBearing":false,"genlayerRequired":true,"canonicalPath":"primitives/dal"},
-    {"id":"financial-contract","name":"Financial Contract","status":"RESEARCHING","qualification":"SCOPE_PROVISIONAL","judgmentBearing":true,"genlayerRequired":true,"canonicalPath":"primitives/financial-contract","implementationBlockedUntil":"canonical state-machine scope is narrowed"},
-    {"id":"gaia","name":"Gaia","status":"RESEARCHING","qualification":"QUALIFIED","judgmentBearing":true,"genlayerRequired":true,"canonicalPath":"primitives/gaia"}
+    {
+      "id": "proof-of-payable",
+      "name": "Proof of Payable",
+      "status": "RESEARCHING",
+      "qualification": "QUALIFIED",
+      "judgmentBearing": true,
+      "genlayerRequired": true,
+      "canonicalPath": "primitives/proof-of-payable"
+    },
+    {
+      "id": "claim-verification",
+      "name": "Claim Verification",
+      "status": "IMPLEMENTING",
+      "qualification": "QUALIFIED",
+      "judgmentBearing": true,
+      "genlayerRequired": true,
+      "canonicalPath": "primitives/claim-verification",
+      "referenceSlice": "v0.1",
+      "capabilityVersion": "0.1.0",
+      "convergenceMode": "SEMANTIC"
+    },
+    {
+      "id": "policy-envelope",
+      "name": "Policy Envelope",
+      "status": "RESEARCHING",
+      "qualification": "QUALIFIED",
+      "judgmentBearing": true,
+      "genlayerRequired": true,
+      "canonicalPath": "primitives/policy-envelope"
+    },
+    {
+      "id": "workflow-authorization",
+      "name": "Workflow Authorization",
+      "status": "RESEARCHING",
+      "qualification": "QUALIFIED",
+      "judgmentBearing": true,
+      "genlayerRequired": true,
+      "components": [
+        "Path",
+        "Pact"
+      ],
+      "canonicalPath": "primitives/workflow-authorization"
+    },
+    {
+      "id": "mandate-allocation",
+      "name": "Mandate Allocation",
+      "status": "RESEARCHING",
+      "qualification": "QUALIFIED_EXTENSION",
+      "judgmentBearing": true,
+      "genlayerRequired": true,
+      "canonicalPath": "primitives/mandate-allocation"
+    },
+    {
+      "id": "daa",
+      "name": "Dynamic Authority Allocation",
+      "status": "RESEARCHING",
+      "qualification": "QUALIFIED",
+      "judgmentBearing": true,
+      "genlayerRequired": true,
+      "canonicalPath": "primitives/daa"
+    },
+    {
+      "id": "claim-encumbrance",
+      "name": "Claim Encumbrance",
+      "status": "SPECIFIED",
+      "qualification": "QUALIFIED",
+      "judgmentBearing": false,
+      "genlayerRequired": true,
+      "canonicalPath": "primitives/claim-encumbrance",
+      "capabilityVersion": "0.1.0",
+      "convergenceMode": "EXACT"
+    },
+    {
+      "id": "capital-commitment",
+      "name": "Capital Commitment",
+      "status": "RESEARCHING",
+      "qualification": "QUALIFIED",
+      "judgmentBearing": false,
+      "genlayerRequired": true,
+      "canonicalPath": "primitives/capital-commitment"
+    },
+    {
+      "id": "dal",
+      "name": "Dynamic Authorization Lanes",
+      "status": "RESEARCHING",
+      "qualification": "QUALIFIED",
+      "judgmentBearing": false,
+      "genlayerRequired": true,
+      "canonicalPath": "primitives/dal"
+    },
+    {
+      "id": "financial-contract",
+      "name": "Financial Contract",
+      "status": "RESEARCHING",
+      "qualification": "SCOPE_PROVISIONAL",
+      "judgmentBearing": true,
+      "genlayerRequired": true,
+      "canonicalPath": "primitives/financial-contract",
+      "implementationBlockedUntil": "canonical state-machine scope is narrowed"
+    },
+    {
+      "id": "gaia",
+      "name": "Gaia",
+      "status": "RESEARCHING",
+      "qualification": "QUALIFIED",
+      "judgmentBearing": true,
+      "genlayerRequired": true,
+      "canonicalPath": "primitives/gaia"
+    }
   ]
 }

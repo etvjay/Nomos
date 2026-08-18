@@ -1,0 +1,190 @@
+{
+  "schemaVersion": "0.1.0",
+  "primitive": "claim-encumbrance",
+  "convergenceMode": "EXACT",
+  "statuses": ["RESERVED", "COMMITTED", "RELEASED", "SETTLED"],
+  "activeStatuses": ["RESERVED", "COMMITTED"],
+  "vectors": [
+    {
+      "id": "ce-set-financeable-001",
+      "description": "Setting financeable amount on a claim succeeds and is reflected by the view",
+      "actions": [
+        {"op": "set_financeable_amount", "args": ["C1", "1000"], "expect": "ok"},
+        {"op": "financeable_amount", "args": ["C1"], "expect": "1000"},
+        {"op": "active_encumbrances", "args": ["C1"], "expect": "0"}
+      ]
+    },
+    {
+      "id": "ce-set-financeable-duplicate-rejected-002",
+      "description": "Financeable amount is immutable once set; duplicate set is rejected",
+      "actions": [
+        {"op": "set_financeable_amount", "args": ["C1", "1000"], "expect": "ok"},
+        {"op": "set_financeable_amount", "args": ["C1", "2000"], "expect": "reject"},
+        {"op": "financeable_amount", "args": ["C1"], "expect": "1000"}
+      ]
+    },
+    {
+      "id": "ce-reserve-within-capacity-003",
+      "description": "Reservations within capacity succeed and accumulate active encumbrance",
+      "actions": [
+        {"op": "set_financeable_amount", "args": ["C1", "1000"], "expect": "ok"},
+        {"op": "reserve", "args": ["R1", "C1", "400"], "expect": "ok"},
+        {"op": "reserve", "args": ["R2", "C1", "400"], "expect": "ok"},
+        {"op": "active_encumbrances", "args": ["C1"], "expect": "800"},
+        {"op": "get_encumbrance", "args": ["R1"], "expect": {"reservation_id": "R1", "claim_id": "C1", "amount": "400", "status": "RESERVED"}},
+        {"op": "get_encumbrance", "args": ["R2"], "expect": {"reservation_id": "R2", "claim_id": "C1", "amount": "400", "status": "RESERVED"}}
+      ]
+    },
+    {
+      "id": "ce-reserve-over-capacity-rejected-004",
+      "description": "A reservation that would exceed capacity is rejected and does not mutate state",
+      "actions": [
+        {"op": "set_financeable_amount", "args": ["C1", "1000"], "expect": "ok"},
+        {"op": "reserve", "args": ["R1", "C1", "600"], "expect": "ok"},
+        {"op": "reserve", "args": ["R2", "C1", "500"], "expect": "reject"},
+        {"op": "active_encumbrances", "args": ["C1"], "expect": "600"},
+        {"op": "get_encumbrance", "args": ["R2"], "expect": ""}
+      ]
+    },
+    {
+      "id": "ce-reserve-duplicate-rejected-005",
+      "description": "A reservation_id may only be used once",
+      "actions": [
+        {"op": "set_financeable_amount", "args": ["C1", "1000"], "expect": "ok"},
+        {"op": "reserve", "args": ["R1", "C1", "300"], "expect": "ok"},
+        {"op": "reserve", "args": ["R1", "C1", "200"], "expect": "reject"},
+        {"op": "active_encumbrances", "args": ["C1"], "expect": "300"}
+      ]
+    },
+    {
+      "id": "ce-reserve-unknown-claim-rejected-006",
+      "description": "Reserving against a claim with no financeable amount is rejected",
+      "actions": [
+        {"op": "reserve", "args": ["R1", "UNKNOWN", "100"], "expect": "reject"},
+        {"op": "get_encumbrance", "args": ["R1"], "expect": ""}
+      ]
+    },
+    {
+      "id": "ce-reserve-invalid-amount-rejected-007",
+      "description": "Non-numeric, negative, and zero amounts are rejected",
+      "actions": [
+        {"op": "set_financeable_amount", "args": ["C1", "1000"], "expect": "ok"},
+        {"op": "reserve", "args": ["R1", "C1", "abc"], "expect": "reject"},
+        {"op": "reserve", "args": ["R2", "C1", "-5"], "expect": "reject"},
+        {"op": "reserve", "args": ["R3", "C1", "0"], "expect": "reject"},
+        {"op": "reserve", "args": ["R4", "C1", ""], "expect": "reject"},
+        {"op": "active_encumbrances", "args": ["C1"], "expect": "0"}
+      ]
+    },
+    {
+      "id": "ce-commit-lifecycle-008",
+      "description": "RESERVED commits to COMMITTED; only RESERVED may commit",
+      "actions": [
+        {"op": "set_financeable_amount", "args": ["C1", "1000"], "expect": "ok"},
+        {"op": "reserve", "args": ["R1", "C1", "400"], "expect": "ok"},
+        {"op": "commit", "args": ["R1"], "expect": "ok"},
+        {"op": "get_encumbrance", "args": ["R1"], "expect": {"reservation_id": "R1", "claim_id": "C1", "amount": "400", "status": "COMMITTED"}},
+        {"op": "active_encumbrances", "args": ["C1"], "expect": "400"},
+        {"op": "commit", "args": ["R1"], "expect": "reject"},
+        {"op": "commit", "args": ["MISSING"], "expect": "reject"}
+      ]
+    },
+    {
+      "id": "ce-release-frees-capacity-once-009",
+      "description": "Release frees capacity exactly once; releasing again is rejected",
+      "actions": [
+        {"op": "set_financeable_amount", "args": ["C1", "1000"], "expect": "ok"},
+        {"op": "reserve", "args": ["R1", "C1", "400"], "expect": "ok"},
+        {"op": "reserve", "args": ["R2", "C1", "400"], "expect": "ok"},
+        {"op": "release", "args": ["R1"], "expect": "ok"},
+        {"op": "active_encumbrances", "args": ["C1"], "expect": "400"},
+        {"op": "release", "args": ["R1"], "expect": "reject"},
+        {"op": "get_encumbrance", "args": ["R1"], "expect": {"reservation_id": "R1", "claim_id": "C1", "amount": "400", "status": "RELEASED"}}
+      ]
+    },
+    {
+      "id": "ce-settle-frees-capacity-once-010",
+      "description": "Settle frees capacity exactly once; settling again is rejected",
+      "actions": [
+        {"op": "set_financeable_amount", "args": ["C1", "1000"], "expect": "ok"},
+        {"op": "reserve", "args": ["R1", "C1", "400"], "expect": "ok"},
+        {"op": "settle", "args": ["R1"], "expect": "ok"},
+        {"op": "active_encumbrances", "args": ["C1"], "expect": "0"},
+        {"op": "settle", "args": ["R1"], "expect": "reject"},
+        {"op": "get_encumbrance", "args": ["R1"], "expect": {"reservation_id": "R1", "claim_id": "C1", "amount": "400", "status": "SETTLED"}}
+      ]
+    },
+    {
+      "id": "ce-release-then-commit-rejected-011",
+      "description": "A released reservation cannot be committed or settled",
+      "actions": [
+        {"op": "set_financeable_amount", "args": ["C1", "1000"], "expect": "ok"},
+        {"op": "reserve", "args": ["R1", "C1", "400"], "expect": "ok"},
+        {"op": "release", "args": ["R1"], "expect": "ok"},
+        {"op": "commit", "args": ["R1"], "expect": "reject"},
+        {"op": "settle", "args": ["R1"], "expect": "reject"}
+      ]
+    },
+    {
+      "id": "ce-commit-then-release-012",
+      "description": "A committed reservation may be released",
+      "actions": [
+        {"op": "set_financeable_amount", "args": ["C1", "1000"], "expect": "ok"},
+        {"op": "reserve", "args": ["R1", "C1", "400"], "expect": "ok"},
+        {"op": "commit", "args": ["R1"], "expect": "ok"},
+        {"op": "release", "args": ["R1"], "expect": "ok"},
+        {"op": "active_encumbrances", "args": ["C1"], "expect": "0"},
+        {"op": "get_encumbrance", "args": ["R1"], "expect": {"reservation_id": "R1", "claim_id": "C1", "amount": "400", "status": "RELEASED"}}
+      ]
+    },
+    {
+      "id": "ce-commit-then-settle-013",
+      "description": "A committed reservation may be settled",
+      "actions": [
+        {"op": "set_financeable_amount", "args": ["C1", "1000"], "expect": "ok"},
+        {"op": "reserve", "args": ["R1", "C1", "400"], "expect": "ok"},
+        {"op": "commit", "args": ["R1"], "expect": "ok"},
+        {"op": "settle", "args": ["R1"], "expect": "ok"},
+        {"op": "active_encumbrances", "args": ["C1"], "expect": "0"},
+        {"op": "get_encumbrance", "args": ["R1"], "expect": {"reservation_id": "R1", "claim_id": "C1", "amount": "400", "status": "SETTLED"}}
+      ]
+    },
+    {
+      "id": "ce-reuse-capacity-after-release-014",
+      "description": "Freed capacity can back a new reservation",
+      "actions": [
+        {"op": "set_financeable_amount", "args": ["C1", "1000"], "expect": "ok"},
+        {"op": "reserve", "args": ["R1", "C1", "400"], "expect": "ok"},
+        {"op": "release", "args": ["R1"], "expect": "ok"},
+        {"op": "reserve", "args": ["R2", "C1", "900"], "expect": "ok"},
+        {"op": "active_encumbrances", "args": ["C1"], "expect": "900"}
+      ]
+    },
+    {
+      "id": "ce-immutable-per-claim-015",
+      "description": "Each claim has independent immutable financeable capacity",
+      "actions": [
+        {"op": "set_financeable_amount", "args": ["C1", "1000"], "expect": "ok"},
+        {"op": "set_financeable_amount", "args": ["C2", "500"], "expect": "ok"},
+        {"op": "reserve", "args": ["R1", "C1", "1000"], "expect": "ok"},
+        {"op": "reserve", "args": ["R2", "C2", "500"], "expect": "ok"},
+        {"op": "reserve", "args": ["R3", "C1", "1"], "expect": "reject"},
+        {"op": "reserve", "args": ["R4", "C2", "1"], "expect": "reject"},
+        {"op": "financeable_amount", "args": ["C1"], "expect": "1000"},
+        {"op": "financeable_amount", "args": ["C2"], "expect": "500"}
+      ]
+    },
+    {
+      "id": "ce-set-financeable-empty-claim-rejected-016",
+      "description": "Empty claim_id and empty amount are rejected when setting financeable amount",
+      "actions": [
+        {"op": "set_financeable_amount", "args": ["", "1000"], "expect": "reject"},
+        {"op": "set_financeable_amount", "args": ["C1", ""], "expect": "reject"},
+        {"op": "set_financeable_amount", "args": ["C1", "-100"], "expect": "reject"},
+        {"op": "set_financeable_amount", "args": ["C1", "0"], "expect": "reject"},
+        {"op": "set_financeable_amount", "args": ["C1", "abc"], "expect": "reject"},
+        {"op": "financeable_amount", "args": ["C1"], "expect": ""}
+      ]
+    }
+  ]
+}

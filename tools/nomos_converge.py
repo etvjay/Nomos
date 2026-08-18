@@ -109,7 +109,7 @@ def check() -> int:
                 if not (ROOT / vector).exists():
                     errors.append(f"{pid}: capability references missing vector {vector}")
             impl = cap.get("implementation", {}).get("path")
-            if impl and not (ROOT / impl).exists():
+            if status in {"IMPLEMENTING", "CONFORMANT", "RELEASED"} and impl and not (ROOT / impl).exists():
                 errors.append(f"{pid}: capability references missing implementation {impl}")
 
     if errors:
