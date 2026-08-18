@@ -22,3 +22,6 @@ jobs:
 
       - name: Run Nomos governance lint
         run: python tools/nomos_lint.py
+
+      - name: Run Nomos convergence checks
+        run: python tools/nomos_converge.py check
