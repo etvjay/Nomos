@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.0.0",
+  "receiptId": "RECEIPT-EXAMPLE-001",
+  "workId": "WORK-EXAMPLE-001",
+  "primitiveId": "claim-verification",
+  "baseCommit": "REPLACE_WITH_BASE_COMMIT",
+  "resultCommit": "REPLACE_WITH_RESULT_COMMIT",
+  "authorityFingerprint": "REPLACE_WITH_FINGERPRINT",
+  "capabilityVersion": "0.1.0",
+  "convergenceMode": "SEMANTIC",
+  "commands": [],
+  "gates": [
+    {
+      "id": "nomos-lint",
+      "state": "NOT_IMPLEMENTED",
+      "evidence": null
+    }
+  ],
+  "runtimeVersions": {},
+  "knownGaps": [],
+  "notes": "A receipt records observed proof only. Replace NOT_IMPLEMENTED/BLOCKED only with executable evidence."
+}
