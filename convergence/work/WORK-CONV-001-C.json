@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "1.0.0",
+  "workId": "WORK-CONV-001-C",
+  "baseCommit": "17a4defe71732c42b53c7dcbebed199ef8f4f63c",
+  "lane": "claim-encumbrance-independent-C",
+  "targets": [
+    "claim-encumbrance"
+  ],
+  "allowedPaths": [
+    "primitives/claim-encumbrance/implementations/genlayer/**"
+  ],
+  "changeClass": "ADD",
+  "authorityFingerprint": "sha256:7cfcbfeac1612804a635a1f9874a1584b62c2e21d542d6154497262ecd23ca10",
+  "capabilityVersion": "0.1.0",
+  "publicInterfaceMutationAllowed": false,
+  "dependencies": [],
+  "acceptanceGates": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "python tools/nomos_run_vectors.py primitives/claim-encumbrance/implementations/genlayer/claim_encumbrance.py",
+    "genvm-lint check primitives/claim-encumbrance/implementations/genlayer/claim_encumbrance.py"
+  ],
+  "notes": "Partner C: independently build deterministic Claim Encumbrance from SPEC/CAPABILITY/vectors only. Must NOT inspect Partner B implementation."
+}

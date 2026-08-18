@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "1.0.0",
+  "workId": "WORK-CONV-001-A",
+  "baseCommit": "17a4defe71732c42b53c7dcbebed199ef8f4f63c",
+  "lane": "claim-verification-integration",
+  "targets": [
+    "claim-verification"
+  ],
+  "allowedPaths": [
+    "primitives/claim-verification/**"
+  ],
+  "changeClass": "PATCH",
+  "authorityFingerprint": "sha256:f0be8bab680a32698c1dbf36971ce10802911af0451f4216de84f92fddf587f2",
+  "capabilityVersion": "0.1.0",
+  "publicInterfaceMutationAllowed": false,
+  "dependencies": [],
+  "acceptanceGates": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "pytest primitives/claim-verification/implementations/genlayer/tests/ -v",
+    "genvm-lint check primitives/claim-verification/implementations/genlayer/claim_verification.py"
+  ],
+  "notes": "Partner A: continue Claim Verification implementation and produce integration/deployment evidence against canonical CAPABILITY."
+}

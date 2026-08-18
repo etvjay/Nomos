@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "1.0.0",
+  "workId": "WORK-CONV-001-D",
+  "baseCommit": "17a4defe71732c42b53c7dcbebed199ef8f4f63c",
+  "lane": "blind-downstream-composition",
+  "targets": [
+    "claim-verification",
+    "claim-encumbrance"
+  ],
+  "allowedPaths": [
+    "examples/**"
+  ],
+  "changeClass": "ADD",
+  "authorityFingerprint": "sha256:f0be8bab680a32698c1dbf36971ce10802911af0451f4216de84f92fddf587f2",
+  "capabilityVersion": "0.1.0",
+  "publicInterfaceMutationAllowed": false,
+  "dependencies": [
+    "claim-verification",
+    "claim-encumbrance"
+  ],
+  "acceptanceGates": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "pytest examples/verified-receivable/tests/ -v"
+  ],
+  "notes": "Partner D: blind downstream composition. Build a tiny app: Verified receivable -> Claim Verification -> if VERIFIED -> Claim Encumbrance.reserve(...) -> financeable balance changes. Must use only CAPABILITY.json + canonical types + SDK helpers + composition docs."
+}
