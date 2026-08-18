@@ -14,6 +14,7 @@ REQUIRED_ROOT = [
     "CONSTITUTION.md",
     "GOVERNANCE.md",
     "AGENTS.md",
+    "CONVERGENCE.md",
     "PRIMITIVE_QUALIFICATION.md",
     "nomos.manifest.json",
     "environments/README.md",
@@ -21,6 +22,9 @@ REQUIRED_ROOT = [
     "conformance/README.md",
     "experiments/README.md",
     "templates/PRIMITIVE_SPEC.md",
+    "templates/WORK_CONTRACT.json",
+    "templates/CONVERGENCE_RECEIPT.json",
+    "tools/nomos_converge.py",
 ]
 
 EXPECTED_PRIMITIVES = {
@@ -52,6 +56,8 @@ ALLOWED_QUALIFICATION = {
     "QUALIFIED_EXTENSION",
     "SCOPE_PROVISIONAL",
 }
+
+ALLOWED_CONVERGENCE = {"EXACT", "SEMANTIC"}
 
 JUDGMENT_EXPECTED = {
     "proof-of-payable",
@@ -102,6 +108,8 @@ def main() -> int:
 
     if manifest.get("constitutionalAuthority") != "CONSTITUTION.md":
         errors.append("constitutionalAuthority must be CONSTITUTION.md")
+    if manifest.get("convergenceProtocol") != "CONVERGENCE.md":
+        errors.append("convergenceProtocol must be CONVERGENCE.md")
     if manifest.get("mandatoryReferenceEnvironment") != "genlayer":
         errors.append("mandatoryReferenceEnvironment must be 'genlayer'")
     if manifest.get("referenceJudgmentSubstrate") != "genlayer":
@@ -167,7 +175,31 @@ def main() -> int:
                     errors.append(f"{pid}: {status} requires {path}/{required}")
 
         if status in {"IMPLEMENTING", "CONFORMANT", "RELEASED"} and path:
-            genlayer = ROOT / path / "implementations" / "genlayer"
+            capsule = ROOT / path
+            capability_path = capsule / "CAPABILITY.json"
+            if not capability_path.exists():
+                errors.append(f"{pid}: {status} requires {path}/CAPABILITY.json")
+            else:
+                try:
+                    capability = json.loads(capability_path.read_text())
+                except Exception as exc:
+                    errors.append(f"{pid}: invalid CAPABILITY.json: {exc}")
+                    capability = {}
+                if capability.get("primitiveId") != pid:
+                    errors.append(f"{pid}: CAPABILITY primitiveId must equal registry id")
+                if capability.get("status") != status:
+                    errors.append(f"{pid}: CAPABILITY status must equal manifest status")
+                if capability.get("capabilityVersion") != primitive.get("capabilityVersion"):
+                    errors.append(f"{pid}: manifest capabilityVersion must match CAPABILITY.json")
+                expected_mode = "SEMANTIC" if judgment else "EXACT"
+                if primitive.get("convergenceMode") != expected_mode:
+                    errors.append(f"{pid}: manifest convergenceMode must be {expected_mode}")
+                if capability.get("convergenceMode") != expected_mode:
+                    errors.append(f"{pid}: CAPABILITY convergenceMode must be {expected_mode}")
+                if capability.get("convergenceMode") not in ALLOWED_CONVERGENCE:
+                    errors.append(f"{pid}: invalid convergence mode")
+
+            genlayer = capsule / "implementations" / "genlayer"
             if not genlayer.exists():
                 errors.append(f"{pid}: {status} requires {path}/implementations/genlayer/")
             elif not (genlayer / "README.md").exists():
@@ -183,7 +215,7 @@ def main() -> int:
     if errors:
         return fail(errors)
 
-    print("NOMOS-LINT PASS: constitutional structure, qualification gates and GenLayer mandate are consistent")
+    print("NOMOS-LINT PASS: constitutional, capability, convergence and GenLayer contracts are consistent")
     return 0
 
 
