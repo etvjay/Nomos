@@ -66,10 +66,7 @@
     "duplicateVerificationId": "rejected"
   },
   "vectors": [
-    "primitives/claim-verification/vectors/cv-verified-001.json",
-    "primitives/claim-verification/vectors/cv-conflicted-001.json",
-    "primitives/claim-verification/vectors/cv-insufficient-001.json",
-    "primitives/claim-verification/vectors/cv-undetermined-001.json"
+    "primitives/claim-verification/vectors/v0.1.json"
   ],
   "reproduce": [
     "python tools/nomos_lint.py",
