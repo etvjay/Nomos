@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
-"""EXACT convergence differential check for EXP-CONV-001.
+"""EXACT convergence differential check.
 
 Deploys two independent implementations of a deterministic primitive and
 replays identical canonical action sequences against both. For every vector
-and every action, the observable economic state (get_encumbrance for all
-reservation ids, active_encumbrances and financeable_amount for all claim ids)
-must be byte-identical between the two implementations, and both must reject
-the same transitions.
+and every action, the observable economic state must be byte-identical
+between the two implementations, and both must reject the same transitions.
+
+Probing is data-driven per primitive: the vectors file may declare a
+"probes" section listing single-record views (keyed by one id) and aggregate
+views (keyed by a tuple of ids) to collect for every key that appears in the
+actions. Without a probes section, claim-encumbrance defaults are used.
 
 Usage:
     python tools/nomos_diff_converge.py <contractA.py> <contractB.py> [--vectors <vectors.json>] [--base <root>]
@@ -23,46 +26,80 @@ from pathlib import Path
 from gltest.direct.vm import VMContext
 from gltest.direct.loader import deploy_contract, create_address
 
+CE_DEFAULT_PROBES = {
+    "single": {
+        "op": "get_encumbrance",
+        "sources": {"reserve": [0], "get_encumbrance": [0]},
+    },
+    "aggregates": [
+        {
+            "op": "financeable_amount",
+            "sources": {"set_financeable_amount": [0], "reserve": [1]},
+        },
+        {
+            "op": "active_encumbrances",
+            "sources": {"set_financeable_amount": [0], "reserve": [1]},
+        },
+    ],
+}
 
-def _collect_state(vm, contract, vector: dict) -> dict:
-    """Run the vector against one contract and capture full observable state."""
-    reservation_ids = set()
-    claim_ids = set()
+
+def _probes_for(vectors: dict) -> dict:
+    return vectors.get("probes", CE_DEFAULT_PROBES)
+
+
+def _collect_keys(actions: list[dict], spec: dict) -> list[tuple]:
+    """Collect unique keys (id or id-tuple) from the actions for a probe."""
+    keys: set[tuple] = set()
+    for action in actions:
+        op = action["op"]
+        args = action.get("args", [])
+        if op in spec["sources"]:
+            idxs = spec["sources"][op]
+            if all(i < len(args) for i in idxs):
+                key = tuple(args[i] for i in idxs)
+                if all(key):
+                    keys.add(key)
+    return sorted(keys)
+
+
+def _run_vector(vm, contract, vector: dict) -> dict:
     outcomes = []
     for action in vector.get("actions", []):
         op = action["op"]
         args = action.get("args", [])
-        expect = action.get("expect")
-        for arg in args:
-            if op in ("reserve",) and args.index(arg) == 0:
-                reservation_ids.add(arg)
-            elif op == "get_encumbrance":
-                reservation_ids.add(args[0])
-        if op == "set_financeable_amount":
-            claim_ids.add(args[0])
-        if op == "reserve":
-            claim_ids.add(args[1])
         try:
             result = getattr(contract, op)(*args)
             outcome = {"rejected": False, "result": result}
         except Exception as exc:
             outcome = {"rejected": True, "error": str(exc)}
         outcomes.append(outcome)
+    return {"outcomes": outcomes}
 
-    state = {"outcomes": outcomes, "reservations": {}, "claims": {}}
-    for rid in sorted(reservation_ids):
-        if rid:
-            state["reservations"][rid] = contract.get_encumbrance(rid)
-    for cid in sorted(claim_ids):
-        if cid:
-            state["claims"][cid] = {
-                "financeable": contract.financeable_amount(cid),
-                "active": contract.active_encumbrances(cid),
-            }
+
+def _collect_state(vm, contract, vector: dict, probes: dict) -> dict:
+    """Run the vector and capture full observable state per probe config."""
+    actions = vector.get("actions", [])
+    state = {"outcomes": []}
+    state["outcomes"] = _run_vector(vm, contract, vector)["outcomes"]
+
+    if "single" in probes:
+        spec = probes["single"]
+        op = spec["op"]
+        state["single"] = {}
+        for key in _collect_keys(actions, spec):
+            state["single"][key[0]] = getattr(contract, op)(*key)
+
+    for agg in probes.get("aggregates", []):
+        op = agg["op"]
+        if op not in state:
+            state[op] = {}
+        for key in _collect_keys(actions, agg):
+            state[op][key] = getattr(contract, op)(*key)
     return state
 
 
-def _compare_state(a: dict, b: dict, vid: str) -> list[str]:
+def _compare_state(a: dict, b: dict, vid: str, probes: dict) -> list[str]:
     failures = []
     for i, (oa, ob) in enumerate(zip(a["outcomes"], b["outcomes"])):
         if oa["rejected"] != ob["rejected"]:
@@ -72,10 +109,12 @@ def _compare_state(a: dict, b: dict, vid: str) -> list[str]:
             failures.append(
                 f"{vid}#{i}: result differs\n  A={oa['result']!r}\n  B={ob['result']!r}"
             )
-    if a["reservations"] != b["reservations"]:
-        failures.append(f"{vid}: reservation state differs\n  A={a['reservations']}\n  B={b['reservations']}")
-    if a["claims"] != b["claims"]:
-        failures.append(f"{vid}: claim state differs\n  A={a['claims']}\n  B={b['claims']}")
+    if "single" in probes and a.get("single") != b.get("single"):
+        failures.append(f"{vid}: single-record state differs\n  A={a.get('single')}\n  B={b.get('single')}")
+    for agg in probes.get("aggregates", []):
+        op = agg["op"]
+        if a.get(op) != b.get(op):
+            failures.append(f"{vid}: {op} state differs\n  A={a.get(op)}\n  B={b.get(op)}")
     return failures
 
 
@@ -97,6 +136,7 @@ def main() -> int:
 
     vectors = json.loads(vp.read_text())
     vector_list = vectors.get("vectors", [])
+    probes = _probes_for(vectors)
     failures = []
     passed = 0
 
@@ -106,13 +146,13 @@ def main() -> int:
         vm_a.sender = create_address("alice")
         with vm_a.activate():
             contract_a = deploy_contract(ca, vm_a)
-            state_a = _collect_state(vm_a, contract_a, vector)
+            state_a = _collect_state(vm_a, contract_a, vector, probes)
         vm_b = VMContext()
         vm_b.sender = create_address("alice")
         with vm_b.activate():
             contract_b = deploy_contract(cb, vm_b)
-            state_b = _collect_state(vm_b, contract_b, vector)
-        diffs = _compare_state(state_a, state_b, vid)
+            state_b = _collect_state(vm_b, contract_b, vector, probes)
+        diffs = _compare_state(state_a, state_b, vid, probes)
         if diffs:
             failures.extend(diffs)
             print(f"DIFF {vid}")

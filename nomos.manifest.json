@@ -110,11 +110,13 @@
     {
       "id": "capital-commitment",
       "name": "Capital Commitment",
-      "status": "RESEARCHING",
+      "status": "SPECIFIED",
       "qualification": "QUALIFIED",
       "judgmentBearing": false,
       "genlayerRequired": true,
-      "canonicalPath": "primitives/capital-commitment"
+      "canonicalPath": "primitives/capital-commitment",
+      "capabilityVersion": "0.1.0",
+      "convergenceMode": "EXACT"
     },
     {
       "id": "dal",

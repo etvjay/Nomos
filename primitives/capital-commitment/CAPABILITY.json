@@ -1,0 +1,149 @@
+{
+  "schemaVersion": "1.0.0",
+  "primitiveId": "capital-commitment",
+  "name": "Capital Commitment",
+  "capabilityVersion": "0.1.0",
+  "status": "SPECIFIED",
+  "convergenceMode": "EXACT",
+  "judgmentBearing": false,
+  "implementation": {
+    "environment": "genlayer",
+    "path": "primitives/capital-commitment/implementations/genlayer/capital_commitment.py",
+    "contract": "CapitalCommitment"
+  },
+  "publicMethods": [
+    {
+      "name": "set_backing",
+      "kind": "write",
+      "inputs": [
+        {"name": "pool_id", "type": "string"},
+        {"name": "asset", "type": "string"},
+        {"name": "amount", "type": "uint-string"}
+      ],
+      "output": "canonical-backing-json-string"
+    },
+    {
+      "name": "reserve",
+      "kind": "write",
+      "inputs": [
+        {"name": "commitment_id", "type": "string"},
+        {"name": "pool_id", "type": "string"},
+        {"name": "asset", "type": "string"},
+        {"name": "beneficiary", "type": "string"},
+        {"name": "amount", "type": "uint-string"},
+        {"name": "valid_until", "type": "uint-string"}
+      ],
+      "output": "canonical-commitment-json-string"
+    },
+    {
+      "name": "commit",
+      "kind": "write",
+      "inputs": [{"name": "commitment_id", "type": "string"}],
+      "output": "canonical-commitment-json-string"
+    },
+    {
+      "name": "release",
+      "kind": "write",
+      "inputs": [{"name": "commitment_id", "type": "string"}],
+      "output": "canonical-commitment-json-string"
+    },
+    {
+      "name": "expire",
+      "kind": "write",
+      "inputs": [
+        {"name": "commitment_id", "type": "string"},
+        {"name": "at", "type": "uint-string"}
+      ],
+      "output": "canonical-commitment-json-string"
+    },
+    {
+      "name": "get_commitment",
+      "kind": "view",
+      "inputs": [{"name": "commitment_id", "type": "string"}],
+      "output": "canonical-commitment-json-string-or-empty"
+    },
+    {
+      "name": "active_commitments",
+      "kind": "view",
+      "inputs": [
+        {"name": "pool_id", "type": "string"},
+        {"name": "asset", "type": "string"}
+      ],
+      "output": "uint-string"
+    },
+    {
+      "name": "available_capacity",
+      "kind": "view",
+      "inputs": [
+        {"name": "pool_id", "type": "string"},
+        {"name": "asset", "type": "string"}
+      ],
+      "output": "uint-string-or-empty"
+    }
+  ],
+  "canonicalDecision": {
+    "status": ["RESERVED", "COMMITTED", "RELEASED", "EXPIRED"],
+    "equivalenceFields": [
+      "commitment_id",
+      "pool_id",
+      "asset",
+      "beneficiary",
+      "amount",
+      "valid_until",
+      "status"
+    ],
+    "nonCanonicalFields": ["created_at", "created_by", "updated_at", "updated_by"]
+  },
+  "stateOwnership": {
+    "owns": [
+      "immutable backing capacity per pool_id+asset",
+      "commitment lifecycle keyed by commitment_id",
+      "active commitment sum per pool_id+asset",
+      "binding of allocation, beneficiary, asset, amount, pool, and validity"
+    ],
+    "doesNotOwn": [
+      "pool creation or vault accounting",
+      "DAA award adjudication",
+      "workflow/pact authorization semantics",
+      "claim verification",
+      "settlement or capital movement",
+      "replay/execution authority for downstream ops"
+    ]
+  },
+  "limits": {
+    "maxAmountDigits": 39,
+    "maxValidityDigits": 39,
+    "duplicateCommitmentId": "rejected",
+    "duplicateBackingPoolAsset": "rejected",
+    "reserveOnUnbackedPoolAsset": "rejected",
+    "reserveOverCapacity": "rejected",
+    "commitNonReserved": "rejected",
+    "releaseOrExpireTwice": "rejected",
+    "expireBeforeValidity": "rejected",
+    "emptyId": "rejected",
+    "emptyBeneficiary": "rejected"
+  },
+  "vectors": [
+    "primitives/capital-commitment/vectors/v0.1.json"
+  ],
+  "reproduce": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "python tools/nomos_run_vectors.py primitives/capital-commitment/implementations/genlayer/capital_commitment.py --vectors primitives/capital-commitment/vectors/v0.1.json",
+    "genvm-lint check primitives/capital-commitment/implementations/genlayer/capital_commitment.py"
+  ],
+  "composition": {
+    "typicalUpstream": ["daa", "workflow-authorization", "claim-verification", "claim-encumbrance"],
+    "typicalDownstream": ["dal", "financial-contract", "settlement"]
+  },
+  "unsupported": [
+    "pool/vault creation",
+    "DAA award adjudication",
+    "workflow/pact authorization semantics",
+    "claim verification",
+    "capital movement",
+    "settlement execution",
+    "replay/execution authority",
+    "deployment/conformance guarantee until a release receipt exists"
+  ]
+}

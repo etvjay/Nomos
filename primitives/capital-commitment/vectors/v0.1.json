@@ -1,0 +1,1029 @@
+{
+  "schemaVersion": "0.1.0",
+  "primitive": "capital-commitment",
+  "convergenceMode": "EXACT",
+  "statuses": [
+    "RESERVED",
+    "COMMITTED",
+    "RELEASED",
+    "EXPIRED"
+  ],
+  "activeStatuses": [
+    "RESERVED",
+    "COMMITTED"
+  ],
+  "vectors": [
+    {
+      "id": "cc-set-backing-001",
+      "description": "Setting backing capacity on a pool+asset succeeds and is reflected by the view",
+      "actions": [
+        {
+          "op": "set_backing",
+          "args": [
+            "POOL-1",
+            "USD",
+            "10000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "available_capacity",
+          "args": [
+            "POOL-1",
+            "USD"
+          ],
+          "expect": "10000"
+        },
+        {
+          "op": "active_commitments",
+          "args": [
+            "POOL-1",
+            "USD"
+          ],
+          "expect": "0"
+        }
+      ]
+    },
+    {
+      "id": "cc-set-backing-duplicate-rejected-002",
+      "description": "Backing capacity is immutable once set; duplicate set is rejected",
+      "actions": [
+        {
+          "op": "set_backing",
+          "args": [
+            "POOL-1",
+            "USD",
+            "10000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "set_backing",
+          "args": [
+            "POOL-1",
+            "USD",
+            "20000"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "available_capacity",
+          "args": [
+            "POOL-1",
+            "USD"
+          ],
+          "expect": "10000"
+        }
+      ]
+    },
+    {
+      "id": "cc-reserve-within-capacity-003",
+      "description": "Commitments within backing capacity succeed and accumulate active commitment",
+      "actions": [
+        {
+          "op": "set_backing",
+          "args": [
+            "POOL-1",
+            "USD",
+            "10000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-1",
+            "POOL-1",
+            "USD",
+            "ALICE",
+            "4000",
+            "1000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-2",
+            "POOL-1",
+            "USD",
+            "BOB",
+            "3000",
+            "1000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "active_commitments",
+          "args": [
+            "POOL-1",
+            "USD"
+          ],
+          "expect": "7000"
+        },
+        {
+          "op": "available_capacity",
+          "args": [
+            "POOL-1",
+            "USD"
+          ],
+          "expect": "3000"
+        },
+        {
+          "op": "get_commitment",
+          "args": [
+            "CC-1"
+          ],
+          "expect": {
+            "commitment_id": "CC-1",
+            "pool_id": "POOL-1",
+            "asset": "USD",
+            "beneficiary": "ALICE",
+            "amount": "4000",
+            "valid_until": "1000",
+            "status": "RESERVED"
+          }
+        },
+        {
+          "op": "get_commitment",
+          "args": [
+            "CC-2"
+          ],
+          "expect": {
+            "commitment_id": "CC-2",
+            "pool_id": "POOL-1",
+            "asset": "USD",
+            "beneficiary": "BOB",
+            "amount": "3000",
+            "valid_until": "1000",
+            "status": "RESERVED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "cc-reserve-over-capacity-rejected-004",
+      "description": "A commitment that would exceed backing capacity is rejected and does not mutate state",
+      "actions": [
+        {
+          "op": "set_backing",
+          "args": [
+            "POOL-1",
+            "USD",
+            "10000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-1",
+            "POOL-1",
+            "USD",
+            "ALICE",
+            "6000",
+            "1000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-2",
+            "POOL-1",
+            "USD",
+            "BOB",
+            "5000",
+            "1000"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "active_commitments",
+          "args": [
+            "POOL-1",
+            "USD"
+          ],
+          "expect": "6000"
+        },
+        {
+          "op": "get_commitment",
+          "args": [
+            "CC-2"
+          ],
+          "expect": ""
+        }
+      ]
+    },
+    {
+      "id": "cc-reserve-duplicate-rejected-005",
+      "description": "A commitment_id may only be used once",
+      "actions": [
+        {
+          "op": "set_backing",
+          "args": [
+            "POOL-1",
+            "USD",
+            "10000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-1",
+            "POOL-1",
+            "USD",
+            "ALICE",
+            "3000",
+            "1000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-1",
+            "POOL-1",
+            "USD",
+            "ALICE",
+            "2000",
+            "1000"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "active_commitments",
+          "args": [
+            "POOL-1",
+            "USD"
+          ],
+          "expect": "3000"
+        }
+      ]
+    },
+    {
+      "id": "cc-reserve-unbacked-pool-rejected-006",
+      "description": "Reserving against a pool+asset with no backing capacity is rejected",
+      "actions": [
+        {
+          "op": "reserve",
+          "args": [
+            "CC-1",
+            "POOL-99",
+            "USD",
+            "ALICE",
+            "1000",
+            "1000"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "set_backing",
+          "args": [
+            "POOL-1",
+            "USD",
+            "10000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-1",
+            "POOL-1",
+            "USD",
+            "ALICE",
+            "1000",
+            "1000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-2",
+            "POOL-1",
+            "EUR",
+            "ALICE",
+            "1000",
+            "1000"
+          ],
+          "expect": "reject"
+        }
+      ]
+    },
+    {
+      "id": "cc-reserve-invalid-amount-rejected-007",
+      "description": "Non-positive or malformed amounts are rejected",
+      "actions": [
+        {
+          "op": "set_backing",
+          "args": [
+            "POOL-1",
+            "USD",
+            "10000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-1",
+            "POOL-1",
+            "USD",
+            "ALICE",
+            "0",
+            "1000"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-2",
+            "POOL-1",
+            "USD",
+            "ALICE",
+            "-5",
+            "1000"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-3",
+            "POOL-1",
+            "USD",
+            "ALICE",
+            "1.5",
+            "1000"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "active_commitments",
+          "args": [
+            "POOL-1",
+            "USD"
+          ],
+          "expect": "0"
+        }
+      ]
+    },
+    {
+      "id": "cc-reserve-invalid-validity-rejected-008",
+      "description": "Non-positive or malformed valid_until is rejected",
+      "actions": [
+        {
+          "op": "set_backing",
+          "args": [
+            "POOL-1",
+            "USD",
+            "10000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-1",
+            "POOL-1",
+            "USD",
+            "ALICE",
+            "1000",
+            "0"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-2",
+            "POOL-1",
+            "USD",
+            "ALICE",
+            "1000",
+            "-1"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-3",
+            "POOL-1",
+            "USD",
+            "ALICE",
+            "1000",
+            "abc"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "active_commitments",
+          "args": [
+            "POOL-1",
+            "USD"
+          ],
+          "expect": "0"
+        }
+      ]
+    },
+    {
+      "id": "cc-empty-ids-rejected-009",
+      "description": "Empty commitment_id, pool_id, asset, or beneficiary are rejected",
+      "actions": [
+        {
+          "op": "set_backing",
+          "args": [
+            "POOL-1",
+            "USD",
+            "10000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "",
+            "POOL-1",
+            "USD",
+            "ALICE",
+            "1000",
+            "1000"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-1",
+            "",
+            "USD",
+            "ALICE",
+            "1000",
+            "1000"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-2",
+            "POOL-1",
+            "",
+            "ALICE",
+            "1000",
+            "1000"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-3",
+            "POOL-1",
+            "USD",
+            "",
+            "1000",
+            "1000"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "active_commitments",
+          "args": [
+            "POOL-1",
+            "USD"
+          ],
+          "expect": "0"
+        }
+      ]
+    },
+    {
+      "id": "cc-commit-lifecycle-010",
+      "description": "RESERVED commitments may be committed; the binding record is preserved",
+      "actions": [
+        {
+          "op": "set_backing",
+          "args": [
+            "POOL-1",
+            "USD",
+            "10000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-1",
+            "POOL-1",
+            "USD",
+            "ALICE",
+            "4000",
+            "1000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "commit",
+          "args": [
+            "CC-1"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "get_commitment",
+          "args": [
+            "CC-1"
+          ],
+          "expect": {
+            "commitment_id": "CC-1",
+            "pool_id": "POOL-1",
+            "asset": "USD",
+            "beneficiary": "ALICE",
+            "amount": "4000",
+            "valid_until": "1000",
+            "status": "COMMITTED"
+          }
+        },
+        {
+          "op": "active_commitments",
+          "args": [
+            "POOL-1",
+            "USD"
+          ],
+          "expect": "4000"
+        }
+      ]
+    },
+    {
+      "id": "cc-commit-nonreserved-rejected-011",
+      "description": "Only RESERVED commitments may commit; committing unknown or already-committed ids is rejected",
+      "actions": [
+        {
+          "op": "set_backing",
+          "args": [
+            "POOL-1",
+            "USD",
+            "10000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "commit",
+          "args": [
+            "CC-99"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-1",
+            "POOL-1",
+            "USD",
+            "ALICE",
+            "4000",
+            "1000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "commit",
+          "args": [
+            "CC-1"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "commit",
+          "args": [
+            "CC-1"
+          ],
+          "expect": "reject"
+        }
+      ]
+    },
+    {
+      "id": "cc-release-frees-capacity-once-012",
+      "description": "Release frees backing capacity exactly once",
+      "actions": [
+        {
+          "op": "set_backing",
+          "args": [
+            "POOL-1",
+            "USD",
+            "10000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-1",
+            "POOL-1",
+            "USD",
+            "ALICE",
+            "4000",
+            "1000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "commit",
+          "args": [
+            "CC-1"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "release",
+          "args": [
+            "CC-1"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "available_capacity",
+          "args": [
+            "POOL-1",
+            "USD"
+          ],
+          "expect": "10000"
+        },
+        {
+          "op": "active_commitments",
+          "args": [
+            "POOL-1",
+            "USD"
+          ],
+          "expect": "0"
+        },
+        {
+          "op": "get_commitment",
+          "args": [
+            "CC-1"
+          ],
+          "expect": {
+            "commitment_id": "CC-1",
+            "pool_id": "POOL-1",
+            "asset": "USD",
+            "beneficiary": "ALICE",
+            "amount": "4000",
+            "valid_until": "1000",
+            "status": "RELEASED"
+          }
+        },
+        {
+          "op": "release",
+          "args": [
+            "CC-1"
+          ],
+          "expect": "reject"
+        }
+      ]
+    },
+    {
+      "id": "cc-expire-before-validity-rejected-013",
+      "description": "Expiry before valid_until is rejected",
+      "actions": [
+        {
+          "op": "set_backing",
+          "args": [
+            "POOL-1",
+            "USD",
+            "10000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-1",
+            "POOL-1",
+            "USD",
+            "ALICE",
+            "4000",
+            "1000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "expire",
+          "args": [
+            "CC-1",
+            "999"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "expire",
+          "args": [
+            "CC-1",
+            "1000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "get_commitment",
+          "args": [
+            "CC-1"
+          ],
+          "expect": {
+            "commitment_id": "CC-1",
+            "pool_id": "POOL-1",
+            "asset": "USD",
+            "beneficiary": "ALICE",
+            "amount": "4000",
+            "valid_until": "1000",
+            "status": "EXPIRED"
+          }
+        },
+        {
+          "op": "available_capacity",
+          "args": [
+            "POOL-1",
+            "USD"
+          ],
+          "expect": "10000"
+        },
+        {
+          "op": "expire",
+          "args": [
+            "CC-1",
+            "2000"
+          ],
+          "expect": "reject"
+        }
+      ]
+    },
+    {
+      "id": "cc-expire-committed-frees-capacity-once-014",
+      "description": "Expiry of a committed commitment frees capacity exactly once",
+      "actions": [
+        {
+          "op": "set_backing",
+          "args": [
+            "POOL-1",
+            "USD",
+            "10000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-1",
+            "POOL-1",
+            "USD",
+            "ALICE",
+            "4000",
+            "1000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "commit",
+          "args": [
+            "CC-1"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "expire",
+          "args": [
+            "CC-1",
+            "1000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "active_commitments",
+          "args": [
+            "POOL-1",
+            "USD"
+          ],
+          "expect": "0"
+        },
+        {
+          "op": "available_capacity",
+          "args": [
+            "POOL-1",
+            "USD"
+          ],
+          "expect": "10000"
+        },
+        {
+          "op": "expire",
+          "args": [
+            "CC-1",
+            "5000"
+          ],
+          "expect": "reject"
+        }
+      ]
+    },
+    {
+      "id": "cc-reuse-capacity-after-release-015",
+      "description": "Released capacity is reusable for a new commitment",
+      "actions": [
+        {
+          "op": "set_backing",
+          "args": [
+            "POOL-1",
+            "USD",
+            "10000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-1",
+            "POOL-1",
+            "USD",
+            "ALICE",
+            "6000",
+            "1000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "release",
+          "args": [
+            "CC-1"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-2",
+            "POOL-1",
+            "USD",
+            "BOB",
+            "7000",
+            "1000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "active_commitments",
+          "args": [
+            "POOL-1",
+            "USD"
+          ],
+          "expect": "7000"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-3",
+            "POOL-1",
+            "USD",
+            "CAROL",
+            "4000",
+            "1000"
+          ],
+          "expect": "reject"
+        }
+      ]
+    },
+    {
+      "id": "cc-asset-segregation-016",
+      "description": "Backing capacity and active commitments are segregated by asset",
+      "actions": [
+        {
+          "op": "set_backing",
+          "args": [
+            "POOL-1",
+            "USD",
+            "10000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "set_backing",
+          "args": [
+            "POOL-1",
+            "EUR",
+            "5000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-1",
+            "POOL-1",
+            "USD",
+            "ALICE",
+            "9000",
+            "1000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-2",
+            "POOL-1",
+            "EUR",
+            "BOB",
+            "4000",
+            "1000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "reserve",
+          "args": [
+            "CC-3",
+            "POOL-1",
+            "USD",
+            "CAROL",
+            "2000",
+            "1000"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "available_capacity",
+          "args": [
+            "POOL-1",
+            "USD"
+          ],
+          "expect": "1000"
+        },
+        {
+          "op": "available_capacity",
+          "args": [
+            "POOL-1",
+            "EUR"
+          ],
+          "expect": "1000"
+        },
+        {
+          "op": "active_commitments",
+          "args": [
+            "POOL-1",
+            "USD"
+          ],
+          "expect": "9000"
+        },
+        {
+          "op": "active_commitments",
+          "args": [
+            "POOL-1",
+            "EUR"
+          ],
+          "expect": "4000"
+        }
+      ]
+    }
+  ],
+  "probes": {
+    "single": {
+      "op": "get_commitment",
+      "sources": {
+        "reserve": [
+          0
+        ],
+        "get_commitment": [
+          0
+        ]
+      }
+    },
+    "aggregates": [
+      {
+        "op": "available_capacity",
+        "sources": {
+          "set_backing": [
+            0,
+            1
+          ],
+          "reserve": [
+            1,
+            2
+          ]
+        }
+      },
+      {
+        "op": "active_commitments",
+        "sources": {
+          "set_backing": [
+            0,
+            1
+          ],
+          "reserve": [
+            1,
+            2
+          ]
+        }
+      }
+    ]
+  }
+}
