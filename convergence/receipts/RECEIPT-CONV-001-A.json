@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "1.0.0",
+  "receiptId": "RECEIPT-CONV-001-A",
+  "workId": "WORK-CONV-001-A",
+  "primitiveId": "claim-verification",
+  "baseCommit": "17a4defe71732c42b53c7dcbebed199ef8f4f63c",
+  "resultCommit": "PENDING_HEAD",
+  "authorityFingerprint": "sha256:f0be8bab680a32698c1dbf36971ce10802911af0451f4216de84f92fddf587f2",
+  "capabilityVersion": "0.1.0",
+  "convergenceMode": "SEMANTIC",
+  "commands": [
+    "python3 -m pytest primitives/claim-verification/implementations/genlayer/tests/ -v",
+    "python3 -m pytest primitives/claim-verification/implementations/genlayer/tests/integration/ -v -s --network localnet",
+    "python3 tools/nomos_lint.py",
+    "python3 tools/nomos_converge.py check"
+  ],
+  "gates": [
+    {
+      "id": "direct-tests",
+      "state": "PASS",
+      "evidence": "13/13 passed"
+    },
+    {
+      "id": "integration-tests",
+      "state": "PASS",
+      "evidence": "1/1 passed against GLSim localnet; verify_claim tx executed with consensus and persisted canonical VERIFIED decision (sim_installMocks deterministic LLM mock)"
+    },
+    {
+      "id": "nomos-lint",
+      "state": "PASS",
+      "evidence": "NOMOS-LINT PASS"
+    },
+    {
+      "id": "nomos-converge",
+      "state": "PASS",
+      "evidence": "NOMOS-CONVERGE PASS"
+    }
+  ],
+  "runtimeVersions": {
+    "python": "3.12.1",
+    "genlayer-py": "0.18.0",
+    "gltest": "0.29.2",
+    "glsim": "genlayer-test sim"
+  },
+  "knownGaps": [
+    "LLM validator mocked deterministically in GLSim (no live provider key); production deployment on StudioNet/testnet pending",
+    "genvm-lint not run for CV in this lane (already covered in direct CI)"
+  ],
+  "notes": "Partner A: Claim Verification implementation continued; direct + integration + deployment evidence recorded. Integration test fixed to current gltest .transact()/.call() API and made self-contained with sim_installMocks."
+}

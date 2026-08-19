@@ -10,9 +10,47 @@ GenLayer transaction execution and nondeterministic consensus behavior.
 """
 
 import json
+import urllib.request
+
 import pytest
 from gltest import get_contract_factory
 from gltest.assertions import tx_execution_succeeded
+from gltest_cli.config.general import get_general_config
+
+
+def _install_sim_llm_mock():
+    """Install a deterministic LLM mock on GLSim (sim_installMocks RPC).
+
+    Claim Verification is judgment-bearing: its canonical decision comes from
+    an LLM validator via exec_prompt. GLSim falls back to a live LLM handler
+    when no mock is present; we install a persistent mock so the consensus
+    decision is reproducible in CI.
+    """
+    endpoint = get_general_config().get_rpc_url()
+    body = json.dumps(
+        {
+            "jsonrpc": "2.0",
+            "method": "sim_installMocks",
+            "params": {
+                "llm_mocks": {
+                    ".*": {
+                        "status": "VERIFIED",
+                        "reason_code": "EVIDENCE_SUPPORTS_CLAIM",
+                        "analysis": "mocked validator analysis",
+                    }
+                },
+                "strict": False,
+            },
+            "id": 1,
+        }
+    ).encode()
+    req = urllib.request.Request(
+        endpoint,
+        data=body,
+        headers={"Content-Type": "application/json"},
+    )
+    with urllib.request.urlopen(req, timeout=10) as resp:
+        return json.loads(resp.read())
 
 
 CLAIM = json.dumps(
@@ -47,6 +85,7 @@ EVIDENCE = json.dumps(
 
 @pytest.mark.integration
 def test_verified_claim_persists_canonical_decision():
+    _install_sim_llm_mock()
     factory = get_contract_factory("ClaimVerification")
     contract = factory.deploy()
 
@@ -57,13 +96,11 @@ def test_verified_claim_persists_canonical_decision():
             "sha256:integration-evidence-v1",
             CLAIM,
             EVIDENCE,
-        ],
-        wait_interval=10000,
-        wait_retries=20,
-    )
+        ]
+    ).transact(wait_interval=10000, wait_retries=20)
     assert tx_execution_succeeded(tx)
 
-    raw = contract.get_verification(args=["V-INTEGRATION-001"])
+    raw = contract.get_verification(args=["V-INTEGRATION-001"]).call()
     decision = json.loads(raw)
 
     assert decision["verification_id"] == "V-INTEGRATION-001"
@@ -89,4 +126,4 @@ def test_verified_claim_persists_canonical_decision():
         "UNDETERMINED": "EVIDENCE_AMBIGUOUS",
     }[decision["status"]]
     assert decision["reason_code"] == expected_reason
-    assert contract.has_verification(args=["V-INTEGRATION-001"]) is True
+    assert contract.has_verification(args=["V-INTEGRATION-001"]).call() is True
