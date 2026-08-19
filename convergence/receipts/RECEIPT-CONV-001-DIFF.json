@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "1.0.0",
+  "receiptId": "RECEIPT-CONV-001-DIFF",
+  "workId": "WORK-CONV-001-B",
+  "primitiveId": "claim-encumbrance",
+  "baseCommit": "17a4defe71732c42b53c7dcbebed199ef8f4f63c",
+  "resultCommit": "c57592750dab65fa89c63ede488c490ea7efd46a",
+  "authorityFingerprint": "sha256:7cfcbfeac1612804a635a1f9874a1584b62c2e21d542d6154497262ecd23ca10",
+  "capabilityVersion": "0.1.0",
+  "convergenceMode": "EXACT",
+  "commands": [
+    "python tools/nomos_diff_converge.py convergence/experiments/EXP-CONV-001/lane-b/claim_encumbrance.py convergence/experiments/EXP-CONV-001/lane-c/claim_encumbrance.py"
+  ],
+  "gates": [
+    {
+      "id": "nomos-diff-converge",
+      "state": "PASS",
+      "evidence": "16/16 vectors EXACT-convergent; byte-identical observable economic state; exit 0"
+    },
+    {
+      "id": "nomos-run-vectors-canonical",
+      "state": "PASS",
+      "evidence": "16/16 vectors passed for canonical impl at primitives/claim-encumbrance/implementations/genlayer/claim_encumbrance.py"
+    }
+  ],
+  "runtimeVersions": {
+    "python": "3.12.1",
+    "genlayer-py": "0.18.0",
+    "gltest": "0.29.2"
+  },
+  "knownGaps": [
+    "adversarial tests not yet in lanes",
+    "integration/deployment evidence pending"
+  ],
+  "notes": "EXP-CONV-001 result: independent lanes B and C reproduced the deterministic primitive from canonical authority only, all 16 canonical vectors EXACT-convergent."
+}

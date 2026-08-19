@@ -4,7 +4,7 @@
   "workId": "WORK-CONV-001-C",
   "primitiveId": "claim-encumbrance",
   "baseCommit": "17a4defe71732c42b53c7dcbebed199ef8f4f63c",
-  "resultCommit": "PENDING_HEAD",
+  "resultCommit": "c57592750dab65fa89c63ede488c490ea7efd46a",
   "authorityFingerprint": "sha256:7cfcbfeac1612804a635a1f9874a1584b62c2e21d542d6154497262ecd23ca10",
   "capabilityVersion": "0.1.0",
   "convergenceMode": "EXACT",
