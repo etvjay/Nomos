@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0.0",
+  "receiptId": "RECEIPT-CONV-001-C",
+  "workId": "WORK-CONV-001-C",
+  "primitiveId": "claim-encumbrance",
+  "baseCommit": "17a4defe71732c42b53c7dcbebed199ef8f4f63c",
+  "resultCommit": "PENDING_HEAD",
+  "authorityFingerprint": "sha256:7cfcbfeac1612804a635a1f9874a1584b62c2e21d542d6154497262ecd23ca10",
+  "capabilityVersion": "0.1.0",
+  "convergenceMode": "EXACT",
+  "commands": [
+    "python tools/nomos_run_vectors.py /workspaces/lane-c/primitives/claim-encumbrance/implementations/genlayer/claim_encumbrance.py",
+    "genvm-lint check /workspaces/lane-c/primitives/claim-encumbrance/implementations/genlayer/claim_encumbrance.py"
+  ],
+  "gates": [
+    {
+      "id": "nomos-run-vectors",
+      "state": "PASS",
+      "evidence": "16/16 vectors passed; exit 0"
+    },
+    {
+      "id": "genvm-lint",
+      "state": "PASS",
+      "evidence": "genvm-lint exit 0 (2 checks lint, validation: 8 methods 3 view 5 write)"
+    }
+  ],
+  "runtimeVersions": {
+    "python": "3.12.1",
+    "genlayer-py": "0.18.0",
+    "gltest": "0.29.2"
+  },
+  "knownGaps": [
+    "adversarial tests not yet in lane-c",
+    "integration/deployment evidence pending"
+  ],
+  "notes": "Partner C independent reproduction from canonical authority only. Did not inspect lane-b."
+}
