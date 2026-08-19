@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0.0",
+  "receiptId": "RECEIPT-CONV-002-D",
+  "workId": "WORK-CONV-001-D",
+  "primitiveId": "claim-verification",
+  "baseCommit": "a4028bc70b2b5be13577102a9844e989b04d5ca8",
+  "resultCommit": "PENDING_HEAD",
+  "authorityFingerprint": "sha256:f0be8bab680a32698c1dbf36971ce10802911af0451f4216de84f92fddf587f2",
+  "capabilityVersion": "0.1.0",
+  "convergenceMode": "SEMANTIC",
+  "commands": [
+    "python3 -m pytest examples/verified-receivable/tests/ -v"
+  ],
+  "gates": [
+    {
+      "id": "composition-tests",
+      "state": "PASS",
+      "evidence": "6 passed: VERIFIED reserves; CONFLICTED/INSUFFICIENT/UNDETERMINED reject; missing verification rejects; verified-for-other-claim rejects"
+    },
+    {
+      "id": "nomos-lint",
+      "state": "PASS",
+      "evidence": "NOMOS-LINT PASS"
+    }
+  ],
+  "runtimeVersions": {
+    "python": "3.12.1",
+    "genlayer-py": "0.18.0",
+    "gltest": "0.29.2"
+  },
+  "knownGaps": [
+    "No cross-contract call API in declared SDK generation; composition is an application layer, not a gl.Contract",
+    "CAPABILITY does not declare decision.claim_id == reserve claim_id binding rule (enforced in composition layer)",
+    "genvm-lint not applicable (no contract class)"
+  ],
+  "notes": "EXP-CONV-002: downstream builder composed Claim Verification + Claim Encumbrance from CAPABILITYs + SDK types + docs only."
+}
