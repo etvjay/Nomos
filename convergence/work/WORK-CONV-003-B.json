@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "1.0.0",
+  "workId": "WORK-CONV-003-B",
+  "baseCommit": "55d9eed0e1f9f39a7a3730087ba5f00eb9cdce2c",
+  "lane": "capital-commitment-independent-B",
+  "targets": [
+    "capital-commitment"
+  ],
+  "allowedPaths": [
+    "primitives/capital-commitment/implementations/genlayer/**"
+  ],
+  "changeClass": "ADD",
+  "authorityFingerprint": "sha256:e327e8c0b74bd84d3535ede7d30f562b6b03f22864332ca16f7ae11cf3e0600b",
+  "capabilityVersion": "0.1.0",
+  "publicInterfaceMutationAllowed": false,
+  "dependencies": [],
+  "acceptanceGates": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "python tools/nomos_run_vectors.py primitives/capital-commitment/implementations/genlayer/capital_commitment.py --vectors primitives/capital-commitment/vectors/v0.1.json",
+    "genvm-lint check primitives/capital-commitment/implementations/genlayer/capital_commitment.py"
+  ],
+  "notes": "Partner B: build deterministic Capital Commitment from SPEC/CAPABILITY/vectors only. Must NOT inspect Partner C implementation."
+}
