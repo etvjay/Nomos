@@ -4,7 +4,7 @@
   "workId": "WORK-CONV-001-A",
   "primitiveId": "claim-verification",
   "baseCommit": "17a4defe71732c42b53c7dcbebed199ef8f4f63c",
-  "resultCommit": "PENDING_HEAD",
+  "resultCommit": "af919979fd631a118ed6976c08c1fcf6378e0c14",
   "authorityFingerprint": "sha256:f0be8bab680a32698c1dbf36971ce10802911af0451f4216de84f92fddf587f2",
   "capabilityVersion": "0.1.0",
   "convergenceMode": "SEMANTIC",
