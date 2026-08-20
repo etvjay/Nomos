@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.0.0",
+  "receiptId": "RECEIPT-CONV-003-C",
+  "workId": "WORK-CONV-003-C",
+  "primitiveId": "capital-commitment",
+  "baseCommit": "55d9eed0e1f9f39a7a3730087ba5f00eb9cdce2c",
+  "resultCommit": "PENDING_HEAD",
+  "authorityFingerprint": "sha256:e327e8c0b74bd84d3535ede7d30f562b6b03f22864332ca16f7ae11cf3e0600b",
+  "capabilityVersion": "0.1.0",
+  "convergenceMode": "EXACT",
+  "commands": [
+    "python3 /workspaces/Nomos/tools/nomos_run_vectors.py /tmp/cc-c/capital_commitment.py --vectors /workspaces/Nomos/primitives/capital-commitment/vectors/v0.1.json",
+    "genvm-lint check /tmp/cc-c/capital_commitment.py"
+  ],
+  "gates": [
+    {"id": "nomos-run-vectors", "state": "PASS", "evidence": "16/16 vectors passed; exit 0"},
+    {"id": "genvm-lint", "state": "PASS", "evidence": "genvm-lint exit 0 (2 checks lint, validation: 8 methods 3 view 5 write)"}
+  ],
+  "runtimeVersions": {"python": "3.12.1", "genlayer-py": "0.18.0", "gltest": "0.29.2"},
+  "knownGaps": ["adversarial tests not yet in lane-c", "integration/deployment evidence pending"],
+  "notes": "Partner C independent reproduction from canonical authority only."
+}

@@ -1,15 +1,16 @@
-# Capital Commitment — GenLayer Implementation Contract
+# Capital Commitment — GenLayer Implementation
 
-Status: NOT_IMPLEMENTED
+Canonical deterministic implementation of the Capital Commitment primitive
+(capabilityVersion 0.1.0, convergenceMode EXACT).
 
-## Required GenLayer behavior
-- Track committed capacity against exact allocation/pool/asset/beneficiary identifiers.
-- Make active commitments unavailable to competing withdrawals/allocations.
-- Implement reserve, release, expiry, and settle transitions deterministically.
-- Preserve atomicity between commitment creation and backing-capacity accounting.
+Status: SPECIFIED. Implementations were independently reproduced by Partners
+B and C in EXP-CONV-003 and are byte-identical in observable economic state
+(16/16 vectors EXACT-convergent).
 
-## Intelligence boundary
-NONE for commitment accounting. Do not insert judgment into conservation, reservation, or expiry.
+Run canonical vectors:
 
-## Required evidence
-GenVM lint, direct tests, overcommit/withdrawal race tests, canonical vectors, integration tests, and deployment/CLI evidence.
+    python tools/nomos_run_vectors.py primitives/capital-commitment/implementations/genlayer/capital_commitment.py --vectors primitives/capital-commitment/vectors/v0.1.json
+
+Lint:
+
+    genvm-lint check primitives/capital-commitment/implementations/genlayer/capital_commitment.py

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "1.0.0",
+  "receiptId": "RECEIPT-CONV-003-DIFF",
+  "workId": "WORK-CONV-003-B",
+  "primitiveId": "capital-commitment",
+  "baseCommit": "55d9eed0e1f9f39a7a3730087ba5f00eb9cdce2c",
+  "resultCommit": "PENDING_HEAD",
+  "authorityFingerprint": "sha256:e327e8c0b74bd84d3535ede7d30f562b6b03f22864332ca16f7ae11cf3e0600b",
+  "capabilityVersion": "0.1.0",
+  "convergenceMode": "EXACT",
+  "commands": [
+    "python3 /workspaces/Nomos/tools/nomos_diff_converge.py /tmp/cc-b/capital_commitment.py /tmp/cc-c/capital_commitment.py --vectors /workspaces/Nomos/primitives/capital-commitment/vectors/v0.1.json"
+  ],
+  "gates": [
+    {"id": "differential-exact", "state": "PASS", "evidence": "16/16 vectors EXACT-convergent between Partner B and Partner C (outcomes + observable state byte-identical)"}
+  ],
+  "runtimeVersions": {"python": "3.12.1", "genlayer-py": "0.18.0", "gltest": "0.29.2"},
+  "knownGaps": ["empty-id view behavior is unspecified and may diverge (out of canonical scope)"],
+  "notes": "EXACT differential check between the two independent reproductions."
+}
