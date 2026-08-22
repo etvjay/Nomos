@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "0.1.0",
+  "primitive": "workflow-authorization",
+  "convergenceMode": "EXACT",
+  "note": "Sender-dependent flows (principal-only Pact acceptance) are covered by direct tests in implementations/genlayer/tests/ because the vector runner operates under a single fixed sender. Vectors here exercise sender-neutral deterministic semantics.",
+  "statuses": { "path": ["ACTIVE", "REVOKED", "EXPIRED"], "pact": ["PROPOSED", "ACCEPTED", "EXECUTED", "VOID"] },
+  "vectors": [
+    {
+      "id": "wa-grant-path-001",
+      "description": "Granting a Path registers standing authority with bounds",
+      "actions": [
+        {"op": "grant_path", "args": ["PATH1", "PRINCIPAL-A", "AGENT-B", "treasury-payments", "5000", "USD", "0", "9999999999"], "expect": "ok"},
+        {"op": "get_path", "args": ["PATH1"], "expect": {"path_id": "PATH1", "principal": "PRINCIPAL-A", "agent": "AGENT-B", "purpose_scope": "treasury-payments", "max_per_action": "5000", "asset": "USD", "status": "ACTIVE"}}
+      ]
+    },
+    {
+      "id": "wa-path-duplicate-rejected-002",
+      "description": "Path ids are unique; self-delegation rejected",
+      "actions": [
+        {"op": "grant_path", "args": ["PATH1", "P", "A", "scope", "10", "USD", "0", "99"], "expect": "ok"},
+        {"op": "grant_path", "args": ["PATH1", "P", "B", "scope", "10", "USD", "0", "99"], "expect": "reject"},
+        {"op": "grant_path", "args": ["PATH2", "SAME", "SAME", "scope", "10", "USD", "0", "99"], "expect": "reject"}
+      ]
+    },
+    {
+      "id": "wa-path-invalid-inputs-003",
+      "description": "Empty fields, zero bound, inverted window rejected deterministically",
+      "actions": [
+        {"op": "grant_path", "args": ["", "P", "A", "s", "10", "USD", "0", "9"], "expect": "reject"},
+        {"op": "grant_path", "args": ["PA2", "P", "", "s", "10", "USD", "0", "9"], "expect": "reject"},
+        {"op": "grant_path", "args": ["PB2", "P", "A", "", "10", "USD", "0", "9"], "expect": "reject"},
+        {"op": "grant_path", "args": ["PC2", "P", "A", "s", "0", "USD", "0", "9"], "expect": "reject"},
+        {"op": "grant_path", "args": ["PD2", "P", "A", "s", "10", "", "0", "9"], "expect": "reject"},
+        {"op": "grant_path", "args": ["PE2", "P", "A", "s", "10", "USD", "20", "10"], "expect": "reject"}
+      ]
+    },
+    {
+      "id": "wa-propose-pact-004",
+      "description": "Proposing a Pact on an active Path binds exact workflow + terms",
+      "actions": [
+        {"op": "grant_path", "args": ["PATH1", "PRINCIPAL-A", "AGENT-B", "treasury-payments", "5000", "USD", "0", "9999999999"], "expect": "ok"},
+        {"op": "propose_pact", "args": ["PACT1", "PATH1", "WF-77", "{\"payee\":\"V\",\"amount\":\"400\",\"asset\":\"USD\"}", "5000000000"], "expect": "ok"},
+        {"op": "get_pact", "args": ["PACT1"], "expect": {"pact_id": "PACT1", "path_id": "PATH1", "workflow_ref": "WF-77", "status": "PROPOSED"}}
+      ]
+    },
+    {
+      "id": "wa-pact-unknown-path-rejected-005",
+      "description": "A Pact cannot reference an unknown Path",
+      "actions": [
+        {"op": "propose_pact", "args": ["PACTX", "NOPE", "WF-1", "{}", "1"], "expect": "reject"}
+      ]
+    },
+    {
+      "id": "wa-pact-duplicate-and-invalid-006",
+      "description": "Duplicate pact ids, empty workflow ref, malformed terms JSON rejected",
+      "actions": [
+        {"op": "grant_path", "args": ["PATH1", "P", "A", "scope", "100", "USD", "0", "9999999999"], "expect": "ok"},
+        {"op": "propose_pact", "args": ["PACT1", "PATH1", "WF-1", "{}", "5"], "expect": "ok"},
+        {"op": "propose_pact", "args": ["PACT1", "PATH1", "WF-2", "{}", "6"], "expect": "reject"},
+        {"op": "propose_pact", "args": ["PACT2", "PATH1", "", "{}", "7"], "expect": "reject"},
+        {"op": "propose_pact", "args": ["PACT3", "PATH1", "WF-3", "not-json", "8"], "expect": "reject"}
+      ]
+    },
+    {
+      "id": "wa-blocked-cannot-execute-007",
+      "description": "Execution on a PROPOSED (never accepted) Pact denies fail-closed without mutating state",
+      "actions": [
+        {"op": "grant_path", "args": ["PATH1", "P", "A", "scope", "100", "USD", "0", "9999999999"], "expect": "ok"},
+        {"op": "propose_pact", "args": ["PACT1", "PATH1", "WF-1", "{}", "5"], "expect": "ok"},
+        {"op": "execute_pact", "args": ["PACT1", "40", "5000000001"], "expect": {"decision": "DENY", "reason_code": "PACT_NOT_ACCEPTED"}},
+        {"op": "get_pact", "args": ["PACT1"], "expect": {"status": "PROPOSED"}}
+      ]
+    },
+    {
+      "id": "wa-revoked-path-authorizes-nothing-008",
+      "description": "Revoked Path cannot accept new Pacts; pending execution denies fail-closed",
+      "actions": [
+        {"op": "grant_path", "args": ["PATH1", "P", "A", "scope", "100", "USD", "0", "9999999999"], "expect": "ok"},
+        {"op": "propose_pact", "args": ["PACT1", "PATH1", "WF-1", "{}", "5"], "expect": "ok"},
+        {"op": "revoke_path", "args": ["PATH1"], "expect": "ok"},
+        {"op": "get_path", "args": ["PATH1"], "expect": {"status": "REVOKED"}},
+        {"op": "propose_pact", "args": ["PACT2", "PATH1", "WF-2", "{}", "6"], "expect": "reject"},
+        {"op": "execute_pact", "args": ["PACT1", "10", "5000000001"], "expect": {"decision": "DENY", "reason_code": "PACT_NOT_ACCEPTED"}}
+      ]
+    },
+    {
+      "id": "wa-expired-path-010",
+      "description": "Proposals against a time-expired Path are rejected deterministically",
+      "actions": [
+        {"op": "grant_path", "args": ["PATH1", "P", "A", "scope", "100", "USD", "0", "50"], "expect": "ok"},
+        {"op": "propose_pact", "args": ["PACT1", "PATH1", "WF-1", "{}", "60"], "expect": "reject"}
+      ]
+    },
+    {
+      "id": "wa-no-capital-effects-013",
+      "description": "Authorization creates no capital state: unknown lookups return empty",
+      "actions": [
+        {"op": "get_path", "args": ["UNKNOWN"], "expect": ""},
+        {"op": "get_pact", "args": ["UNKNOWN"], "expect": ""}
+      ]
+    }
+  ]
+}

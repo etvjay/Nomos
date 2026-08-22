@@ -72,15 +72,17 @@
     {
       "id": "workflow-authorization",
       "name": "Workflow Authorization",
-      "status": "RESEARCHING",
+      "status": "SPECIFIED",
       "qualification": "QUALIFIED",
-      "judgmentBearing": true,
+      "judgmentBearing": false,
       "genlayerRequired": true,
       "components": [
         "Path",
         "Pact"
       ],
-      "canonicalPath": "primitives/workflow-authorization"
+      "canonicalPath": "primitives/workflow-authorization",
+      "capabilityVersion": "0.1.0",
+      "convergenceMode": "EXACT"
     },
     {
       "id": "mandate-allocation",

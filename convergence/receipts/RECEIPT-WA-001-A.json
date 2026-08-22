@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "1.0.0",
+  "receiptId": "RECEIPT-WA-001-A",
+  "workId": "WORK-WA-001",
+  "primitiveId": "workflow-authorization",
+  "baseCommit": "1abba2a976792cdf138268ed13f6060eb395f327",
+  "resultCommit": "1abba2a976792cdf138268ed13f6060eb395f327",
+  "authorityFingerprint": "sha256:1456ac24e2213e5b302c50078389a557202ffd4775d0ce9846204ec7947cc3b5",
+  "capabilityVersion": "0.1.0",
+  "convergenceMode": "EXACT",
+  "commands": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "python tools/nomos_run_vectors.py primitives/workflow-authorization/implementations/genlayer/workflow_authorization.py --vectors primitives/workflow-authorization/vectors/v0.1.json",
+    "python -m pytest primitives/workflow-authorization/implementations/genlayer/tests/ -v"
+  ],
+  "gates": [
+    {
+      "id": "nomos-lint",
+      "state": "PASS",
+      "evidence": "NOMOS-LINT PASS"
+    },
+    {
+      "id": "nomos-converge-check",
+      "state": "PASS",
+      "evidence": "NOMOS-CONVERGE PASS"
+    },
+    {
+      "id": "canonical-vectors-deterministic-core",
+      "state": "PASS",
+      "evidence": "10/10 vectors passed"
+    },
+    {
+      "id": "authority-gate-direct-tests",
+      "state": "PASS",
+      "evidence": "5/5 passed (principal-only acceptance, expiry-at-proposal, revocation blocking, double-execution rejection)"
+    },
+    {
+      "id": "independent-partner-convergence",
+      "state": "NOT_IMPLEMENTED",
+      "evidence": null
+    },
+    {
+      "id": "integration/deployment",
+      "state": "NOT_IMPLEMENTED",
+      "evidence": null
+    }
+  ],
+  "runtimeVersions": {
+    "python": "3.12.14",
+    "genlayer-py": "0.18.0",
+    "genlayer-test": "0.29.2"
+  },
+  "knownGaps": [
+    "no independent partner build yet",
+    "no GLSim integration test yet",
+    "purpose-fit judgment externalized to policy-envelope"
+  ],
+  "notes": "Lane-A canonical authority build. Path+Pact machinery fully deterministic; judgment externalized per Article XVI record in SPEC.md."
+}

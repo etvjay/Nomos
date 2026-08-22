@@ -1,6 +1,6 @@
 # Workflow Authorization — Canonical Specification
 
-Status: RESEARCHING
+Status: SPECIFIED
 Version: 0.1.0
 
 ## Problem
@@ -18,7 +18,10 @@ Workflow Authorization composes Path (standing bounded delegated authority) and 
 - Direct exact-wallet authorization may have a reduced chain only when the canonical profile explicitly permits it.
 
 ## Judgment boundary
-GenLayer MAY judge whether an action is substantively within delegated purpose or whether proposed terms satisfy a natural-language authority mandate. Reference continuity, signatures, expiry, capability bounds, and quantitative limits remain deterministic.
+NONE for the v0.1 canonical slice. Reference continuity, capability membership, quantitative limits, expiry, revocation, and exact Pact binding are deterministic and implemented as such. Substantive purpose/mandate-fit judgment is delegated to Policy Envelope's interpret_clause surface consumed before Pact proposal; its result can never relax the deterministic gates here.
+
+### v0.1 classification change (Article XVI record)
+v0.1-draft declared judgmentBearing=true (SEMANTIC). Accepted v0.1 narrows the canonical surface to deterministic Path/Pact machinery with externalized judgment (policy-envelope). Compatibility: additive; no prior release consumed a SEMANTIC workflow-authorization surface.
 
 ## Composition
 Consumes Policy Envelope and evidence; feeds DAA, Capital Commitment, DAL, Settlement, Financial Contract, and Gaia correction workflows.
