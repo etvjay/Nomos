@@ -1,0 +1,840 @@
+{
+  "schemaVersion": "0.1.0",
+  "primitive": "proof-of-payable",
+  "convergenceMode": "EXACT",
+  "statuses": [
+    "DRAFT",
+    "EVIDENCED",
+    "ATTESTED",
+    "DISPUTED",
+    "REJECTED",
+    "SETTLED",
+    "VOID"
+  ],
+  "liveStatuses": [
+    "DRAFT",
+    "EVIDENCED",
+    "ATTESTED"
+  ],
+  "terminalStatuses": [
+    "REJECTED",
+    "SETTLED",
+    "VOID"
+  ],
+  "vectors": [
+    {
+      "id": "pop-open-claim-001",
+      "description": "Opening a claim registers it in DRAFT with empty evidence lineage",
+      "actions": [
+        {
+          "op": "open_claim",
+          "args": [
+            "C1",
+            "1000",
+            "INV-2026-001",
+            "ACME-CORP"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "get_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": {
+            "claim_id": "C1",
+            "amount": "1000",
+            "external_ref": "INV-2026-001",
+            "obligor": "ACME-CORP",
+            "status": "DRAFT",
+            "evidence_count": "0",
+            "latest_proof_hash": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "pop-open-duplicate-rejected-002",
+      "description": "A claim_id may only be opened once",
+      "actions": [
+        {
+          "op": "open_claim",
+          "args": [
+            "C1",
+            "1000",
+            "INV-2026-001",
+            "ACME-CORP"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "open_claim",
+          "args": [
+            "C1",
+            "2000",
+            "INV-2026-002",
+            "ACME-CORP"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "get_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": {
+            "claim_id": "C1",
+            "amount": "1000",
+            "external_ref": "INV-2026-001",
+            "obligor": "ACME-CORP",
+            "status": "DRAFT",
+            "evidence_count": "0",
+            "latest_proof_hash": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "pop-open-invalid-inputs-rejected-003",
+      "description": "Empty ids and non-positive or malformed amounts are rejected deterministically",
+      "actions": [
+        {
+          "op": "open_claim",
+          "args": [
+            "",
+            "1000",
+            "INV-1",
+            "ACME"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "open_claim",
+          "args": [
+            "C1",
+            "0",
+            "INV-1",
+            "ACME"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "open_claim",
+          "args": [
+            "C1",
+            "-5",
+            "INV-1",
+            "ACME"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "open_claim",
+          "args": [
+            "C1",
+            "abc",
+            "INV-1",
+            "ACME"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "open_claim",
+          "args": [
+            "C1",
+            "1",
+            "",
+            "ACME"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "open_claim",
+          "args": [
+            "C1",
+            "1",
+            "INV-1",
+            ""
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "get_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": ""
+        }
+      ]
+    },
+    {
+      "id": "pop-attach-evidence-004",
+      "description": "Attaching evidence appends to lineage and updates latest_proof_hash; claimId stays distinct from proofHash",
+      "actions": [
+        {
+          "op": "open_claim",
+          "args": [
+            "C1",
+            "1000",
+            "INV-2026-001",
+            "ACME-CORP"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "attach_evidence",
+          "args": [
+            "C1",
+            "P1",
+            "sha256:aaa111",
+            "{\"kind\":\"invoice\",\"uri\":\"s3://x\"}"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "get_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": {
+            "claim_id": "C1",
+            "amount": "1000",
+            "external_ref": "INV-2026-001",
+            "obligor": "ACME-CORP",
+            "status": "EVIDENCED",
+            "evidence_count": "1",
+            "latest_proof_hash": "sha256:aaa111"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pop-evidence-append-only-005",
+      "description": "Evidence lineage is append-only: a proof id may not be reused, and earlier proofs remain retrievable",
+      "actions": [
+        {
+          "op": "open_claim",
+          "args": [
+            "C1",
+            "1000",
+            "INV-2026-001",
+            "ACME-CORP"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "attach_evidence",
+          "args": [
+            "C1",
+            "P1",
+            "sha256:aaa111",
+            "{}"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "attach_evidence",
+          "args": [
+            "C1",
+            "P1",
+            "sha256:bbb222",
+            "{}"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "attach_evidence",
+          "args": [
+            "C1",
+            "P2",
+            "sha256:bbb222",
+            "{}"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "get_evidence",
+          "args": [
+            "P1"
+          ],
+          "expect": {
+            "proof_id": "P1",
+            "claim_id": "C1",
+            "proof_hash": "sha256:aaa111",
+            "status": "ATTACHED"
+          }
+        },
+        {
+          "op": "get_evidence",
+          "args": [
+            "P2"
+          ],
+          "expect": {
+            "proof_id": "P2",
+            "claim_id": "C1",
+            "proof_hash": "sha256:bbb222",
+            "status": "ATTACHED"
+          }
+        },
+        {
+          "op": "get_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": {
+            "claim_id": "C1",
+            "amount": "1000",
+            "external_ref": "INV-2026-001",
+            "obligor": "ACME-CORP",
+            "status": "EVIDENCED",
+            "evidence_count": "2",
+            "latest_proof_hash": "sha256:bbb222"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pop-evidence-unknown-claim-rejected-006",
+      "description": "Evidence cannot be attached to an unknown claim",
+      "actions": [
+        {
+          "op": "attach_evidence",
+          "args": [
+            "NOPE",
+            "P1",
+            "sha256:aaa111",
+            "{}"
+          ],
+          "expect": "reject"
+        }
+      ]
+    },
+    {
+      "id": "pop-evidence-invalid-inputs-rejected-007",
+      "description": "Empty proof id or empty hash is rejected; oversized metadata is rejected",
+      "actions": [
+        {
+          "op": "open_claim",
+          "args": [
+            "C1",
+            "1000",
+            "INV-2026-001",
+            "ACME-CORP"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "attach_evidence",
+          "args": [
+            "C1",
+            "",
+            "sha256:aaa111",
+            "{}"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "attach_evidence",
+          "args": [
+            "C1",
+            "P1",
+            "",
+            "{}"
+          ],
+          "expect": "reject"
+        }
+      ]
+    },
+    {
+      "id": "pop-attest-from-evidenced-008",
+      "description": "A claim with at least one attached proof can be attested",
+      "actions": [
+        {
+          "op": "open_claim",
+          "args": [
+            "C1",
+            "1000",
+            "INV-2026-001",
+            "ACME-CORP"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "attach_evidence",
+          "args": [
+            "C1",
+            "P1",
+            "sha256:aaa111",
+            "{}"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "attest_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "get_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": {
+            "claim_id": "C1",
+            "amount": "1000",
+            "external_ref": "INV-2026-001",
+            "obligor": "ACME-CORP",
+            "status": "ATTESTED",
+            "evidence_count": "1",
+            "latest_proof_hash": "sha256:aaa111"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pop-attest-without-evidence-rejected-009",
+      "description": "A DRAFT claim cannot be attested without any attached proof",
+      "actions": [
+        {
+          "op": "open_claim",
+          "args": [
+            "C1",
+            "1000",
+            "INV-2026-001",
+            "ACME-CORP"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "attest_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "get_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": {
+            "claim_id": "C1",
+            "amount": "1000",
+            "external_ref": "INV-2026-001",
+            "obligor": "ACME-CORP",
+            "status": "DRAFT",
+            "evidence_count": "0",
+            "latest_proof_hash": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "pop-dispute-010",
+      "description": "A live claim can be disputed; dispute blocks attest and settle",
+      "actions": [
+        {
+          "op": "open_claim",
+          "args": [
+            "C1",
+            "1000",
+            "INV-2026-001",
+            "ACME-CORP"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "attach_evidence",
+          "args": [
+            "C1",
+            "P1",
+            "sha256:aaa111",
+            "{}"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "attest_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "dispute_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "get_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": {
+            "claim_id": "C1",
+            "amount": "1000",
+            "external_ref": "INV-2026-001",
+            "obligor": "ACME-CORP",
+            "status": "DISPUTED",
+            "evidence_count": "1",
+            "latest_proof_hash": "sha256:aaa111"
+          }
+        },
+        {
+          "op": "attest_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "settle_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": "reject"
+        }
+      ]
+    },
+    {
+      "id": "pop-dispute-terminal-rejected-011",
+      "description": "Terminal claims cannot be disputed",
+      "actions": [
+        {
+          "op": "open_claim",
+          "args": [
+            "C1",
+            "1000",
+            "INV-2026-001",
+            "ACME-CORP"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "void_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "dispute_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": "reject"
+        }
+      ]
+    },
+    {
+      "id": "pop-settle-012",
+      "description": "An ATTESTED claim can settle; settlement is terminal",
+      "actions": [
+        {
+          "op": "open_claim",
+          "args": [
+            "C1",
+            "1000",
+            "INV-2026-001",
+            "ACME-CORP"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "attach_evidence",
+          "args": [
+            "C1",
+            "P1",
+            "sha256:aaa111",
+            "{}"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "attest_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "settle_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "get_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": {
+            "claim_id": "C1",
+            "amount": "1000",
+            "external_ref": "INV-2026-001",
+            "obligor": "ACME-CORP",
+            "status": "SETTLED",
+            "evidence_count": "1",
+            "latest_proof_hash": "sha256:aaa111"
+          }
+        },
+        {
+          "op": "dispute_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "void_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": "reject"
+        }
+      ]
+    },
+    {
+      "id": "pop-settle-unevidenced-rejected-013",
+      "description": "A claim without evidence cannot settle",
+      "actions": [
+        {
+          "op": "open_claim",
+          "args": [
+            "C1",
+            "1000",
+            "INV-2026-001",
+            "ACME-CORP"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "settle_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": "reject"
+        }
+      ]
+    },
+    {
+      "id": "pop-void-and-terminal-014",
+      "description": "A live claim can be voided; VOID is terminal and immutable",
+      "actions": [
+        {
+          "op": "open_claim",
+          "args": [
+            "C1",
+            "1000",
+            "INV-2026-001",
+            "ACME-CORP"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "void_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "get_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": {
+            "claim_id": "C1",
+            "amount": "1000",
+            "external_ref": "INV-2026-001",
+            "obligor": "ACME-CORP",
+            "status": "VOID",
+            "evidence_count": "0",
+            "latest_proof_hash": ""
+          }
+        },
+        {
+          "op": "attach_evidence",
+          "args": [
+            "C1",
+            "P1",
+            "sha256:aaa111",
+            "{}"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "void_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": "reject"
+        }
+      ]
+    },
+    {
+      "id": "pop-rejected-terminal-015",
+      "description": "A DISPUTED claim can be rejected; REJECTED is terminal",
+      "actions": [
+        {
+          "op": "open_claim",
+          "args": [
+            "C1",
+            "1000",
+            "INV-2026-001",
+            "ACME-CORP"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "attach_evidence",
+          "args": [
+            "C1",
+            "P1",
+            "sha256:aaa111",
+            "{}"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "dispute_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "reject_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "get_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": {
+            "claim_id": "C1",
+            "amount": "1000",
+            "external_ref": "INV-2026-001",
+            "obligor": "ACME-CORP",
+            "status": "REJECTED",
+            "evidence_count": "1",
+            "latest_proof_hash": "sha256:aaa111"
+          }
+        },
+        {
+          "op": "attest_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "dispute_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": "reject"
+        }
+      ]
+    },
+    {
+      "id": "pop-identity-stability-016",
+      "description": "Lifecycle + evidence updates preserve claim identity and amount; claimId != proofHash by construction",
+      "actions": [
+        {
+          "op": "open_claim",
+          "args": [
+            "C1",
+            "1000",
+            "INV-2026-001",
+            "ACME-CORP"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "attach_evidence",
+          "args": [
+            "C1",
+            "P1",
+            "sha256:aaa111",
+            "{}"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "attach_evidence",
+          "args": [
+            "C1",
+            "P2",
+            "sha256:bbb222",
+            "{}"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "attest_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "get_claim",
+          "args": [
+            "C1"
+          ],
+          "expect": {
+            "claim_id": "C1",
+            "amount": "1000",
+            "external_ref": "INV-2026-001",
+            "obligor": "ACME-CORP",
+            "status": "ATTESTED",
+            "evidence_count": "2",
+            "latest_proof_hash": "sha256:bbb222"
+          }
+        },
+        {
+          "op": "get_evidence",
+          "args": [
+            "P1"
+          ],
+          "expect": {
+            "proof_id": "P1",
+            "claim_id": "C1",
+            "proof_hash": "sha256:aaa111",
+            "status": "ATTACHED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pop-no-capital-effects-017",
+      "description": "Unknown ids report empty; the primitive exposes no capital-moving surface",
+      "actions": [
+        {
+          "op": "get_claim",
+          "args": [
+            "UNKNOWN"
+          ],
+          "expect": ""
+        },
+        {
+          "op": "get_evidence",
+          "args": [
+            "UNKNOWN"
+          ],
+          "expect": ""
+        }
+      ]
+    }
+  ]
+}

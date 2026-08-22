@@ -1,0 +1,148 @@
+{
+  "schemaVersion": "1.0.0",
+  "primitiveId": "proof-of-payable",
+  "name": "Proof of Payable",
+  "capabilityVersion": "0.1.0",
+  "status": "SPECIFIED",
+  "convergenceMode": "EXACT",
+  "judgmentBearing": false,
+  "implementation": {
+    "environment": "genlayer",
+    "path": "primitives/proof-of-payable/implementations/genlayer/proof_of_payable.py",
+    "contract": "ProofOfPayable"
+  },
+  "publicMethods": [
+    {
+      "name": "open_claim",
+      "kind": "write",
+      "inputs": [
+        {"name": "claim_id", "type": "string"},
+        {"name": "amount", "type": "uint-string"},
+        {"name": "external_ref", "type": "string"},
+        {"name": "obligor", "type": "string"}
+      ],
+      "output": "canonical-claim-json-string"
+    },
+    {
+      "name": "attach_evidence",
+      "kind": "write",
+      "inputs": [
+        {"name": "claim_id", "type": "string"},
+        {"name": "proof_id", "type": "string"},
+        {"name": "proof_hash", "type": "string"},
+        {"name": "metadata_json", "type": "string (<=4096 bytes)"}
+      ],
+      "output": "canonical-proof-json-string"
+    },
+    {
+      "name": "attest_claim",
+      "kind": "write",
+      "inputs": [{"name": "claim_id", "type": "string"}],
+      "output": "canonical-claim-json-string"
+    },
+    {
+      "name": "dispute_claim",
+      "kind": "write",
+      "inputs": [{"name": "claim_id", "type": "string"}],
+      "output": "canonical-claim-json-string"
+    },
+    {
+      "name": "reject_claim",
+      "kind": "write",
+      "inputs": [{"name": "claim_id", "type": "string"}],
+      "output": "canonical-claim-json-string"
+    },
+    {
+      "name": "settle_claim",
+      "kind": "write",
+      "inputs": [{"name": "claim_id", "type": "string"}],
+      "output": "canonical-claim-json-string"
+    },
+    {
+      "name": "void_claim",
+      "kind": "write",
+      "inputs": [{"name": "claim_id", "type": "string"}],
+      "output": "canonical-claim-json-string"
+    },
+    {
+      "name": "get_claim",
+      "kind": "view",
+      "inputs": [{"name": "claim_id", "type": "string"}],
+      "output": "canonical-claim-json-string-or-empty"
+    },
+    {
+      "name": "get_evidence",
+      "kind": "view",
+      "inputs": [{"name": "proof_id", "type": "string"}],
+      "output": "canonical-proof-json-string-or-empty"
+    }
+  ],
+  "canonicalDecision": {
+    "status": ["DRAFT", "EVIDENCED", "ATTESTED", "DISPUTED", "REJECTED", "SETTLED", "VOID"],
+    "liveStatuses": ["DRAFT", "EVIDENCED", "ATTESTED"],
+    "terminalStatuses": ["REJECTED", "SETTLED", "VOID"],
+    "equivalenceFields": [
+      "claim_id",
+      "amount",
+      "external_ref",
+      "obligor",
+      "status",
+      "evidence_count",
+      "latest_proof_hash"
+    ],
+    "nonCanonicalFields": ["created_at", "created_by"]
+  },
+  "stateOwnership": {
+    "owns": [
+      "stable claim identity with immutable amount/external_ref/obligor",
+      "append-only per-claim evidence lineage keyed by globally unique proof_id",
+      "claim lifecycle state transitions"
+    ],
+    "doesNotOwn": [
+      "capital allocation or reservation",
+      "claim encumbrance",
+      "capital commitment",
+      "verification judgment over evidence content",
+      "replay lanes",
+      "settlement execution"
+    ]
+  },
+  "limits": {
+    "maxMetadataBytes": 4096,
+    "duplicateClaimId": "rejected",
+    "duplicateProofId": "rejected",
+    "terminalStatusMutation": "rejected"
+  },
+  "lifecycle": {
+    "transitions": {
+      "DRAFT->EVIDENCED": "automatic on first attach_evidence",
+      "EVIDENCED->ATTESTED": "attest_claim",
+      "DRAFT/EVIDENCED/ATTESTED->DISPUTED": "dispute_claim",
+      "DISPUTED->REJECTED": "reject_claim (terminal)",
+      "ATTESTED->SETTLED": "settle_claim (terminal)",
+      "live->VOID": "void_claim (terminal)"
+    },
+    "rules": [
+      "attest requires evidence_count >= 1",
+      "settle requires status ATTESTED and evidence_count >= 1",
+      "terminal states reject every mutation including re-dispute and re-attach"
+    ]
+  },
+  "vectors": ["primitives/proof-of-payable/vectors/v0.1.json"],
+  "reproduce": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "python tools/nomos_run_vectors.py primitives/proof-of-payable/implementations/genlayer/proof_of_payable.py --vectors primitives/proof-of-payable/vectors/v0.1.json"
+  ],
+  "composition": {
+    "typicalUpstream": [],
+    "typicalDownstream": ["claim-verification", "policy-envelope", "workflow-authorization", "daa", "claim-encumbrance"]
+  },
+  "unsupported": [
+    "substantive judgment that evidence supports the claimed payable condition (belongs to claim-verification)",
+    "remote evidence fetching or hashing inside the primitive (caller supplies proof_hash)",
+    "source authenticity verification",
+    "capital movement, reservation, encumbrance, or settlement execution",
+    "deployment/conformance guarantee until a convergence receipt exists"
+  ]
+}

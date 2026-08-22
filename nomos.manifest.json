@@ -38,11 +38,13 @@
     {
       "id": "proof-of-payable",
       "name": "Proof of Payable",
-      "status": "RESEARCHING",
+      "status": "SPECIFIED",
       "qualification": "QUALIFIED",
-      "judgmentBearing": true,
+      "judgmentBearing": false,
       "genlayerRequired": true,
-      "canonicalPath": "primitives/proof-of-payable"
+      "canonicalPath": "primitives/proof-of-payable",
+      "capabilityVersion": "0.1.0",
+      "convergenceMode": "EXACT"
     },
     {
       "id": "claim-verification",
