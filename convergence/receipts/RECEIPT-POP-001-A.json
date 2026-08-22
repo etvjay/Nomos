@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "1.0.0",
+  "receiptId": "RECEIPT-POP-001-A",
+  "workId": "WORK-POP-001",
+  "primitiveId": "proof-of-payable",
+  "baseCommit": "0c0fd69fa5ccf91dcd0197bbe79988f38bf13088",
+  "resultCommit": "d084f6756bcb5e5d7de0ac9aede03aa33ed646d3",
+  "authorityFingerprint": "sha256:ca98ec25fc2a3ea004d4abde094c9a2de3a1c339ed3c84949109d1c3a20cd51a",
+  "capabilityVersion": "0.1.0",
+  "convergenceMode": "EXACT",
+  "commands": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "python tools/nomos_converge.py fingerprint proof-of-payable",
+    "python tools/nomos_run_vectors.py primitives/proof-of-payable/implementations/genlayer/proof_of_payable.py --vectors primitives/proof-of-payable/vectors/v0.1.json"
+  ],
+  "gates": [
+    {
+      "id": "nomos-lint",
+      "state": "PASS",
+      "evidence": "NOMOS-LINT PASS after manifest+linter update"
+    },
+    {
+      "id": "nomos-converge-check",
+      "state": "PASS",
+      "evidence": "NOMOS-CONVERGE PASS"
+    },
+    {
+      "id": "canonical-vectors",
+      "state": "PASS",
+      "evidence": "17/17 vectors passed for proof-of-payable"
+    },
+    {
+      "id": "genvm-lint",
+      "state": "NOT_IMPLEMENTED",
+      "evidence": null
+    },
+    {
+      "id": "independent-partner-convergence",
+      "state": "NOT_IMPLEMENTED",
+      "evidence": null
+    },
+    {
+      "id": "integration/deployment",
+      "state": "NOT_IMPLEMENTED",
+      "evidence": null
+    }
+  ],
+  "runtimeVersions": {
+    "python": "3.12.14",
+    "genlayer-py": "0.18.0",
+    "genlayer-test": "0.29.2"
+  },
+  "knownGaps": [
+    "metadata size limit enforced in code but not exercised by vector runner (runner has no placeholder expansion)",
+    "no adversarial experiment receipt yet",
+    "no independent partner build"
+  ],
+  "notes": "Lane-A canonical authority build. pop narrowed to deterministic core; substantive judgment belongs to claim-verification."
+}
