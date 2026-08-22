@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "1.0.0",
+  "receiptId": "RECEIPT-CONV-004-B",
+  "workId": "WORK-CONV-004-B",
+  "primitiveId": "claim-verification",
+  "baseCommit": "ef2ac0a37c85e1d4ef2390152102381a51e70694",
+  "resultCommit": "ef2ac0a37c85e1d4ef2390152102381a51e70694",
+  "authorityFingerprint": "sha256:f0be8bab680a32698c1dbf36971ce10802911af0451f4216de84f92fddf587f2",
+  "capabilityVersion": "0.1.0",
+  "convergenceMode": "SEMANTIC",
+  "commands": [
+    "python -m pytest convergence/experiments/EXP-CONV-004/ -v",
+    "python -m pytest primitives/claim-verification/implementations/genlayer/tests/ -v",
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "python tools/nomos_converge.py fingerprint claim-verification"
+  ],
+  "gates": [
+    {
+      "id": "lane-b-direct-tests",
+      "state": "PASS",
+      "evidence": "9/9 passed (4 canonical vectors + 5 adversarial)"
+    },
+    {
+      "id": "canonical-vectors",
+      "state": "PASS",
+      "evidence": "Lane B converged on equivalence fields {status, reason_code} for all 4 canonical vectors"
+    },
+    {
+      "id": "integration-tests-lane-a",
+      "state": "PASS",
+      "evidence": "1/1 against GLSim localnet with consensus (reproduced this session; sim_installMocks)"
+    },
+    {
+      "id": "nomos-lint",
+      "state": "PASS",
+      "evidence": "NOMOS-LINT PASS"
+    },
+    {
+      "id": "nomos-converge",
+      "state": "PASS",
+      "evidence": "NOMOS-CONVERGE PASS"
+    },
+    {
+      "id": "genvm-lint",
+      "state": "NOT_IMPLEMENTED",
+      "evidence": null
+    },
+    {
+      "id": "live-provider-integration",
+      "state": "NOT_IMPLEMENTED",
+      "evidence": null
+    }
+  ],
+  "runtimeVersions": {
+    "python": "3.12.14",
+    "genlayer-py": "0.18.0",
+    "genlayer-test": "0.29.2",
+    "glsim": "localnet seed=42"
+  },
+  "knownGaps": [
+    "validator LLM mocked deterministically in both lanes (no live provider key)",
+    "genvm-lint not run on lane-b file"
+  ],
+  "notes": "Independent Partner-B build of claim-verification v0.1 converged with Partner A under SEMANTIC mode. Together with RECEIPT-CONV-001-A this satisfies the independent-build convergence gate for CONFORMANT candidacy."
+}

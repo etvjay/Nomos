@@ -49,7 +49,7 @@
     {
       "id": "claim-verification",
       "name": "Claim Verification",
-      "status": "IMPLEMENTING",
+      "status": "CONFORMANT",
       "qualification": "QUALIFIED",
       "judgmentBearing": true,
       "genlayerRequired": true,

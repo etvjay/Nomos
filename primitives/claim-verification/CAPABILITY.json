@@ -3,7 +3,7 @@
   "primitiveId": "claim-verification",
   "name": "Claim Verification",
   "capabilityVersion": "0.1.0",
-  "status": "IMPLEMENTING",
+  "status": "CONFORMANT",
   "convergenceMode": "SEMANTIC",
   "judgmentBearing": true,
   "implementation": {
