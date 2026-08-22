@@ -3,7 +3,7 @@
   "primitiveId": "claim-encumbrance",
   "name": "Claim Encumbrance",
   "capabilityVersion": "0.1.0",
-  "status": "SPECIFIED",
+  "status": "CONFORMANT",
   "convergenceMode": "EXACT",
   "judgmentBearing": false,
   "implementation": {
@@ -16,8 +16,14 @@
       "name": "set_financeable_amount",
       "kind": "write",
       "inputs": [
-        {"name": "claim_id", "type": "string"},
-        {"name": "amount", "type": "uint-string"}
+        {
+          "name": "claim_id",
+          "type": "string"
+        },
+        {
+          "name": "amount",
+          "type": "uint-string"
+        }
       ],
       "output": "canonical-claim-json-string"
     },
@@ -25,51 +31,95 @@
       "name": "reserve",
       "kind": "write",
       "inputs": [
-        {"name": "reservation_id", "type": "string"},
-        {"name": "claim_id", "type": "string"},
-        {"name": "amount", "type": "uint-string"}
+        {
+          "name": "reservation_id",
+          "type": "string"
+        },
+        {
+          "name": "claim_id",
+          "type": "string"
+        },
+        {
+          "name": "amount",
+          "type": "uint-string"
+        }
       ],
       "output": "canonical-encumbrance-json-string"
     },
     {
       "name": "commit",
       "kind": "write",
-      "inputs": [{"name": "reservation_id", "type": "string"}],
+      "inputs": [
+        {
+          "name": "reservation_id",
+          "type": "string"
+        }
+      ],
       "output": "canonical-encumbrance-json-string"
     },
     {
       "name": "release",
       "kind": "write",
-      "inputs": [{"name": "reservation_id", "type": "string"}],
+      "inputs": [
+        {
+          "name": "reservation_id",
+          "type": "string"
+        }
+      ],
       "output": "canonical-encumbrance-json-string"
     },
     {
       "name": "settle",
       "kind": "write",
-      "inputs": [{"name": "reservation_id", "type": "string"}],
+      "inputs": [
+        {
+          "name": "reservation_id",
+          "type": "string"
+        }
+      ],
       "output": "canonical-encumbrance-json-string"
     },
     {
       "name": "get_encumbrance",
       "kind": "view",
-      "inputs": [{"name": "reservation_id", "type": "string"}],
+      "inputs": [
+        {
+          "name": "reservation_id",
+          "type": "string"
+        }
+      ],
       "output": "canonical-encumbrance-json-string-or-empty"
     },
     {
       "name": "active_encumbrances",
       "kind": "view",
-      "inputs": [{"name": "claim_id", "type": "string"}],
+      "inputs": [
+        {
+          "name": "claim_id",
+          "type": "string"
+        }
+      ],
       "output": "uint-string"
     },
     {
       "name": "financeable_amount",
       "kind": "view",
-      "inputs": [{"name": "claim_id", "type": "string"}],
+      "inputs": [
+        {
+          "name": "claim_id",
+          "type": "string"
+        }
+      ],
       "output": "uint-string-or-empty"
     }
   ],
   "canonicalDecision": {
-    "status": ["RESERVED", "COMMITTED", "RELEASED", "SETTLED"],
+    "status": [
+      "RESERVED",
+      "COMMITTED",
+      "RELEASED",
+      "SETTLED"
+    ],
     "equivalenceFields": [
       "reservation_id",
       "claim_id",
@@ -77,7 +127,12 @@
       "status",
       "financeable_amount"
     ],
-    "nonCanonicalFields": ["created_at", "created_by", "updated_at", "updated_by"]
+    "nonCanonicalFields": [
+      "created_at",
+      "created_by",
+      "updated_at",
+      "updated_by"
+    ]
   },
   "stateOwnership": {
     "owns": [
@@ -112,8 +167,14 @@
     "genvm-lint check primitives/claim-encumbrance/implementations/genlayer/claim_encumbrance.py"
   ],
   "composition": {
-    "typicalUpstream": ["claim-verification", "daa"],
-    "typicalDownstream": ["capital-commitment", "financial-contract"]
+    "typicalUpstream": [
+      "claim-verification",
+      "daa"
+    ],
+    "typicalDownstream": [
+      "capital-commitment",
+      "financial-contract"
+    ]
   },
   "unsupported": [
     "same-claim semantic adjudication",

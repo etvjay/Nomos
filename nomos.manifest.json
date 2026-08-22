@@ -101,7 +101,7 @@
     {
       "id": "claim-encumbrance",
       "name": "Claim Encumbrance",
-      "status": "SPECIFIED",
+      "status": "CONFORMANT",
       "qualification": "QUALIFIED",
       "judgmentBearing": false,
       "genlayerRequired": true,
@@ -112,7 +112,7 @@
     {
       "id": "capital-commitment",
       "name": "Capital Commitment",
-      "status": "SPECIFIED",
+      "status": "CONFORMANT",
       "qualification": "QUALIFIED",
       "judgmentBearing": false,
       "genlayerRequired": true,

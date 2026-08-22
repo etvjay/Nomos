@@ -3,7 +3,7 @@
   "primitiveId": "capital-commitment",
   "name": "Capital Commitment",
   "capabilityVersion": "0.1.0",
-  "status": "SPECIFIED",
+  "status": "CONFORMANT",
   "convergenceMode": "EXACT",
   "judgmentBearing": false,
   "implementation": {
@@ -16,9 +16,18 @@
       "name": "set_backing",
       "kind": "write",
       "inputs": [
-        {"name": "pool_id", "type": "string"},
-        {"name": "asset", "type": "string"},
-        {"name": "amount", "type": "uint-string"}
+        {
+          "name": "pool_id",
+          "type": "string"
+        },
+        {
+          "name": "asset",
+          "type": "string"
+        },
+        {
+          "name": "amount",
+          "type": "uint-string"
+        }
       ],
       "output": "canonical-backing-json-string"
     },
@@ -26,48 +35,93 @@
       "name": "reserve",
       "kind": "write",
       "inputs": [
-        {"name": "commitment_id", "type": "string"},
-        {"name": "pool_id", "type": "string"},
-        {"name": "asset", "type": "string"},
-        {"name": "beneficiary", "type": "string"},
-        {"name": "amount", "type": "uint-string"},
-        {"name": "valid_until", "type": "uint-string"}
+        {
+          "name": "commitment_id",
+          "type": "string"
+        },
+        {
+          "name": "pool_id",
+          "type": "string"
+        },
+        {
+          "name": "asset",
+          "type": "string"
+        },
+        {
+          "name": "beneficiary",
+          "type": "string"
+        },
+        {
+          "name": "amount",
+          "type": "uint-string"
+        },
+        {
+          "name": "valid_until",
+          "type": "uint-string"
+        }
       ],
       "output": "canonical-commitment-json-string"
     },
     {
       "name": "commit",
       "kind": "write",
-      "inputs": [{"name": "commitment_id", "type": "string"}],
+      "inputs": [
+        {
+          "name": "commitment_id",
+          "type": "string"
+        }
+      ],
       "output": "canonical-commitment-json-string"
     },
     {
       "name": "release",
       "kind": "write",
-      "inputs": [{"name": "commitment_id", "type": "string"}],
+      "inputs": [
+        {
+          "name": "commitment_id",
+          "type": "string"
+        }
+      ],
       "output": "canonical-commitment-json-string"
     },
     {
       "name": "expire",
       "kind": "write",
       "inputs": [
-        {"name": "commitment_id", "type": "string"},
-        {"name": "at", "type": "uint-string"}
+        {
+          "name": "commitment_id",
+          "type": "string"
+        },
+        {
+          "name": "at",
+          "type": "uint-string"
+        }
       ],
       "output": "canonical-commitment-json-string"
     },
     {
       "name": "get_commitment",
       "kind": "view",
-      "inputs": [{"name": "commitment_id", "type": "string"}],
+      "inputs": [
+        {
+          "name": "commitment_id",
+          "type": "string"
+        }
+      ],
       "output": "canonical-commitment-json-string-or-empty"
     },
     {
       "name": "active_commitments",
       "kind": "view",
       "inputs": [
-        {"name": "pool_id", "type": "string"},
-        {"name": "asset", "type": "string"}
+        {
+          "name": "pool_id",
+          "type": "string"
+        },
+        {
+          "name": "asset",
+          "type": "string"
+        }
       ],
       "output": "uint-string"
     },
@@ -75,14 +129,25 @@
       "name": "available_capacity",
       "kind": "view",
       "inputs": [
-        {"name": "pool_id", "type": "string"},
-        {"name": "asset", "type": "string"}
+        {
+          "name": "pool_id",
+          "type": "string"
+        },
+        {
+          "name": "asset",
+          "type": "string"
+        }
       ],
       "output": "uint-string-or-empty"
     }
   ],
   "canonicalDecision": {
-    "status": ["RESERVED", "COMMITTED", "RELEASED", "EXPIRED"],
+    "status": [
+      "RESERVED",
+      "COMMITTED",
+      "RELEASED",
+      "EXPIRED"
+    ],
     "equivalenceFields": [
       "commitment_id",
       "pool_id",
@@ -92,7 +157,12 @@
       "valid_until",
       "status"
     ],
-    "nonCanonicalFields": ["created_at", "created_by", "updated_at", "updated_by"]
+    "nonCanonicalFields": [
+      "created_at",
+      "created_by",
+      "updated_at",
+      "updated_by"
+    ]
   },
   "stateOwnership": {
     "owns": [
@@ -133,8 +203,17 @@
     "genvm-lint check primitives/capital-commitment/implementations/genlayer/capital_commitment.py"
   ],
   "composition": {
-    "typicalUpstream": ["daa", "workflow-authorization", "claim-verification", "claim-encumbrance"],
-    "typicalDownstream": ["dal", "financial-contract", "settlement"]
+    "typicalUpstream": [
+      "daa",
+      "workflow-authorization",
+      "claim-verification",
+      "claim-encumbrance"
+    ],
+    "typicalDownstream": [
+      "dal",
+      "financial-contract",
+      "settlement"
+    ]
   },
   "unsupported": [
     "pool/vault creation",
