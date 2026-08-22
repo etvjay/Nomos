@@ -1,0 +1,89 @@
+name: skills-sync
+
+# Keep the vendored genlayer-dev plugin in sync with upstream
+# genlayerlabs/skills (skills.genlayer.com). Opens a PR when upstream
+# changes so governance gates validate the new version before merge.
+
+on:
+  schedule:
+    - cron: "0 6 * * *" # daily 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Nomos
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout upstream skills
+        uses: actions/checkout@v4
+        with:
+          repository: genlayerlabs/skills
+          ref: main
+          path: upstream-skills
+          persist-credentials: false
+
+      - name: Record upstream version + commit
+        id: upstream
+        run: |
+          UP_COMMIT=$(git -C upstream-skills rev-parse HEAD)
+          UP_VER=$(python3 -c "import json; print(json.load(open('upstream-skills/plugins/genlayer-dev/.claude-plugin/plugin.json'))['version'])")
+          echo "commit=$UP_COMMIT" >> "$GITHUB_OUTPUT"
+          echo "version=$UP_VER" >> "$GITHUB_OUTPUT"
+          # Write sync metadata alongside the vendored plugin
+          cat > skills/genlayer-dev/UPSTREAM.json <<EOF
+          {
+            "source": "genlayerlabs/skills",
+            "upstreamRef": "main",
+            "upstreamCommit": "$UP_COMMIT",
+            "pluginVersion": "$UP_VER",
+            "syncedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          EOF
+
+      - name: Sync vendored plugin
+        run: |
+          rsync -a --delete \
+            --exclude '.git' \
+            upstream-skills/plugins/genlayer-dev/ skills/genlayer-dev/
+
+      - name: Detect changes
+        id: diff
+        run: |
+          git add skills/genlayer-dev
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open sync PR
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          UP_COMMIT: ${{ steps.upstream.outputs.commit }}
+          UP_VER: ${{ steps.upstream.outputs.version }}
+        run: |
+          BRANCH="chore/skills-sync-${UP_COMMIT:0:8}"
+          git config user.name "nomos-sync-bot"
+          git config user.email "actions@github.com"
+          git checkout -b "$BRANCH"
+          git commit -m "chore(skills): sync genlayer-dev to upstream ${UP_COMMIT:0:8} (v$UP_VER)"
+          git push origin "$BRANCH"
+          gh pr create \
+            --title "chore(skills): sync genlayer-dev to v$UP_VER" \
+            --body "Automated vendor sync of \`skills/genlayer-dev\` from genlayerlabs/skills@${UP_COMMIT:0:8}.
+
+          - Upstream plugin version: **v$UP_VER**
+          - Upstream commit: $UP_COMMIT
+          - \`UPSTREAM.json\` updated with sync metadata.
+
+          Review the diff and confirm governance/convergence checks pass before merging." \
+            --base main --head "$BRANCH"
