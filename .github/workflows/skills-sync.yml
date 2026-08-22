@@ -37,7 +37,13 @@ jobs:
           UP_VER=$(python3 -c "import json; print(json.load(open('upstream-skills/plugins/genlayer-dev/.claude-plugin/plugin.json'))['version'])")
           echo "commit=$UP_COMMIT" >> "$GITHUB_OUTPUT"
           echo "version=$UP_VER" >> "$GITHUB_OUTPUT"
-          # Write sync metadata alongside the vendored plugin
+
+      - name: Sync vendored plugin
+        run: |
+          rsync -a --delete \
+            --exclude '.git' \
+            upstream-skills/plugins/genlayer-dev/ skills/genlayer-dev/
+          # Write sync metadata AFTER rsync so it isn't deleted
           cat > skills/genlayer-dev/UPSTREAM.json <<EOF
           {
             "source": "genlayerlabs/skills",
@@ -47,12 +53,6 @@ jobs:
             "syncedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           }
           EOF
-
-      - name: Sync vendored plugin
-        run: |
-          rsync -a --delete \
-            --exclude '.git' \
-            upstream-skills/plugins/genlayer-dev/ skills/genlayer-dev/
 
       - name: Detect changes
         id: diff
