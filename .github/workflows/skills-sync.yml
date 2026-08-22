@@ -48,8 +48,8 @@ jobs:
           {
             "source": "genlayerlabs/skills",
             "upstreamRef": "main",
-            "upstreamCommit": "$UP_COMMIT",
-            "pluginVersion": "$UP_VER",
+            "upstreamCommit": "${{ steps.upstream.outputs.commit }}",
+            "pluginVersion": "${{ steps.upstream.outputs.version }}",
             "syncedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           }
           EOF
