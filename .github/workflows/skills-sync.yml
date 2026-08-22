@@ -71,7 +71,7 @@ jobs:
           UP_COMMIT: ${{ steps.upstream.outputs.commit }}
           UP_VER: ${{ steps.upstream.outputs.version }}
         run: |
-          BRANCH="chore/skills-sync-${UP_COMMIT:0:8}"
+          BRANCH="chore/skills-sync-${{ github.run_id }}"
           git config user.name "nomos-sync-bot"
           git config user.email "actions@github.com"
           git checkout -b "$BRANCH"
