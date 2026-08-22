@@ -1,0 +1,566 @@
+{
+  "schemaVersion": "0.1.0",
+  "primitive": "policy-envelope",
+  "convergenceMode": "EXACT",
+  "statuses": [
+    "ADMIT",
+    "DENY",
+    "UNDETERMINED"
+  ],
+  "vectors": [
+    {
+      "id": "pe-create-001",
+      "description": "Creating an envelope with deterministic hard limits registers it ACTIVE",
+      "actions": [
+        {
+          "op": "create_envelope",
+          "args": [
+            "ENV1",
+            "POLICYHASH-1",
+            "1000",
+            "USD",
+            "1700000000",
+            "1800000000"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "get_envelope",
+          "args": [
+            "ENV1"
+          ],
+          "expect": {
+            "envelope_id": "ENV1",
+            "policy_hash": "POLICYHASH-1",
+            "max_amount": "1000",
+            "asset": "USD",
+            "valid_after": "1700000000",
+            "valid_until": "1800000000",
+            "status": "ACTIVE"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pe-create-duplicate-rejected-002",
+      "description": "Envelope ids are unique",
+      "actions": [
+        {
+          "op": "create_envelope",
+          "args": [
+            "ENV1",
+            "P1",
+            "1000",
+            "USD",
+            "0",
+            "10"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "create_envelope",
+          "args": [
+            "ENV1",
+            "P2",
+            "2000",
+            "EUR",
+            "0",
+            "10"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "get_envelope",
+          "args": [
+            "ENV1"
+          ],
+          "expect": {
+            "policy_hash": "P1",
+            "max_amount": "1000"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pe-create-invalid-rejected-003",
+      "description": "Empty id/hash, zero amount, or inverted time window rejected deterministically",
+      "actions": [
+        {
+          "op": "create_envelope",
+          "args": [
+            "",
+            "P1",
+            "1000",
+            "USD",
+            "0",
+            "10"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "create_envelope",
+          "args": [
+            "E2",
+            "",
+            "1000",
+            "USD",
+            "0",
+            "10"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "create_envelope",
+          "args": [
+            "E3",
+            "P1",
+            "0",
+            "USD",
+            "0",
+            "10"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "create_envelope",
+          "args": [
+            "E4",
+            "P1",
+            "abc",
+            "USD",
+            "0",
+            "10"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "create_envelope",
+          "args": [
+            "E5",
+            "P1",
+            "1000",
+            "USD",
+            "20",
+            "10"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "get_envelope",
+          "args": [
+            "E5"
+          ],
+          "expect": ""
+        }
+      ]
+    },
+    {
+      "id": "pe-admit-within-bounds-004",
+      "description": "A request inside all hard limits is ADMIT with amount recorded against usage",
+      "actions": [
+        {
+          "op": "create_envelope",
+          "args": [
+            "ENV1",
+            "P1",
+            "1000",
+            "USD",
+            "0",
+            "9999999999"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "evaluate_request",
+          "args": [
+            "ENV1",
+            "R1",
+            "400",
+            "USD",
+            "ACTOR-A",
+            "TARGET-X",
+            "5000000000"
+          ],
+          "expect": {
+            "decision": "ADMIT",
+            "reason_code": "WITHIN_HARD_LIMITS"
+          }
+        },
+        {
+          "op": "used_amount",
+          "args": [
+            "ENV1"
+          ],
+          "expect": "400"
+        }
+      ]
+    },
+    {
+      "id": "pe-deny-over-amount-005",
+      "description": "A request exceeding max_amount is DENY and does not consume capacity",
+      "actions": [
+        {
+          "op": "create_envelope",
+          "args": [
+            "ENV1",
+            "P1",
+            "1000",
+            "USD",
+            "0",
+            "9999999999"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "evaluate_request",
+          "args": [
+            "ENV1",
+            "R1",
+            "1001",
+            "USD",
+            "ACTOR-A",
+            "TARGET-X",
+            "5000000000"
+          ],
+          "expect": {
+            "decision": "DENY",
+            "reason_code": "AMOUNT_EXCEEDS_LIMIT"
+          }
+        },
+        {
+          "op": "used_amount",
+          "args": [
+            "ENV1"
+          ],
+          "expect": "0"
+        }
+      ]
+    },
+    {
+      "id": "pe-deny-cumulative-capacity-006",
+      "description": "Cumulative usage cannot exceed the envelope limit; failed requests do not consume",
+      "actions": [
+        {
+          "op": "create_envelope",
+          "args": [
+            "ENV1",
+            "P1",
+            "1000",
+            "USD",
+            "0",
+            "9999999999"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "evaluate_request",
+          "args": [
+            "ENV1",
+            "R1",
+            "600",
+            "USD",
+            "A",
+            "T",
+            "5000000000"
+          ],
+          "expect": {
+            "decision": "ADMIT"
+          }
+        },
+        {
+          "op": "evaluate_request",
+          "args": [
+            "ENV1",
+            "R2",
+            "600",
+            "USD",
+            "A",
+            "T",
+            "5000000001"
+          ],
+          "expect": {
+            "decision": "DENY",
+            "reason_code": "CAPACITY_EXHAUSTED"
+          }
+        },
+        {
+          "op": "used_amount",
+          "args": [
+            "ENV1"
+          ],
+          "expect": "600"
+        },
+        {
+          "op": "evaluate_request",
+          "args": [
+            "ENV1",
+            "R3",
+            "400",
+            "USD",
+            "A",
+            "T",
+            "5000000002"
+          ],
+          "expect": {
+            "decision": "ADMIT"
+          }
+        },
+        {
+          "op": "used_amount",
+          "args": [
+            "ENV1"
+          ],
+          "expect": "1000"
+        }
+      ]
+    },
+    {
+      "id": "pe-deny-wrong-asset-007",
+      "description": "Asset mismatch denies fail-closed regardless of amount",
+      "actions": [
+        {
+          "op": "create_envelope",
+          "args": [
+            "ENV1",
+            "P1",
+            "1000",
+            "USD",
+            "0",
+            "9999999999"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "evaluate_request",
+          "args": [
+            "ENV1",
+            "R1",
+            "5",
+            "EUR",
+            "A",
+            "T",
+            "5000000000"
+          ],
+          "expect": {
+            "decision": "DENY",
+            "reason_code": "ASSET_MISMATCH"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pe-deny-outside-time-window-008",
+      "description": "Requests before valid_after or after valid_until deny fail-closed",
+      "actions": [
+        {
+          "op": "create_envelope",
+          "args": [
+            "ENV1",
+            "P1",
+            "1000",
+            "USD",
+            "100",
+            "200"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "evaluate_request",
+          "args": [
+            "ENV1",
+            "R1",
+            "5",
+            "USD",
+            "A",
+            "T",
+            "99"
+          ],
+          "expect": {
+            "decision": "DENY",
+            "reason_code": "OUTSIDE_VALIDITY_WINDOW"
+          }
+        },
+        {
+          "op": "evaluate_request",
+          "args": [
+            "ENV1",
+            "R2",
+            "5",
+            "USD",
+            "A",
+            "T",
+            "201"
+          ],
+          "expect": {
+            "decision": "DENY",
+            "reason_code": "OUTSIDE_VALIDITY_WINDOW"
+          }
+        },
+        {
+          "op": "evaluate_request",
+          "args": [
+            "ENV1",
+            "R3",
+            "5",
+            "USD",
+            "A",
+            "T",
+            "100"
+          ],
+          "expect": {
+            "decision": "ADMIT"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pe-deny-expired-envelope-009",
+      "description": "An expired envelope denies every request even within old windows",
+      "actions": [
+        {
+          "op": "create_envelope",
+          "args": [
+            "ENV1",
+            "P1",
+            "1000",
+            "USD",
+            "0",
+            "50"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "expire_envelope",
+          "args": [
+            "ENV1"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "evaluate_request",
+          "args": [
+            "ENV1",
+            "R1",
+            "5",
+            "USD",
+            "A",
+            "T",
+            "10"
+          ],
+          "expect": {
+            "decision": "DENY",
+            "reason_code": "ENVELOPE_INACTIVE"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pe-duplicate-request-id-rejected-010",
+      "description": "Request ids are unique per envelope for ADMITTED requests (replay rejection); denied attempts do not burn the id",
+      "actions": [
+        {
+          "op": "create_envelope",
+          "args": [
+            "ENV1",
+            "P1",
+            "1000",
+            "USD",
+            "0",
+            "9999999999"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "evaluate_request",
+          "args": [
+            "ENV1",
+            "R1",
+            "100",
+            "USD",
+            "A",
+            "T",
+            "5000000000"
+          ],
+          "expect": {
+            "decision": "ADMIT"
+          }
+        },
+        {
+          "op": "evaluate_request",
+          "args": [
+            "ENV1",
+            "R1",
+            "100",
+            "USD",
+            "A",
+            "T",
+            "5000000001"
+          ],
+          "expect": "reject"
+        },
+        {
+          "op": "evaluate_request",
+          "args": [
+            "ENV1",
+            "R2",
+            "99999",
+            "USD",
+            "A",
+            "T",
+            "5000000002"
+          ],
+          "expect": {
+            "decision": "DENY"
+          }
+        },
+        {
+          "op": "evaluate_request",
+          "args": [
+            "ENV1",
+            "R2",
+            "10",
+            "USD",
+            "A",
+            "T",
+            "5000000003"
+          ],
+          "expect": {
+            "decision": "ADMIT"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pe-unknown-envelope-rejected-011",
+      "description": "Evaluation against unknown envelope rejects",
+      "actions": [
+        {
+          "op": "evaluate_request",
+          "args": [
+            "NOPE",
+            "R1",
+            "5",
+            "USD",
+            "A",
+            "T",
+            "1"
+          ],
+          "expect": "reject"
+        }
+      ]
+    },
+    {
+      "id": "pe-no-authority-effects-012",
+      "description": "Envelope decisions create no delegation/allocation/commitment state: unknown lookups return empty",
+      "actions": [
+        {
+          "op": "get_clause_interpretation",
+          "args": [
+            "UNKNOWN"
+          ],
+          "expect": ""
+        }
+      ]
+    }
+  ]
+}

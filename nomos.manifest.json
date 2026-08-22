@@ -61,11 +61,13 @@
     {
       "id": "policy-envelope",
       "name": "Policy Envelope",
-      "status": "RESEARCHING",
+      "status": "SPECIFIED",
       "qualification": "QUALIFIED",
-      "judgmentBearing": true,
+      "judgmentBearing": false,
       "genlayerRequired": true,
-      "canonicalPath": "primitives/policy-envelope"
+      "canonicalPath": "primitives/policy-envelope",
+      "capabilityVersion": "0.1.0",
+      "convergenceMode": "EXACT"
     },
     {
       "id": "workflow-authorization",

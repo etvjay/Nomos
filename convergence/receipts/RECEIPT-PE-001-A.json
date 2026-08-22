@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "1.0.0",
+  "receiptId": "RECEIPT-PE-001-A",
+  "workId": "WORK-PE-001",
+  "primitiveId": "policy-envelope",
+  "baseCommit": "5f0631a93be024476992b10e47dc0f7693a68122",
+  "resultCommit": "5f0631a93be024476992b10e47dc0f7693a68122",
+  "authorityFingerprint": "sha256:92f5e9b3ce667a73ca46641d1b13ac82525847ba5c87ba7cdf5cea9d76642476",
+  "capabilityVersion": "0.1.0",
+  "convergenceMode": "EXACT",
+  "commands": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "python tools/nomos_run_vectors.py primitives/policy-envelope/implementations/genlayer/policy_envelope.py --vectors primitives/policy-envelope/vectors/v0.1.json",
+    "python -m pytest primitives/policy-envelope/implementations/genlayer/tests/ -v"
+  ],
+  "gates": [
+    {
+      "id": "nomos-lint",
+      "state": "PASS",
+      "evidence": "NOMOS-LINT PASS"
+    },
+    {
+      "id": "nomos-converge-check",
+      "state": "PASS",
+      "evidence": "NOMOS-CONVERGE PASS"
+    },
+    {
+      "id": "canonical-vectors-deterministic-core",
+      "state": "PASS",
+      "evidence": "12/12 vectors passed for policy-envelope"
+    },
+    {
+      "id": "judgment-surface-direct-tests",
+      "state": "PASS",
+      "evidence": "7/7 passed (bounded schema, dominance, UNDETERMINED-not-approval)"
+    },
+    {
+      "id": "independent-partner-convergence",
+      "state": "NOT_IMPLEMENTED",
+      "evidence": null
+    },
+    {
+      "id": "integration/deployment",
+      "state": "NOT_IMPLEMENTED",
+      "evidence": null
+    }
+  ],
+  "runtimeVersions": {
+    "python": "3.12.14",
+    "genlayer-py": "0.18.0",
+    "genlayer-test": "0.29.2"
+  },
+  "knownGaps": [
+    "no independent partner build yet",
+    "no GLSim integration test yet",
+    "actor/target registry enforcement deferred"
+  ],
+  "notes": "Lane-A canonical authority build. Canonical decision narrowed to deterministic hard limits (EXACT); clause interpretation is a subordinate non-authoritative judgment surface tested via direct-mode mocks."
+}
