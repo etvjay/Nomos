@@ -87,7 +87,7 @@
     {
       "id": "mandate-allocation",
       "name": "Mandate Allocation",
-      "status": "SPECIFIED",
+      "status": "CONFORMANT",
       "qualification": "QUALIFIED_EXTENSION",
       "judgmentBearing": false,
       "genlayerRequired": true,
@@ -154,7 +154,7 @@
     {
       "id": "gaia",
       "name": "Gaia",
-      "status": "SPECIFIED",
+      "status": "CONFORMANT",
       "qualification": "QUALIFIED",
       "judgmentBearing": false,
       "genlayerRequired": true,

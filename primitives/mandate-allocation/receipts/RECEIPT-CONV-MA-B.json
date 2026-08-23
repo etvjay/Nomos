@@ -1,0 +1,12 @@
+{
+  "receipt_id": "RECEIPT-CONV-MA-B",
+  "primitive": "mandate-allocation",
+  "date": "2026-08-23",
+  "convergence_mode": "EXACT",
+  "lane": "convergence-lanes/mandate-allocation/your_build.py",
+  "builder": "fresh-context subagent (spec+vectors only; reference implementation not accessed)",
+  "vectors_total": 9,
+  "vectors_passed": 9,
+  "verdict": "CONVERGED",
+  "report": "convergence-lanes/mandate-allocation/BUILD_REPORT.md"
+}

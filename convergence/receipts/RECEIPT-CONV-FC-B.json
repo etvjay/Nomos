@@ -1,0 +1,12 @@
+{
+  "receipt_id": "RECEIPT-CONV-FC-B",
+  "primitive": "financial-contract",
+  "date": "2026-08-23",
+  "convergence_mode": "EXACT",
+  "lane": "convergence-lanes/financial-contract/your_build.py",
+  "builder": "fresh-context subagent (spec+vectors only; reference implementation not accessed)",
+  "vectors_total": 9,
+  "vectors_passed": 9,
+  "verdict": "CONVERGED",
+  "report": "convergence-lanes/financial-contract/BUILD_REPORT.md"
+}

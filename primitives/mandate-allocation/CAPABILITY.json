@@ -3,7 +3,7 @@
   "primitiveId": "mandate-allocation",
   "name": "Mandate Allocation",
   "capabilityVersion": "0.1.0",
-  "status": "SPECIFIED",
+  "status": "CONFORMANT",
   "convergenceMode": "EXACT",
   "judgmentBearing": false,
   "implementation": {
@@ -12,34 +12,132 @@
     "contract": "MandateAllocation"
   },
   "publicMethods": [
-    {"name": "register_mandate", "kind": "write", "inputs": [
-      {"name": "mandate_id", "type": "string"},
-      {"name": "doc_hash", "type": "string"},
-      {"name": "max_total_exposure", "type": "uint-string"},
-      {"name": "asset", "type": "string"},
-      {"name": "allowed_classes_json", "type": "list-of-strings-as-string"}
-    ], "output": "canonical-mandate-json-string"},
-    {"name": "evaluate_opportunity", "kind": "write", "inputs": [
-      {"name": "evaluation_id", "type": "string"},
-      {"name": "mandate_id", "type": "string"},
-      {"name": "opportunity_ref", "type": "string"},
-      {"name": "opportunity_class", "type": "string"},
-      {"name": "requested_amount", "type": "uint-string"},
-      {"name": "at_timestamp", "type": "int-string"}
-    ], "output": "canonical-evaluation-json-string"},
-    {"name": "supersede_evaluation", "kind": "write", "inputs": [
-      {"name": "old_evaluation_id", "type": "string"},
-      {"name": "new_evaluation_id", "type": "string"},
-      {"name": "note_json", "type": "json-object-as-string"}
-    ], "output": "canonical-lineage-json-string"},
-    {"name": "get_mandate", "kind": "view", "inputs": [{"name": "mandate_id", "type": "string"}], "output": "json-or-empty"},
-    {"name": "get_evaluation", "kind": "view", "inputs": [{"name": "evaluation_id", "type": "string"}], "output": "json-or-empty"},
-    {"name": "committed_exposure", "kind": "view", "inputs": [{"name": "mandate_id", "type": "string"}], "output": "uint-string-or-empty"}
+    {
+      "name": "register_mandate",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "mandate_id",
+          "type": "string"
+        },
+        {
+          "name": "doc_hash",
+          "type": "string"
+        },
+        {
+          "name": "max_total_exposure",
+          "type": "uint-string"
+        },
+        {
+          "name": "asset",
+          "type": "string"
+        },
+        {
+          "name": "allowed_classes_json",
+          "type": "list-of-strings-as-string"
+        }
+      ],
+      "output": "canonical-mandate-json-string"
+    },
+    {
+      "name": "evaluate_opportunity",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "evaluation_id",
+          "type": "string"
+        },
+        {
+          "name": "mandate_id",
+          "type": "string"
+        },
+        {
+          "name": "opportunity_ref",
+          "type": "string"
+        },
+        {
+          "name": "opportunity_class",
+          "type": "string"
+        },
+        {
+          "name": "requested_amount",
+          "type": "uint-string"
+        },
+        {
+          "name": "at_timestamp",
+          "type": "int-string"
+        }
+      ],
+      "output": "canonical-evaluation-json-string"
+    },
+    {
+      "name": "supersede_evaluation",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "old_evaluation_id",
+          "type": "string"
+        },
+        {
+          "name": "new_evaluation_id",
+          "type": "string"
+        },
+        {
+          "name": "note_json",
+          "type": "json-object-as-string"
+        }
+      ],
+      "output": "canonical-lineage-json-string"
+    },
+    {
+      "name": "get_mandate",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "mandate_id",
+          "type": "string"
+        }
+      ],
+      "output": "json-or-empty"
+    },
+    {
+      "name": "get_evaluation",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "evaluation_id",
+          "type": "string"
+        }
+      ],
+      "output": "json-or-empty"
+    },
+    {
+      "name": "committed_exposure",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "mandate_id",
+          "type": "string"
+        }
+      ],
+      "output": "uint-string-or-empty"
+    }
   ],
   "canonicalDecision": {
-    "eligibility": ["ELIGIBLE", "INELIGIBLE"],
-    "reasonCode": ["WITHIN_MANDATE", "CLASS_NOT_PERMITTED", "EXPOSURE_EXCEEDED"],
-    "equivalenceFields": ["eligibility", "reason_code", "recommended_amount"]
+    "eligibility": [
+      "ELIGIBLE",
+      "INELIGIBLE"
+    ],
+    "reasonCode": [
+      "WITHIN_MANDATE",
+      "CLASS_NOT_PERMITTED",
+      "EXPOSURE_EXCEEDED"
+    ],
+    "equivalenceFields": [
+      "eligibility",
+      "reason_code",
+      "recommended_amount"
+    ]
   },
   "stateMachine": {
     "evaluation": "EVALUATED -> SUPERSEDED (lineage preserved)",
@@ -51,8 +149,18 @@
     ]
   },
   "stateOwnership": {
-    "owns": ["mandate constraint objects", "advisory evaluation records and lineage"],
-    "doesNotOwn": ["authority (daa)", "capital reservation or commitment", "claim encumbrance", "replay lanes", "value movement", "underwriting of individual creditworthiness"]
+    "owns": [
+      "mandate constraint objects",
+      "advisory evaluation records and lineage"
+    ],
+    "doesNotOwn": [
+      "authority (daa)",
+      "capital reservation or commitment",
+      "claim encumbrance",
+      "replay lanes",
+      "value movement",
+      "underwriting of individual creditworthiness"
+    ]
   },
   "limits": {
     "duplicateMandateId": "rejected",
@@ -60,15 +168,22 @@
     "selfSupersede": "rejected",
     "exposureOvercommit": "rejected"
   },
-  "vectors": ["primitives/mandate-allocation/vectors/v0.1.json"],
+  "vectors": [
+    "primitives/mandate-allocation/vectors/v0.1.json"
+  ],
   "reproduce": [
     "python tools/nomos_lint.py",
     "python tools/nomos_converge.py check",
     "python tools/nomos_run_vectors.py primitives/mandate-allocation/implementations/genlayer/mandate_allocation.py --vectors primitives/mandate-allocation/vectors/v0.1.json"
   ],
   "composition": {
-    "typicalUpstream": ["claim-verification", "policy-envelope (qualitative mandate interpretation)"],
-    "typicalDownstream": ["daa (the only step that converts recommendation into authority)"]
+    "typicalUpstream": [
+      "claim-verification",
+      "policy-envelope (qualitative mandate interpretation)"
+    ],
+    "typicalDownstream": [
+      "daa (the only step that converts recommendation into authority)"
+    ]
   },
   "unsupported": [
     "authority grant, capital reservation, encumbrance, replay lanes, or value movement of any kind",

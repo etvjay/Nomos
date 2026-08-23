@@ -1,9 +1,9 @@
 {
   "schemaVersion": "1.0.0",
   "primitiveId": "gaia",
-  "name": "Gaia — Exception, Reconciliation & Rectification",
+  "name": "Gaia \u2014 Exception, Reconciliation & Rectification",
   "capabilityVersion": "0.1.0",
-  "status": "SPECIFIED",
+  "status": "CONFORMANT",
   "convergenceMode": "EXACT",
   "judgmentBearing": false,
   "implementation": {
@@ -12,38 +12,148 @@
     "contract": "Gaia"
   },
   "publicMethods": [
-    {"name": "open_case", "kind": "write", "inputs": [
-      {"name": "case_id", "type": "string"},
-      {"name": "category", "type": "declared-category"},
-      {"name": "subject_ref", "type": "string"},
-      {"name": "facts_json", "type": "json-object-as-string (<=4096 bytes)"}
-    ], "output": "canonical-case-json-string"},
-    {"name": "classify_case", "kind": "write", "inputs": [
-      {"name": "case_id", "type": "string"},
-      {"name": "classification_id", "type": "string"},
-      {"name": "obligations_json", "type": "list of {type, bound} (1..8)"}
-    ], "output": "canonical-classification-json-string"},
-    {"name": "discharge_obligation", "kind": "write", "inputs": [
-      {"name": "obligation_id", "type": "string"},
-      {"name": "evidence_hash", "type": "string"}
-    ], "output": "canonical-obligation-json-string"},
-    {"name": "waive_obligation", "kind": "write", "inputs": [
-      {"name": "obligation_id", "type": "string"},
-      {"name": "waiver_note", "type": "string"}
-    ], "output": "canonical-obligation-json-string"},
-    {"name": "resolve_case", "kind": "write", "inputs": [
-      {"name": "case_id", "type": "string"},
-      {"name": "resolution_evidence_hash", "type": "string"}
-    ], "output": "canonical-case-json-string"},
-    {"name": "get_case", "kind": "view", "inputs": [{"name": "case_id", "type": "string"}], "output": "json-or-empty"},
-    {"name": "get_obligation", "kind": "view", "inputs": [{"name": "obligation_id", "type": "string"}], "output": "json-or-empty"}
+    {
+      "name": "open_case",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "case_id",
+          "type": "string"
+        },
+        {
+          "name": "category",
+          "type": "declared-category"
+        },
+        {
+          "name": "subject_ref",
+          "type": "string"
+        },
+        {
+          "name": "facts_json",
+          "type": "json-object-as-string (<=4096 bytes)"
+        }
+      ],
+      "output": "canonical-case-json-string"
+    },
+    {
+      "name": "classify_case",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "case_id",
+          "type": "string"
+        },
+        {
+          "name": "classification_id",
+          "type": "string"
+        },
+        {
+          "name": "obligations_json",
+          "type": "list of {type, bound} (1..8)"
+        }
+      ],
+      "output": "canonical-classification-json-string"
+    },
+    {
+      "name": "discharge_obligation",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "obligation_id",
+          "type": "string"
+        },
+        {
+          "name": "evidence_hash",
+          "type": "string"
+        }
+      ],
+      "output": "canonical-obligation-json-string"
+    },
+    {
+      "name": "waive_obligation",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "obligation_id",
+          "type": "string"
+        },
+        {
+          "name": "waiver_note",
+          "type": "string"
+        }
+      ],
+      "output": "canonical-obligation-json-string"
+    },
+    {
+      "name": "resolve_case",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "case_id",
+          "type": "string"
+        },
+        {
+          "name": "resolution_evidence_hash",
+          "type": "string"
+        }
+      ],
+      "output": "canonical-case-json-string"
+    },
+    {
+      "name": "get_case",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "case_id",
+          "type": "string"
+        }
+      ],
+      "output": "json-or-empty"
+    },
+    {
+      "name": "get_obligation",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "obligation_id",
+          "type": "string"
+        }
+      ],
+      "output": "json-or-empty"
+    }
   ],
   "canonicalDecision": {
-    "caseStatus": ["OPEN", "CLASSIFIED", "RESOLVED"],
-    "obligationStatus": ["PRESCRIBED", "DISCHARGED", "WAIVED"],
-    "categories": ["settlement-mismatch", "delivery-mismatch", "duplicate-execution", "stale-evidence", "unauthorized-action", "reconciliation-failure", "other"],
-    "obligationTypes": ["refund", "retry", "provide_evidence", "correct_usage_record", "reconcile", "manual_review"],
-    "equivalenceFields": ["status", "resolution_evidence_hash"]
+    "caseStatus": [
+      "OPEN",
+      "CLASSIFIED",
+      "RESOLVED"
+    ],
+    "obligationStatus": [
+      "PRESCRIBED",
+      "DISCHARGED",
+      "WAIVED"
+    ],
+    "categories": [
+      "settlement-mismatch",
+      "delivery-mismatch",
+      "duplicate-execution",
+      "stale-evidence",
+      "unauthorized-action",
+      "reconciliation-failure",
+      "other"
+    ],
+    "obligationTypes": [
+      "refund",
+      "retry",
+      "provide_evidence",
+      "correct_usage_record",
+      "reconcile",
+      "manual_review"
+    ],
+    "equivalenceFields": [
+      "status",
+      "resolution_evidence_hash"
+    ]
   },
   "stateMachine": {
     "case": "OPEN -> CLASSIFIED -> RESOLVED (terminal)",
@@ -56,8 +166,16 @@
     ]
   },
   "stateOwnership": {
-    "owns": ["exception cases with declared categories and facts", "bounded rectification obligations and their disposition state"],
-    "doesNotOwn": ["execution authority for any remedy", "capital movement", "historical event records of other primitives", "workflow authorization"]
+    "owns": [
+      "exception cases with declared categories and facts",
+      "bounded rectification obligations and their disposition state"
+    ],
+    "doesNotOwn": [
+      "execution authority for any remedy",
+      "capital movement",
+      "historical event records of other primitives",
+      "workflow authorization"
+    ]
   },
   "limits": {
     "maxFactsBytes": 4096,
@@ -68,18 +186,28 @@
     "dischargeWithoutEvidence": "rejected",
     "waiveWithoutNote": "rejected"
   },
-  "vectors": ["primitives/gaia/vectors/v0.1.json"],
+  "vectors": [
+    "primitives/gaia/vectors/v0.1.json"
+  ],
   "reproduce": [
     "python tools/nomos_lint.py",
     "python tools/nomos_converge.py check",
     "python tools/nomos_run_vectors.py primitives/gaia/implementations/genlayer/gaia.py --vectors primitives/gaia/vectors/v0.1.json"
   ],
   "composition": {
-    "typicalUpstream": ["any primitive's exceptional state", "claim-verification CONFLICTED results", "policy-envelope DENY anomalies"],
-    "typicalDownstream": ["workflow-authorization (remedy execution must be separately authorized)", "financial-contract", "settlement"]
+    "typicalUpstream": [
+      "any primitive's exceptional state",
+      "claim-verification CONFLICTED results",
+      "policy-envelope DENY anomalies"
+    ],
+    "typicalDownstream": [
+      "workflow-authorization (remedy execution must be separately authorized)",
+      "financial-contract",
+      "settlement"
+    ]
   },
   "unsupported": [
-    "executing any prescribed remedy — refund/retry/correction must pass ordinary Workflow Authorization",
+    "executing any prescribed remedy \u2014 refund/retry/correction must pass ordinary Workflow Authorization",
     "rewriting historical confirmed truth (append-only by construction)",
     "automatic case creation on ordinary deterministic rejection",
     "ambiguous-exception classification inside the contract in v0.1 (interpreting party supplies the bounded classification; an LLM layer may compose upstream without changing this surface)",
