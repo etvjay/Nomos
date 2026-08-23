@@ -150,9 +150,14 @@ class MonitorAccount(gl.Contract):
 
         def validator_fn(leaders_res) -> bool:
             my = leader_fn()
-            if not hasattr(leaders_res, "calldata"):
+            if not isinstance(my, dict):
                 return False
-            ld = leaders_res.calldata
+            try:
+                ld = leaders_res.calldata
+            except Exception:
+                return False
+            if not isinstance(ld, dict):
+                return False
             if not my.get("found") or not ld.get("found"):
                 return my.get("found") == ld.get("found")
             conf_rank = {"none": 0, "low": 1, "medium": 2, "high": 3}
@@ -170,7 +175,12 @@ class MonitorAccount(gl.Contract):
             res = gl.vm.run_nondet(leader_fn, validator_fn)
             return res
 
-        result = leader_fn()
+        result = gl.vm.run_nondet(leader_fn, validator_fn)
+        if not isinstance(result, dict):
+            m["last_check"] = _now_iso()
+            m["last_status"] = "consensus_unreachable"
+            self.monitors[monitor_id] = json.dumps(m)
+            return {"success": False, "error": "consensus_unreachable"}
 
         m["last_check"] = _now_iso()
         m["last_value"] = str(result.get("value", ""))
