@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "0.1.0",
+  "primitive": "dal",
+  "convergenceMode": "EXACT",
+  "statuses": ["ACTIVE", "REVOKED", "EXPIRED"],
+  "vectors": [
+    {
+      "id": "dal-open-lane-001",
+      "description": "Opening a lane for an issuer+domain registers it ACTIVE at expected nonce",
+      "actions": [
+        {"op": "open_lane", "args": ["ISSUER-1", "DOMAIN-A", "1000000000"], "expect": "ok"},
+        {"op": "get_lane", "args": ["ISSUER-1", "DOMAIN-A"], "expect": {"issuer": "ISSUER-1", "domain_id": "DOMAIN-A", "nonce": "1", "status": "ACTIVE"}}
+      ]
+    },
+    {
+      "id": "dal-open-duplicate-rejected-002",
+      "description": "A lane is unique per issuer+domain",
+      "actions": [
+        {"op": "open_lane", "args": ["ISSUER-1", "DOMAIN-A", "0"], "expect": "ok"},
+        {"op": "open_lane", "args": ["ISSUER-1", "DOMAIN-A", "0"], "expect": "reject"}
+      ]
+    },
+    {
+      "id": "dal-exercise-advances-nonce-003",
+      "description": "Exercising the exact expected nonce advances the lane deterministically",
+      "actions": [
+        {"op": "open_lane", "args": ["ISSUER-1", "DOMAIN-A", "9999999999"], "expect": "ok"},
+        {"op": "exercise", "args": ["ISSUER-1", "DOMAIN-A", "1", "5000000000"], "expect": {"decision": "AUTHORIZE", "reason_code": "NONCE_VALID"}},
+        {"op": "get_lane", "args": ["ISSUER-1", "DOMAIN-A"], "expect": {"nonce": "2"}}
+      ]
+    },
+    {
+      "id": "dal-stale-nonce-rejected-004",
+      "description": "Replaying an old nonce is rejected and does not advance the lane",
+      "actions": [
+        {"op": "open_lane", "args": ["ISSUER-1", "DOMAIN-A", "9999999999"], "expect": "ok"},
+        {"op": "exercise", "args": ["ISSUER-1", "DOMAIN-A", "1", "5000000000"], "expect": {"decision": "AUTHORIZE"}},
+        {"op": "exercise", "args": ["ISSUER-1", "DOMAIN-A", "1", "5000000001"], "expect": {"decision": "DENY", "reason_code": "NONCE_REUSED"}},
+        {"op": "exercise", "args": ["ISSUER-1", "DOMAIN-A", "2", "5000000002"], "expect": {"decision": "AUTHORIZE"}},
+        {"op": "exercise", "args": ["ISSUER-1", "DOMAIN-A", "2", "5000000003"], "expect": {"decision": "DENY", "reason_code": "NONCE_REUSED"}},
+        {"op": "get_lane", "args": ["ISSUER-1", "DOMAIN-A"], "expect": {"nonce": "3"}}
+      ]
+    },
+    {
+      "id": "dal-future-or-zero-nonce-rejected-005",
+      "description": "Zero or too-far-ahead nonces deny without advancing state",
+      "actions": [
+        {"op": "open_lane", "args": ["ISSUER-1", "DOMAIN-A", "9999999999"], "expect": "ok"},
+        {"op": "exercise", "args": ["ISSUER-1", "DOMAIN-A", "0", "5000000000"], "expect": {"decision": "DENY", "reason_code": "NONCE_INVALID"}},
+        {"op": "exercise", "args": ["ISSUER-1", "DOMAIN-A", "5", "5000000000"], "expect": {"decision": "DENY", "reason_code": "NONCE_INVALID"}},
+        {"op": "get_lane", "args": ["ISSUER-1", "DOMAIN-A"], "expect": {"nonce": "1"}}
+      ]
+    },
+    {
+      "id": "dal-domain-independence-006",
+      "description": "Two lanes under the same issuer are independent: exercising one does not disturb the other",
+      "actions": [
+        {"op": "open_lane", "args": ["ISSUER-1", "DOMAIN-A", "9999999999"], "expect": "ok"},
+        {"op": "open_lane", "args": ["ISSUER-1", "DOMAIN-B", "9999999999"], "expect": "ok"},
+        {"op": "exercise", "args": ["ISSUER-1", "DOMAIN-A", "1", "5000000000"], "expect": {"decision": "AUTHORIZE"}},
+        {"op": "exercise", "args": ["ISSUER-1", "DOMAIN-B", "1", "5000000000"], "expect": {"decision": "AUTHORIZE"}},
+        {"op": "exercise", "args": ["ISSUER-1", "DOMAIN-A", "2", "5000000001"], "expect": {"decision": "AUTHORIZE"}},
+        {"op": "get_lane", "args": ["ISSUER-1", "DOMAIN-B"], "expect": {"nonce": "2"}},
+        {"op": "get_lane", "args": ["ISSUER-1", "DOMAIN-A"], "expect": {"nonce": "3"}}
+      ]
+    },
+    {
+      "id": "dal-shared-dependency-not-implied-007",
+      "description": "Replay independence does not imply shared economic state: DAL exposes no balances or capacity views",
+      "actions": [
+        {"op": "open_lane", "args": ["ISSUER-1", "DOMAIN-A", "9999999999"], "expect": "ok"},
+        {"op": "get_lane", "args": ["UNKNOWN", "NOPE"], "expect": ""}
+      ]
+    },
+    {
+      "id": "dal-revoked-lane-denies-008",
+      "description": "Revocation denies all later exercise on that lane only; other lanes unaffected",
+      "actions": [
+        {"op": "open_lane", "args": ["ISSUER-1", "DOMAIN-A", "9999999999"], "expect": "ok"},
+        {"op": "open_lane", "args": ["ISSUER-1", "DOMAIN-B", "9999999999"], "expect": "ok"},
+        {"op": "revoke_lane", "args": ["ISSUER-1", "DOMAIN-A"], "expect": "ok"},
+        {"op": "get_lane", "args": ["ISSUER-1", "DOMAIN-A"], "expect": {"status": "REVOKED"}},
+        {"op": "exercise", "args": ["ISSUER-1", "DOMAIN-A", "1", "5000000000"], "expect": {"decision": "DENY", "reason_code": "LANE_REVOKED"}},
+        {"op": "exercise", "args": ["ISSUER-1", "DOMAIN-B", "1", "5000000000"], "expect": {"decision": "AUTHORIZE"}}
+      ]
+    },
+    {
+      "id": "dal-expired-lane-denies-009",
+      "description": "Exercise after expiry_window denies fail-closed",
+      "actions": [
+        {"op": "open_lane", "args": ["ISSUER-1", "DOMAIN-A", "50"], "expect": "ok"},
+        {"op": "exercise", "args": ["ISSUER-1", "DOMAIN-A", "1", "51"], "expect": {"decision": "DENY", "reason_code": "LANE_EXPIRED"}}
+      ]
+    },
+    {
+      "id": "dal-reopen-after-revoke-rejected-010",
+      "description": "A revoked lane cannot be reopened under the same key (revocation is explicit and testable)",
+      "actions": [
+        {"op": "open_lane", "args": ["ISSUER-1", "DOMAIN-A", "9999999999"], "expect": "ok"},
+        {"op": "revoke_lane", "args": ["ISSUER-1", "DOMAIN-A"], "expect": "ok"},
+        {"op": "open_lane", "args": ["ISSUER-1", "DOMAIN-A", "9999999999"], "expect": "reject"}
+      ]
+    }
+  ]
+}

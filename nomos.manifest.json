@@ -129,11 +129,13 @@
     {
       "id": "dal",
       "name": "Dynamic Authorization Lanes",
-      "status": "RESEARCHING",
+      "status": "SPECIFIED",
       "qualification": "QUALIFIED",
       "judgmentBearing": false,
       "genlayerRequired": true,
-      "canonicalPath": "primitives/dal"
+      "canonicalPath": "primitives/dal",
+      "capabilityVersion": "0.1.0",
+      "convergenceMode": "EXACT"
     },
     {
       "id": "financial-contract",

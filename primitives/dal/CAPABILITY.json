@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "1.0.0",
+  "primitiveId": "dal",
+  "name": "Dynamic Authorization Lanes (DAL)",
+  "capabilityVersion": "0.1.0",
+  "status": "SPECIFIED",
+  "convergenceMode": "EXACT",
+  "judgmentBearing": false,
+  "implementation": {
+    "environment": "genlayer",
+    "path": "primitives/dal/implementations/genlayer/dal.py",
+    "contract": "Dal"
+  },
+  "publicMethods": [
+    {"name": "open_lane", "kind": "write", "inputs": [
+      {"name": "issuer", "type": "address-string"},
+      {"name": "domain_id", "type": "string"},
+      {"name": "expiry_window", "type": "int-string"}
+    ], "output": "canonical-lane-json-string"},
+    {"name": "exercise", "kind": "write", "inputs": [
+      {"name": "issuer", "type": "address-string"},
+      {"name": "domain_id", "type": "string"},
+      {"name": "nonce", "type": "uint-string"},
+      {"name": "at_timestamp", "type": "int-string"}
+    ], "output": "canonical-decision-json-string"},
+    {"name": "revoke_lane", "kind": "write", "inputs": [
+      {"name": "issuer", "type": "address-string"},
+      {"name": "domain_id", "type": "string"}
+    ], "output": "canonical-lane-json-string"},
+    {"name": "get_lane", "kind": "view", "inputs": [
+      {"name": "issuer", "type": "address-string"},
+      {"name": "domain_id", "type": "string"}
+    ], "output": "json-or-empty"}
+  ],
+  "canonicalDecision": {
+    "decision": ["AUTHORIZE", "DENY"],
+    "reasonCode": ["NONCE_VALID", "NONCE_REUSED", "NONCE_INVALID", "LANE_REVOKED", "LANE_EXPIRED", "LANE_INACTIVE"],
+    "equivalenceFields": ["decision", "reason_code"]
+  },
+  "stateMachine": {
+    "lane": "ACTIVE -> REVOKED | ACTIVE -> EXPIRED(implicit by expiry window)",
+    "rules": [
+      "one lane per (issuer, domain_id); revoked lanes cannot be reopened",
+      "expected nonce starts at 1 and advances exactly once per AUTHORIZE",
+      "replayed (below expected) nonce -> NONCE_REUSED; ahead or zero -> NONCE_INVALID",
+      "denials mutate nothing; exercise after expiry denies fail-closed"
+    ]
+  },
+  "stateOwnership": {
+    "owns": ["per-(issuer,domain) replay domains with monotonic nonces"],
+    "doesNotOwn": ["balances, capacity, policy state, or any shared economic dependency", "authority creation (daa/workflow-authorization)", "capital of any kind", "settlement"]
+  },
+  "vectors": ["primitives/dal/vectors/v0.1.json"],
+  "reproduce": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "python tools/nomos_run_vectors.py primitives/dal/implementations/genlayer/dal.py --vectors primitives/dal/vectors/v0.1.json"
+  ],
+  "composition": {
+    "typicalUpstream": ["workflow-authorization", "daa", "capital-commitment"],
+    "typicalDownstream": ["financial-contract execution", "settlement"]
+  },
+  "unsupported": [
+    "shared economic state across lanes (explicitly out of scope)",
+    "authority creation or capital effects of any kind",
+    "deployment/conformance guarantee until receipts exist"
+  ]
+}
