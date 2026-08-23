@@ -98,7 +98,7 @@
     {
       "id": "daa",
       "name": "Dynamic Authority Allocation",
-      "status": "SPECIFIED",
+      "status": "CONFORMANT",
       "qualification": "QUALIFIED",
       "judgmentBearing": false,
       "genlayerRequired": true,
