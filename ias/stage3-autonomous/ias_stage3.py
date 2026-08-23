@@ -231,19 +231,37 @@ class AutonomousAccount(gl.Contract):
             tolerance = 5.0
 
         def leader_fn() -> typing.Any:
-            web_data = gl.nondet.web.render(data_source, mode="text")
-            res = gl.nondet.exec_prompt(
+            try:
+                web_data = gl.nondet.web.render(data_source, mode="text")
+            except Exception as e:
+                return {"found": False, "value": "0", "step": "web_render_failed",
+                        "error": str(e)[:150]}
+            if not web_data or len(web_data) < 10:
+                return {"found": False, "value": "0", "step": "web_empty"}
+            prompt = (
                 f'Extract {m["metric_type"]} from this page. WEBPAGE:\n'
                 f"{web_data[:4000]}\n"
                 'Respond ONLY as JSON: {"value":"<number>","found":true} '
                 'or {"found":false,"value":"0"}')
+            try:
+                res = gl.nondet.exec_prompt(prompt, response_format="json")
+            except Exception as e:
+                return {"found": False, "value": "0", "step": "exec_prompt_failed",
+                        "error": str(e)[:150]}
+            if not isinstance(res, dict):
+                return {"found": False, "value": "0", "step": "llm_returned_none"}
             return res
 
         def validator_fn(leaders_res) -> bool:
             my = leader_fn()
-            if not hasattr(leaders_res, "calldata"):
+            if not isinstance(my, dict):
                 return False
-            ld = leaders_res.calldata
+            try:
+                ld = leaders_res.calldata
+            except Exception:
+                return False
+            if not isinstance(ld, dict):
+                return False
             try:
                 ln, vn = float(ld.get("value", "0")), float(my.get("value", "0"))
                 ok = abs(ln - vn) <= abs(ln * (tolerance / 100.0))
@@ -252,6 +270,11 @@ class AutonomousAccount(gl.Contract):
             return ok and bool(ld.get("found")) == bool(my.get("found"))
 
         result = gl.vm.run_nondet(leader_fn, validator_fn)
+        if not isinstance(result, dict):
+            m["last_check"] = _now_iso()
+            m["last_status"] = "consensus_unreachable"
+            self.monitors[monitor_id] = json.dumps(m)
+            return {"success": False, "error": "consensus_unreachable"}
         value_str = str(result.get("value", "0"))
         found = bool(result.get("found"))
 
