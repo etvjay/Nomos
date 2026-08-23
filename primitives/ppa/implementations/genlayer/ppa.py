@@ -42,6 +42,14 @@ def _now_iso() -> str:
     return gl.message_raw["datetime"]
 
 
+def _ts(iso: str) -> int:
+    """Parse an ISO-8601 timestamp string to epoch seconds, tolerating
+    trailing 'Z', offsets, and fractional seconds."""
+    import datetime
+    txt = iso.strip().replace("Z", "+00:00")
+    return int(datetime.datetime.fromisoformat(txt).timestamp())
+
+
 def _valid_addr(a: str) -> bool:
     return isinstance(a, str) and a.startswith("0x") and len(a) == 42
 
@@ -88,7 +96,7 @@ class ProgrammablePaymentAccount(gl.Contract):
         sender = self._sender()
         if sender == self._norm(self.meta.get("owner")):
             return "owner"
-        now = int(_now_iso().replace("-", "").replace(":", "").replace("T", "").split(".")[0])
+        now = _ts(_now_iso())
         keys = list(self.delegations.keys())
         for k in keys:
             d = json.loads(self.delegations[k])
@@ -103,7 +111,7 @@ class ProgrammablePaymentAccount(gl.Contract):
     def _delegate_limits(self) -> tuple:
         """(per_tx_limit, daily_limit) for a delegator actor, else None."""
         sender = self._sender()
-        now = int(_now_iso().replace("-", "").replace(":", "").replace("T", "").split(".")[0])
+        now = _ts(_now_iso())
         for k in self.delegations.keys():
             d = json.loads(self.delegations[k])
             if d["principal"].lower().replace("0x", "") == sender and d["status"] == "ACTIVE" and int(d["expires"]) >= now:
@@ -269,8 +277,8 @@ class ProgrammablePaymentAccount(gl.Contract):
         return {"success": False, "status": "DENIED", "reason": reason}
 
     def _roll_daily_window(self, rec: dict) -> tuple:
-        now = int(_now_iso().replace("-", "").replace(":", "").replace("T", "").split(".")[0])
-        start = int(rec["daily_window_start"].replace("-", "").replace(":", "").replace("T", "").split(".")[0])
+        now = _ts(_now_iso())
+        start = _ts(rec["daily_window_start"])
         if now - start >= 86400:
             rec["daily_spent"] = "0"
             rec["daily_window_start"] = _now_iso()

@@ -5,9 +5,16 @@
   "deployer": "0x8311bfd717708d6e9c4933e80762cc4901f836bf",
   "contractFile": "contracts/ppa.py",
   "primitive": "ppa",
-  "evmTxHash": "0xd4129d0ab152c952403b4299036f4db591ec014bda71d9cb1350aa025ef469ff",
-  "contractAddress": "0xe4d3f0b1119f940c5e98bc3899a595a92c988f7a",
+  "evmTxHash": "0x0359eb263c384e7c6e9ce83e9f8762455f72d4d48159718f311324f63822187b",
+  "contractAddress": "0xa0a78b312edae2b95ae73d1706295ed7966b45da",
   "codeBytesOnChain": 300,
   "evidenceLevel": "deployed on live testnet; bytecode verified via eth_getCode; functional write-call evidence pending",
-  "deployedAt": "2026-08-23"
+  "deployedAt": "2026-08-23",
+  "note": "v0.1.1 redeploy with robust ISO timestamp parsing (Z-suffix fix found via Bradbury-only revert)",
+  "functionalVerification": {
+    "method": "live write+read calls",
+    "result": "PASS",
+    "detail": "Full payment lifecycle executed on-chain: initialize, create_account (ACTIVE), deposit 3000, send 1200 -> SETTLED, balance read-back 1800 = exact expected delta. Payment id LIFE-945168.",
+    "verifiedAt": "2026-08-23"
+  }
 }
