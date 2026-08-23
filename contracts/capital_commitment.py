@@ -1,0 +1,1 @@
+/home/ubuntu/nomos/primitives/capital-commitment/implementations/genlayer/capital_commitment.py
