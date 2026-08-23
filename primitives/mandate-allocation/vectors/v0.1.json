@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "0.1.0",
+  "primitive": "mandate-allocation",
+  "convergenceMode": "EXACT",
+  "statuses": ["EVALUATED", "SUPERSEDED"],
+  "vectors": [
+    {
+      "id": "ma-register-mandate-001",
+      "description": "Registering a mandate binds its hash and deterministic hard constraints",
+      "actions": [
+        {"op": "register_mandate", "args": ["MAN1", "sha256:mandate-doc-1", "1000000", "USD", "[\"invoice\",\"trade-receivable\"]"], "expect": "ok"},
+        {"op": "get_mandate", "args": ["MAN1"], "expect": {"mandate_id": "MAN1", "doc_hash": "sha256:mandate-doc-1", "max_total_exposure": "1000000", "asset": "USD"}}
+      ]
+    },
+    {
+      "id": "ma-mandate-duplicate-invalid-002",
+      "description": "Duplicate mandate ids, empty fields, zero exposure rejected deterministically",
+      "actions": [
+        {"op": "register_mandate", "args": ["MAN1", "sha256:m1", "100000", "USD", "[\"invoice\"]"], "expect": "ok"},
+        {"op": "register_mandate", "args": ["MAN1", "sha256:m2", "200000", "EUR", "[\"invoice\"]"], "expect": "reject"},
+        {"op": "register_mandate", "args": ["", "sha256:m3", "100", "USD", "[]"], "expect": "reject"},
+        {"op": "register_mandate", "args": ["M3", "", "100", "USD", "[]"], "expect": "reject"},
+        {"op": "register_mandate", "args": ["M4", "sha256:m4", "0", "USD", "[]"], "expect": "reject"},
+        {"op": "register_mandate", "args": ["M5", "sha256:m5", "abc", "USD", "[]"], "expect": "reject"}
+      ]
+    },
+    {
+      "id": "ma-evaluate-single-opportunity-003",
+      "description": "Deterministic evaluation returns ELIGIBLE recommendation with score class; result is advisory only",
+      "actions": [
+        {"op": "register_mandate", "args": ["MAN1", "sha256:m1", "1000000", "USD", "[\"invoice\"]"], "expect": "ok"},
+        {"op": "evaluate_opportunity", "args": ["RES1", "MAN1", "OPP-1", "invoice", "40000", "5000000000"], "expect": {"evaluation_id": "RES1", "mandate_id": "MAN1", "opportunity_ref": "OPP-1", "eligibility": "ELIGIBLE", "recommended_amount": "40000"}},
+        {"op": "get_evaluation", "args": ["RES1"], "expect": {"status": "EVALUATED"}}
+      ]
+    },
+    {
+      "id": "ma-ineligible-by-class-004",
+      "description": "Opportunity class outside allowed classes yields INELIGIBLE, no authority implied",
+      "actions": [
+        {"op": "register_mandate", "args": ["MAN1", "sha256:m1", "1000000", "USD", "[\"invoice\"]"], "expect": "ok"},
+        {"op": "evaluate_opportunity", "args": ["RES1", "MAN1", "OPP-X", "crypto-loan", "10", "5000000000"], "expect": {"eligibility": "INELIGIBLE", "reason_code": "CLASS_NOT_PERMITTED"}}
+      ]
+    },
+    {
+      "id": "ma-exposure-capacity-enforced-005",
+      "description": "Recommended amounts consume mandate exposure; exceeding capacity yields INELIGIBLE EXPOSURE_EXCEEDED without consuming",
+      "actions": [
+        {"op": "register_mandate", "args": ["MAN1", "sha256:m1", "100000", "USD", "[\"invoice\"]"], "expect": "ok"},
+        {"op": "evaluate_opportunity", "args": ["RES1", "MAN1", "OPP-1", "invoice", "60000", "5000000000"], "expect": {"eligibility": "ELIGIBLE"}},
+        {"op": "evaluate_opportunity", "args": ["RES2", "MAN1", "OPP-2", "invoice", "60000", "5000000001"], "expect": {"eligibility": "INELIGIBLE", "reason_code": "EXPOSURE_EXCEEDED"}},
+        {"op": "committed_exposure", "args": ["MAN1"], "expect": "60000"},
+        {"op": "evaluate_opportunity", "args": ["RES3", "MAN1", "OPP-3", "invoice", "40000", "5000000002"], "expect": {"eligibility": "ELIGIBLE"}},
+        {"op": "committed_exposure", "args": ["MAN1"], "expect": "100000"}
+      ]
+    },
+    {
+      "id": "ma-duplicate-evaluation-id-rejected-006",
+      "description": "Evaluation ids are unique — including INELIGIBLE attempts (attempts are auditable)",
+      "actions": [
+        {"op": "register_mandate", "args": ["MAN1", "sha256:m1", "100000", "USD", "[\"invoice\"]"], "expect": "ok"},
+        {"op": "evaluate_opportunity", "args": ["RES1", "MAN1", "OPP-1", "invoice", "10", "5000000000"], "expect": {"eligibility": "ELIGIBLE"}},
+        {"op": "evaluate_opportunity", "args": ["RES1", "MAN1", "OPP-2", "invoice", "10", "5000000001"], "expect": "reject"},
+        {"op": "evaluate_opportunity", "args": ["RES2", "MAN1", "OPP-2", "invoice", "9999999", "5000000002"], "expect": {"eligibility": "INELIGIBLE", "reason_code": "EXPOSURE_EXCEEDED"}},
+        {"op": "get_evaluation", "args": ["RES2"], "expect": {"eligibility": "INELIGIBLE"}},
+        {"op": "evaluate_opportunity", "args": ["RES2", "MAN1", "OPP-2", "invoice", "10", "5000000003"], "expect": "reject"},
+        {"op": "committed_exposure", "args": ["MAN1"], "expect": "10"}
+      ]
+    },
+    {
+      "id": "ma-unknown-mandate-and-inputs-007",
+      "description": "Unknown mandate, empty refs, malformed class list rejected",
+      "actions": [
+        {"op": "evaluate_opportunity", "args": ["RX", "NOPE", "OPP-1", "invoice", "10", "1"], "expect": "reject"},
+        {"op": "register_mandate", "args": ["MAN1", "sha256:m1", "1000", "USD", "[\"invoice\"]"], "expect": "ok"},
+        {"op": "evaluate_opportunity", "args": ["RY", "MAN1", "", "invoice", "10", "1"], "expect": "reject"},
+        {"op": "get_evaluation", "args": ["UNKNOWN"], "expect": ""},
+        {"op": "get_mandate", "args": ["UNKNOWN"], "expect": ""}
+      ]
+    },
+    {
+      "id": "ma-supersede-008",
+      "description": "A newer evaluation supersedes an older one for the same opportunity; superseded keeps history",
+      "actions": [
+        {"op": "register_mandate", "args": ["MAN1", "sha256:m1", "100000", "USD", "[\"invoice\"]"], "expect": "ok"},
+        {"op": "evaluate_opportunity", "args": ["RES1", "MAN1", "OPP-1", "invoice", "20000", "5000000000"], "expect": {"eligibility": "ELIGIBLE"}},
+        {"op": "supersede_evaluation", "args": ["RES1", "RES2", "{\"note\":\"repriced\"}"], "expect": "ok"},
+        {"op": "get_evaluation", "args": ["RES1"], "expect": {"status": "SUPERSEDED"}},
+        {"op": "get_evaluation", "args": ["RES2"], "expect": {"status": "EVALUATED", "supersedes": "RES1"}}
+      ]
+    },
+    {
+      "id": "ma-no-authority-effects-009",
+      "description": "Recommendations create no authority/capital state beyond advisory exposure accounting: unknown lookups return empty",
+      "actions": [
+        {"op": "get_evaluation", "args": ["UNKNOWN"], "expect": ""}
+      ]
+    }
+  ]
+}

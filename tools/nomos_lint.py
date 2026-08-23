@@ -61,7 +61,6 @@ ALLOWED_CONVERGENCE = {"EXACT", "SEMANTIC"}
 
 JUDGMENT_EXPECTED = {
     "claim-verification",
-    "mandate-allocation",
     "financial-contract",
 }
 
@@ -70,6 +69,7 @@ DETERMINISTIC_EXPECTED = {
     "proof-of-payable",
     "workflow-authorization",
     "daa",
+    "mandate-allocation",
     "claim-encumbrance",
     "capital-commitment",
     "dal",

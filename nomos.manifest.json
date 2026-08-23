@@ -87,11 +87,13 @@
     {
       "id": "mandate-allocation",
       "name": "Mandate Allocation",
-      "status": "RESEARCHING",
+      "status": "SPECIFIED",
       "qualification": "QUALIFIED_EXTENSION",
-      "judgmentBearing": true,
+      "judgmentBearing": false,
       "genlayerRequired": true,
-      "canonicalPath": "primitives/mandate-allocation"
+      "canonicalPath": "primitives/mandate-allocation",
+      "capabilityVersion": "0.1.0",
+      "convergenceMode": "EXACT"
     },
     {
       "id": "daa",
