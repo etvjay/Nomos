@@ -38,7 +38,7 @@
     {
       "id": "proof-of-payable",
       "name": "Proof of Payable",
-      "status": "SPECIFIED",
+      "status": "CONFORMANT",
       "qualification": "QUALIFIED",
       "judgmentBearing": false,
       "genlayerRequired": true,

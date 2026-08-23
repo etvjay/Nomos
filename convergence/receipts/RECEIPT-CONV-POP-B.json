@@ -1,0 +1,12 @@
+{
+  "receipt_id": "RECEIPT-CONV-POP-B",
+  "primitive": "proof-of-payable",
+  "date": "2026-08-23",
+  "convergence_mode": "EXACT",
+  "lane": "convergence-lanes/pop/your_build.py",
+  "builder": "fresh-context subagent (spec+vectors only; reference impl not accessed)",
+  "vectors_total": 17,
+  "vectors_passed": 17,
+  "verdict": "CONVERGED",
+  "report": "convergence-lanes/pop/BUILD_REPORT.md"
+}
