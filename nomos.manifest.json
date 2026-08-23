@@ -72,7 +72,7 @@
     {
       "id": "workflow-authorization",
       "name": "Workflow Authorization",
-      "status": "SPECIFIED",
+      "status": "CONFORMANT",
       "qualification": "QUALIFIED",
       "judgmentBearing": false,
       "genlayerRequired": true,

@@ -3,7 +3,7 @@
   "primitiveId": "workflow-authorization",
   "name": "Workflow Authorization (Path + Pact)",
   "capabilityVersion": "0.1.0",
-  "status": "SPECIFIED",
+  "status": "CONFORMANT",
   "convergenceMode": "EXACT",
   "judgmentBearing": false,
   "implementation": {
@@ -12,38 +12,164 @@
     "contract": "WorkflowAuthorization"
   },
   "publicMethods": [
-    {"name": "grant_path", "kind": "write", "inputs": [
-      {"name": "path_id", "type": "string"},
-      {"name": "principal", "type": "address-string"},
-      {"name": "agent", "type": "address-string"},
-      {"name": "purpose_scope", "type": "string"},
-      {"name": "max_per_action", "type": "uint-string"},
-      {"name": "asset", "type": "string"},
-      {"name": "valid_after", "type": "int-string"},
-      {"name": "valid_until", "type": "int-string"}
-    ], "output": "canonical-path-json-string"},
-    {"name": "revoke_path", "kind": "write", "inputs": [{"name": "path_id", "type": "string"}], "output": "canonical-path-json-string"},
-    {"name": "propose_pact", "kind": "write", "inputs": [
-      {"name": "pact_id", "type": "string"},
-      {"name": "path_id", "type": "string"},
-      {"name": "workflow_ref", "type": "string"},
-      {"name": "terms_json", "type": "json-object-as-string (<=4096 bytes)"},
-      {"name": "proposed_at", "type": "int-string"}
-    ], "output": "canonical-pact-json-string"},
-    {"name": "accept_pact", "kind": "write", "inputs": [{"name": "pact_id", "type": "string"}], "output": "canonical-pact-json-string", "authority": "only the Path principal may accept"},
-    {"name": "void_pact", "kind": "write", "inputs": [{"name": "pact_id", "type": "string"}], "output": "canonical-pact-json-string"},
-    {"name": "execute_pact", "kind": "write", "inputs": [
-      {"name": "pact_id", "type": "string"},
-      {"name": "action_amount", "type": "uint-string"},
-      {"name": "at_timestamp", "type": "int-string"}
-    ], "output": "canonical-decision-json-string"},
-    {"name": "get_path", "kind": "view", "inputs": [{"name": "path_id", "type": "string"}], "output": "json-or-empty"},
-    {"name": "get_pact", "kind": "view", "inputs": [{"name": "pact_id", "type": "string"}], "output": "json-or-empty"}
+    {
+      "name": "grant_path",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "path_id",
+          "type": "string"
+        },
+        {
+          "name": "principal",
+          "type": "address-string"
+        },
+        {
+          "name": "agent",
+          "type": "address-string"
+        },
+        {
+          "name": "purpose_scope",
+          "type": "string"
+        },
+        {
+          "name": "max_per_action",
+          "type": "uint-string"
+        },
+        {
+          "name": "asset",
+          "type": "string"
+        },
+        {
+          "name": "valid_after",
+          "type": "int-string"
+        },
+        {
+          "name": "valid_until",
+          "type": "int-string"
+        }
+      ],
+      "output": "canonical-path-json-string"
+    },
+    {
+      "name": "revoke_path",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "path_id",
+          "type": "string"
+        }
+      ],
+      "output": "canonical-path-json-string"
+    },
+    {
+      "name": "propose_pact",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "pact_id",
+          "type": "string"
+        },
+        {
+          "name": "path_id",
+          "type": "string"
+        },
+        {
+          "name": "workflow_ref",
+          "type": "string"
+        },
+        {
+          "name": "terms_json",
+          "type": "json-object-as-string (<=4096 bytes)"
+        },
+        {
+          "name": "proposed_at",
+          "type": "int-string"
+        }
+      ],
+      "output": "canonical-pact-json-string"
+    },
+    {
+      "name": "accept_pact",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "pact_id",
+          "type": "string"
+        }
+      ],
+      "output": "canonical-pact-json-string",
+      "authority": "only the Path principal may accept"
+    },
+    {
+      "name": "void_pact",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "pact_id",
+          "type": "string"
+        }
+      ],
+      "output": "canonical-pact-json-string"
+    },
+    {
+      "name": "execute_pact",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "pact_id",
+          "type": "string"
+        },
+        {
+          "name": "action_amount",
+          "type": "uint-string"
+        },
+        {
+          "name": "at_timestamp",
+          "type": "int-string"
+        }
+      ],
+      "output": "canonical-decision-json-string"
+    },
+    {
+      "name": "get_path",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "path_id",
+          "type": "string"
+        }
+      ],
+      "output": "json-or-empty"
+    },
+    {
+      "name": "get_pact",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "pact_id",
+          "type": "string"
+        }
+      ],
+      "output": "json-or-empty"
+    }
   ],
   "canonicalDecision": {
-    "decision": ["AUTHORIZE", "DENY"],
-    "reasonCode": ["WITHIN_DELEGATED_AUTHORITY", "PACT_NOT_ACCEPTED", "PATH_NOT_ACTIVE", "PATH_EXPIRED", "EXCEEDS_PATH_BOUND"],
-    "equivalenceFields": ["decision", "reason_code"]
+    "decision": [
+      "AUTHORIZE",
+      "DENY"
+    ],
+    "reasonCode": [
+      "WITHIN_DELEGATED_AUTHORITY",
+      "PACT_NOT_ACCEPTED",
+      "PATH_NOT_ACTIVE",
+      "PATH_EXPIRED",
+      "EXCEEDS_PATH_BOUND"
+    ],
+    "equivalenceFields": [
+      "decision",
+      "reason_code"
+    ]
   },
   "stateMachine": {
     "path": "ACTIVE -> REVOKED | ACTIVE -> EXPIRED(implicit by window)",
@@ -57,8 +183,17 @@
     ]
   },
   "stateOwnership": {
-    "owns": ["Path standing-authority objects with deterministic bounds", "Pact propose/accept/execute state keyed by exact workflow reference"],
-    "doesNotOwn": ["capital allocation or reservation", "replay lanes/nonces", "settlement execution", "policy interpretation (delegates to policy-envelope interpret_clause)", "claim encumbrance or commitment"]
+    "owns": [
+      "Path standing-authority objects with deterministic bounds",
+      "Pact propose/accept/execute state keyed by exact workflow reference"
+    ],
+    "doesNotOwn": [
+      "capital allocation or reservation",
+      "replay lanes/nonces",
+      "settlement execution",
+      "policy interpretation (delegates to policy-envelope interpret_clause)",
+      "claim encumbrance or commitment"
+    ]
   },
   "limits": {
     "maxTermsBytes": 4096,
@@ -67,7 +202,9 @@
     "duplicatePactId": "rejected",
     "executedPactReuse": "rejected"
   },
-  "vectors": ["primitives/workflow-authorization/vectors/v0.1.json"],
+  "vectors": [
+    "primitives/workflow-authorization/vectors/v0.1.json"
+  ],
   "reproduce": [
     "python tools/nomos_lint.py",
     "python tools/nomos_converge.py check",
@@ -75,12 +212,22 @@
     "python -m pytest primitives/workflow-authorization/implementations/genlayer/tests/ -v"
   ],
   "composition": {
-    "typicalUpstream": ["policy-envelope", "proof-of-payable", "claim-verification"],
-    "typicalDownstream": ["daa", "capital-commitment", "dal", "financial-contract", "gaia"]
+    "typicalUpstream": [
+      "policy-envelope",
+      "proof-of-payable",
+      "claim-verification"
+    ],
+    "typicalDownstream": [
+      "daa",
+      "capital-commitment",
+      "dal",
+      "financial-contract",
+      "gaia"
+    ]
   },
   "unsupported": [
     "substantive purpose-fit judgment inside the primitive (compose policy-envelope interpret_clause)",
-    "capital movement of any kind — AUTHORIZE is an authorization decision only",
+    "capital movement of any kind \u2014 AUTHORIZE is an authorization decision only",
     "multi-signature or quorum acceptance in v0.1",
     "deployment/conformance guarantee until receipts exist"
   ]

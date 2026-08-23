@@ -1,0 +1,12 @@
+{
+  "receipt_id": "RECEIPT-CONV-WA-B",
+  "primitive": "workflow-authorization",
+  "date": "2026-08-23",
+  "convergence_mode": "EXACT",
+  "lane": "convergence-lanes/workflow-authorization/your_build.py",
+  "builder": "fresh-context subagent (spec+vectors only)",
+  "vectors_total": 10,
+  "vectors_passed": 10,
+  "verdict": "CONVERGED",
+  "report": "convergence-lanes/workflow-authorization/BUILD_REPORT.md"
+}
