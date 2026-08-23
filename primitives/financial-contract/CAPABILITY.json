@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "1.0.0",
+  "primitiveId": "financial-contract",
+  "name": "Financial Contract (Obligation / Cash-Flow Lifecycle)",
+  "capabilityVersion": "0.1.0",
+  "status": "SPECIFIED",
+  "convergenceMode": "EXACT",
+  "judgmentBearing": false,
+  "scopeNarrowing": {
+    "from": "generic financial agreement (SCOPE_PROVISIONAL)",
+    "to": "obligation/cash-flow lifecycle: principal conservation, deterministic payment application, maturity, closure, creditor-declared default",
+    "deferred": ["interest/fee accrual rules", "contingent clauses", "covenants", "restructuring", "natural-language conditions"],
+    "record": "PRIMITIVE_QUALIFICATION directed narrowing before implementation; Article XVI analysis in SPEC.md"
+  },
+  "implementation": {
+    "environment": "genlayer",
+    "path": "primitives/financial-contract/implementations/genlayer/financial_contract.py",
+    "contract": "FinancialContract"
+  },
+  "publicMethods": [
+    {"name": "open_contract", "kind": "write", "inputs": [
+      {"name": "contract_id", "type": "string"},
+      {"name": "creditor", "type": "address-string"},
+      {"name": "obligor", "type": "address-string"},
+      {"name": "principal", "type": "uint-string"},
+      {"name": "asset", "type": "string"},
+      {"name": "valid_after", "type": "int-string"},
+      {"name": "maturity", "type": "int-string"},
+      {"name": "authority_ref", "type": "string (exact upstream Pact/allocation origin)"}
+    ], "output": "canonical-contract-json-string"},
+    {"name": "apply_payment", "kind": "write", "inputs": [
+      {"name": "contract_id", "type": "string"},
+      {"name": "payment_id", "type": "string"},
+      {"name": "amount", "type": "uint-string"},
+      {"name": "at_timestamp", "type": "int-string"}
+    ], "output": "canonical-application-json-or-denial-json-string"},
+    {"name": "declare_default", "kind": "write", "authority": "only the creditor, after maturity, with outstanding balance", "inputs": [{"name": "contract_id", "type": "string"}], "output": "canonical-contract-json-string"},
+    {"name": "get_contract", "kind": "view", "inputs": [{"name": "contract_id", "type": "string"}], "output": "json-or-empty"},
+    {"name": "get_payment", "kind": "view", "inputs": [
+      {"name": "contract_id", "type": "string"},
+      {"name": "payment_id", "type": "string"}
+    ], "output": "json-or-empty"}
+  ],
+  "canonicalDecision": {
+    "contractStatus": ["ACTIVE", "CLOSED", "DEFAULTED"],
+    "denialReasons": ["EXCEEDS_OUTSTANDING", "BEFORE_VALIDITY_WINDOW", "CONTRACT_CLOSED", "CONTRACT_DEFAULTED", "CONTRACT_MATURED"],
+    "equivalenceFields": ["applied", "outstanding", "total_paid", "decision", "reason_code"]
+  },
+  "stateMachine": {
+    "contract": "ACTIVE -> CLOSED (full repayment) | ACTIVE -> DEFAULTED (creditor-declared post-maturity)",
+    "rules": [
+      "conservation: outstanding = principal - total_paid at all times, exact integer arithmetic",
+      "overpayment denied (not clipped); denied payments consume no id and mutate nothing",
+      "CLOSED and DEFAULTED are terminal",
+      "payment records append-only and immutable after closure"
+    ]
+  },
+  "stateOwnership": {
+    "owns": ["obligation lifecycle state", "append-only applied-payment records"],
+    "doesNotOwn": ["actual fund transfer (settlement/custody layers)", "authority creation", "claim encumbrance", "replay lanes", "clause interpretation (upstream claim-verification / policy-envelope)"]
+  },
+  "limits": {
+    "duplicateContractId": "rejected",
+    "duplicatePaymentIdPerContract": "rejected",
+    "selfDealing": "rejected",
+    "defaultByNonCreditor": "rejected",
+    "defaultBeforeMaturity": "rejected"
+  },
+  "vectors": ["primitives/financial-contract/vectors/v0.1.json"],
+  "reproduce": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "python tools/nomos_run_vectors.py primitives/financial-contract/implementations/genlayer/financial_contract.py --vectors primitives/financial-contract/vectors/v0.1.json",
+    "python -m pytest primitives/financial-contract/implementations/genlayer/tests/ -v"
+  ],
+  "composition": {
+    "typicalUpstream": ["workflow-authorization (Pact)", "capital-commitment", "claim-verification", "proof-of-payable"],
+    "typicalDownstream": ["gaia (exceptions)", "settlement"]
+  },
+  "unsupported": [
+    "contingent clauses, covenants, interest accrual, restructuring — future capability versions with declared judgment boundaries",
+    "in-contract interpretation of external events (compose claim-verification)",
+    "actual fund transfer — apply_payment records application; movement is settlement-layer",
+    "deployment/conformance guarantee until receipts exist"
+  ]
+}

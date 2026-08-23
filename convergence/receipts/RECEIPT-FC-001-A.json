@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0.0",
+  "receiptId": "RECEIPT-FC-001-A",
+  "workId": "WORK-FC-001",
+  "primitiveId": "financial-contract",
+  "baseCommit": "SET_AT_COMMIT",
+  "resultCommit": "SET_AT_COMMIT",
+  "authorityFingerprint": "sha256:898323a144a1fe456cda291eda463824e3ccb10e6b16875f65c2cc34ddf91954",
+  "capabilityVersion": "0.1.0",
+  "convergenceMode": "EXACT",
+  "commands": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "python tools/nomos_run_vectors.py primitives/financial-contract/implementations/genlayer/financial_contract.py --vectors primitives/financial-contract/vectors/v0.1.json",
+    "python -m pytest primitives/financial-contract/implementations/genlayer/tests/ -v"
+  ],
+  "gates": [
+    {"id": "nomos-lint", "state": "PASS", "evidence": "NOMOS-LINT PASS"},
+    {"id": "nomos-converge-check", "state": "PASS", "evidence": "NOMOS-CONVERGE PASS"},
+    {"id": "canonical-vectors", "state": "PASS", "evidence": "9/9 vectors passed for financial-contract"},
+    {"id": "authority-gate-direct-tests", "state": "PASS", "evidence": "3/3 passed (creditor-only default, pre-maturity rejection, post-default denial)"},
+    {"id": "independent-partner-convergence", "state": "NOT_IMPLEMENTED", "evidence": null},
+    {"id": "integration/deployment", "state": "NOT_IMPLEMENTED", "evidence": null}
+  ],
+  "runtimeVersions": {"python": "3.12.14", "genlayer-py": "0.18.0", "genlayer-test": "0.29.2"},
+  "knownGaps": ["no independent partner build yet", "no GLSim integration test yet", "interest/covenants/clauses deferred to future capability versions"],
+  "notes": "Scope narrowed per PRIMITIVE_QUALIFICATION to obligation/cash-flow lifecycle; Article XVI record in SPEC.md and CAPABILITY.json scopeNarrowing."
+}

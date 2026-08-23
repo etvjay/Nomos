@@ -61,7 +61,6 @@ ALLOWED_CONVERGENCE = {"EXACT", "SEMANTIC"}
 
 JUDGMENT_EXPECTED = {
     "claim-verification",
-    "financial-contract",
 }
 
 DETERMINISTIC_EXPECTED = {

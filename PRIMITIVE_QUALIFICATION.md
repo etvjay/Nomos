@@ -26,7 +26,7 @@ A primitive that fails this test should become an internal module, composition p
 
 ## Consequence
 
-Ten primitives currently qualify as public Nomos developer building blocks. `Financial Contract` remains registered but is **scope-provisional** and MUST NOT enter implementation until its public state model is narrowed.
+Ten primitives currently qualify as public Nomos developer building blocks. `Financial Contract` was narrowed (Aug 2026) to an obligation/cash-flow lifecycle and entered implementation as v0.1.0 SPECIFIED/EXACT.
 
 `Mandate Allocation` qualifies as an extension primitive: public and reusable, but not part of the minimum dependency chain for the first Nomos reference application.
 

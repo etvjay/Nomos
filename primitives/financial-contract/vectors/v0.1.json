@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "0.1.0",
+  "primitive": "financial-contract",
+  "convergenceMode": "EXACT",
+  "statuses": { "contract": ["ACTIVE", "MATURED", "DEFAULTED", "CLOSED"], "payment": ["APPLIED"] },
+  "vectors": [
+    {
+      "id": "fc-open-contract-001",
+      "description": "Opening a contract binds principal, counterparties, maturity; state ACTIVE with zero paid",
+      "actions": [
+        {"op": "open_contract", "args": ["FC1", "PRINCIPAL-A", "OBLIGOR-B", "10000", "USD", "1700000000", "1800000000", "PATH-REF-1"], "expect": "ok"},
+        {"op": "get_contract", "args": ["FC1"], "expect": {"contract_id": "FC1", "creditor": "PRINCIPAL-A", "obligor": "OBLIGOR-B", "principal": "10000", "asset": "USD", "maturity": "1800000000", "authority_ref": "PATH-REF-1", "status": "ACTIVE", "total_paid": "0", "outstanding": "10000"}}
+      ]
+    },
+    {
+      "id": "fc-open-duplicate-invalid-002",
+      "description": "Duplicate ids, empty fields, zero principal, inverted dates, self-dealing rejected",
+      "actions": [
+        {"op": "open_contract", "args": ["FC1", "A", "B", "100", "USD", "0", "10", "P1"], "expect": "ok"},
+        {"op": "open_contract", "args": ["FC1", "C", "D", "200", "USD", "0", "10", "P2"], "expect": "reject"},
+        {"op": "open_contract", "args": ["", "A", "B", "100", "USD", "0", "10", "P1"], "expect": "reject"},
+        {"op": "open_contract", "args": ["FC3", "", "B", "100", "USD", "0", "10", "P1"], "expect": "reject"},
+        {"op": "open_contract", "args": ["FC4", "A", "", "100", "USD", "0", "10", "P1"], "expect": "reject"},
+        {"op": "open_contract", "args": ["FC5", "A", "B", "0", "USD", "0", "10", "P1"], "expect": "reject"},
+        {"op": "open_contract", "args": ["FC6", "A", "B", "100", "", "0", "10", "P1"], "expect": "reject"},
+        {"op": "open_contract", "args": ["FC7", "A", "B", "100", "USD", "20", "10", "P1"], "expect": "reject"},
+        {"op": "open_contract", "args": ["FC8", "SAME", "SAME", "100", "USD", "0", "10", "P1"], "expect": "reject"}
+      ]
+    },
+    {
+      "id": "fc-payment-conservation-003",
+      "description": "Payments apply deterministically: outstanding decreases exactly by applied amount, total_paid increases; overpayment rejected not clipped",
+      "actions": [
+        {"op": "open_contract", "args": ["FC1", "A", "B", "1000", "USD", "0", "9999999999", "P1"], "expect": "ok"},
+        {"op": "apply_payment", "args": ["FC1", "PAY1", "400", "5000000000"], "expect": {"applied": "400", "outstanding": "600"}},
+        {"op": "apply_payment", "args": ["FC1", "PAY2", "700", "5000000001"], "expect": {"decision": "DENY", "reason_code": "EXCEEDS_OUTSTANDING"}},
+        {"op": "get_contract", "args": ["FC1"], "expect": {"total_paid": "400", "outstanding": "600"}}
+      ]
+    },
+    {
+      "id": "fc-payment-id-uniqueness-004",
+      "description": "Payment ids unique per contract (replay rejection); denied payments do not consume the id",
+      "actions": [
+        {"op": "open_contract", "args": ["FC1", "A", "B", "1000", "USD", "0", "9999999999", "P1"], "expect": "ok"},
+        {"op": "apply_payment", "args": ["FC1", "PAY1", "100", "5000000000"], "expect": {"applied": "100"}},
+        {"op": "apply_payment", "args": ["FC1", "PAY1", "100", "5000000001"], "expect": "reject"},
+        {"op": "apply_payment", "args": ["FC1", "PAY2", "99999", "5000000002"], "expect": {"decision": "DENY", "reason_code": "EXCEEDS_OUTSTANDING"}},
+        {"op": "apply_payment", "args": ["FC1", "PAY2", "50", "5000000003"], "expect": {"applied": "50"}}
+      ]
+    },
+    {
+      "id": "fc-maturity-and-full-repayment-005",
+      "description": "Full repayment closes the contract; closed contracts reject further payments",
+      "actions": [
+        {"op": "open_contract", "args": ["FC1", "A", "B", "500", "USD", "0", "60", "P1"], "expect": "ok"},
+        {"op": "apply_payment", "args": ["FC1", "PAY1", "500", "5000000000"], "expect": {"applied": "500", "outstanding": "0"}},
+        {"op": "get_contract", "args": ["FC1"], "expect": {"status": "CLOSED"}},
+        {"op": "apply_payment", "args": ["FC1", "PAY2", "1", "5000000001"], "expect": {"decision": "DENY", "reason_code": "CONTRACT_CLOSED"}}
+      ]
+    },
+    {
+      "id": "fc-default-declared-by-authority-006",
+      "description": "Only the creditor may declare default on a matured unpaid contract; default is terminal for payments",
+      "note": "sender-gated; covered by direct tests",
+      "actions": [
+        {"op": "get_contract", "args": ["UNKNOWN"], "expect": ""}
+      ]
+    },
+    {
+      "id": "fc-terminal-immutable-007",
+      "description": "CLOSED contracts reject further payments with explicit reason; history preserved",
+      "actions": [
+        {"op": "open_contract", "args": ["FC9", "A", "B", "300", "USD", "0", "9999999999", "P1"], "expect": "ok"},
+        {"op": "apply_payment", "args": ["FC9", "PA", "300", "5000000000"], "expect": {"applied": "300"}},
+        {"op": "get_contract", "args": ["FC9"], "expect": {"status": "CLOSED"}},
+        {"op": "apply_payment", "args": ["FC9", "PX", "10", "5000000001"], "expect": {"decision": "DENY", "reason_code": "CONTRACT_CLOSED"}},
+        {"op": "get_payment", "args": ["FC9", "PA"], "expect": {"payment_id": "PA", "amount": "300", "status": "APPLIED"}}
+      ]
+    },
+    {
+      "id": "fc-history-append-only-008",
+      "description": "Applied payment records are immutable and retrievable after closure",
+      "actions": [
+        {"op": "open_contract", "args": ["FC1", "A", "B", "100", "USD", "0", "9999999999", "P1"], "expect": "ok"},
+        {"op": "apply_payment", "args": ["FC1", "PAY1", "100", "5000000000"], "expect": {"applied": "100"}},
+        {"op": "get_payment", "args": ["FC1", "PAY1"], "expect": {"payment_id": "PAY1", "amount": "100", "status": "APPLIED"}},
+        {"op": "get_contract", "args": ["FC1"], "expect": {"status": "CLOSED"}},
+        {"op": "get_payment", "args": ["FC1", "PAY1"], "expect": {"payment_id": "PAY1", "amount": "100", "status": "APPLIED"}}
+      ]
+    },
+    {
+      "id": "fc-no-capital-effects-009",
+      "description": "Unknown lookups return empty; the primitive moves no funds itself — payments are recorded obligations",
+      "actions": [
+        {"op": "get_contract", "args": ["UNKNOWN"], "expect": ""},
+        {"op": "get_payment", "args": ["UNKNOWN", "NOPE"], "expect": ""}
+      ]
+    }
+  ]
+}

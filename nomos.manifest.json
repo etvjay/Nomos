@@ -142,12 +142,14 @@
     {
       "id": "financial-contract",
       "name": "Financial Contract",
-      "status": "RESEARCHING",
+      "status": "SPECIFIED",
       "qualification": "SCOPE_PROVISIONAL",
-      "judgmentBearing": true,
+      "judgmentBearing": false,
       "genlayerRequired": true,
       "canonicalPath": "primitives/financial-contract",
-      "implementationBlockedUntil": "canonical state-machine scope is narrowed"
+      "implementationBlockedUntil": "canonical state-machine scope is narrowed",
+      "capabilityVersion": "0.1.0",
+      "convergenceMode": "EXACT"
     },
     {
       "id": "gaia",
