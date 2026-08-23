@@ -1,0 +1,13 @@
+{
+  "network": "genlayer-testnet-bradbury",
+  "chainId": "4221",
+  "rpc": "https://rpc-bradbury.genlayer.com",
+  "deployer": "0x8311bfd717708d6e9c4933e80762cc4901f836bf",
+  "contractFile": "contracts/financial_contract.py",
+  "primitive": "financial_contract",
+  "evmTxHash": "0x0dcf35ae91bb7af9652a408ee63ec487c374b4963388c4a10faf4f189d500d46",
+  "consensusTxId": "0x4833534be68d486ca5",
+  "contractAddress": "0xd2afc6235642fb0e6d1c84f4e7885cf3ed38b668",
+  "evidenceLevel": "deployed on live testnet; functional call evidence pending",
+  "deployedAt": "2026-08-23"
+}

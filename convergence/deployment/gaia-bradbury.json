@@ -1,0 +1,13 @@
+{
+  "network": "genlayer-testnet-bradbury",
+  "chainId": "4221",
+  "rpc": "https://rpc-bradbury.genlayer.com",
+  "deployer": "0x8311bfd717708d6e9c4933e80762cc4901f836bf",
+  "contractFile": "contracts/gaia.py",
+  "primitive": "gaia",
+  "evmTxHash": "0x801b40e77ae0a3316df8bb382f203a654ad01219ec71f437b974b8dbfe77f99d",
+  "consensusTxId": "0xd3bd27633f44321829",
+  "contractAddress": "0xa0a8556c289864e805cf770066d515024200a0b1",
+  "evidenceLevel": "deployed on live testnet; functional call evidence pending",
+  "deployedAt": "2026-08-23"
+}

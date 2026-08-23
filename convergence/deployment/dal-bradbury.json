@@ -1,0 +1,13 @@
+{
+  "network": "genlayer-testnet-bradbury",
+  "chainId": "4221",
+  "rpc": "https://rpc-bradbury.genlayer.com",
+  "deployer": "0x8311bfd717708d6e9c4933e80762cc4901f836bf",
+  "contractFile": "contracts/dal.py",
+  "primitive": "dal",
+  "evmTxHash": "0xf327f06f3ee2ac231efbb6636feab6de3bafae79d6d42ee1b07438e7e9b57739",
+  "consensusTxId": "0xd073568ef672c9c0fa",
+  "contractAddress": "0x134037019e373b15ed8e8d1a6dcee84c9cfaaeeb",
+  "evidenceLevel": "deployed on live testnet; functional call evidence pending",
+  "deployedAt": "2026-08-23"
+}

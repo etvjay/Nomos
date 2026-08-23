@@ -1,0 +1,13 @@
+{
+  "network": "genlayer-testnet-bradbury",
+  "chainId": "4221",
+  "rpc": "https://rpc-bradbury.genlayer.com",
+  "deployer": "0x8311bfd717708d6e9c4933e80762cc4901f836bf",
+  "contractFile": "contracts/policy_envelope.py",
+  "primitive": "policy_envelope",
+  "evmTxHash": "0xb7e4c9473dfea43febeef6fa5a9f9cf45f81f74b49882337312a837d81af683c",
+  "consensusTxId": "0x882d2a952ac97eddc8",
+  "contractAddress": "0x4132c3aa725f9e8d447a725e9005b89d6075ca6d",
+  "evidenceLevel": "deployed on live testnet; functional call evidence pending",
+  "deployedAt": "2026-08-23"
+}

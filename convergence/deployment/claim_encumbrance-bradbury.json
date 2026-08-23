@@ -1,0 +1,13 @@
+{
+  "network": "genlayer-testnet-bradbury",
+  "chainId": "4221",
+  "rpc": "https://rpc-bradbury.genlayer.com",
+  "deployer": "0x8311bfd717708d6e9c4933e80762cc4901f836bf",
+  "contractFile": "contracts/claim_encumbrance.py",
+  "primitive": "claim_encumbrance",
+  "evmTxHash": "0x7b0ed42b76a7e56518896ec56d4b8ca9c795fbbfcae0f9164fb69abb0284095f",
+  "consensusTxId": "0x4b97f91110ae38ee18",
+  "contractAddress": "0xc63eb02cc570f93fc0e83c17df08f4edb99e0e20",
+  "evidenceLevel": "deployed on live testnet; functional call evidence pending",
+  "deployedAt": "2026-08-23"
+}
