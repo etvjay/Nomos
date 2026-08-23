@@ -1,6 +1,6 @@
 # Gaia — Exception, Reconciliation & Rectification
 
-Status: RESEARCHING
+Status: SPECIFIED
 Version: 0.1.0
 
 ## Problem

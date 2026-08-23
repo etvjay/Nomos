@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "1.0.0",
+  "receiptId": "RECEIPT-GAIA-001-A",
+  "workId": "WORK-GAIA-001",
+  "primitiveId": "gaia",
+  "baseCommit": "SET_AT_COMMIT",
+  "resultCommit": "SET_AT_COMMIT",
+  "authorityFingerprint": "sha256:ad85d3e4a731cf0136cbda289ff00cae3608dccf23110cc97dc9ab5e76d9f2b3",
+  "capabilityVersion": "0.1.0",
+  "convergenceMode": "EXACT",
+  "commands": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "python tools/nomos_run_vectors.py primitives/gaia/implementations/genlayer/gaia.py --vectors primitives/gaia/vectors/v0.1.json"
+  ],
+  "gates": [
+    {"id": "nomos-lint", "state": "PASS", "evidence": "NOMOS-LINT PASS"},
+    {"id": "nomos-converge-check", "state": "PASS", "evidence": "NOMOS-CONVERGE PASS"},
+    {"id": "canonical-vectors", "state": "PASS", "evidence": "9/9 vectors passed for gaia"},
+    {"id": "independent-partner-convergence", "state": "NOT_IMPLEMENTED", "evidence": null},
+    {"id": "integration/deployment", "state": "NOT_IMPLEMENTED", "evidence": null}
+  ],
+  "runtimeVersions": {"python": "3.12.14", "genlayer-py": "0.18.0", "genlayer-test": "0.29.2"},
+  "knownGaps": ["no independent partner build yet", "no GLSim integration test yet", "in-contract LLM classification deferred (bounded caller-supplied classification in v0.1)"],
+  "notes": "Lane-A canonical authority build. Deterministic exception plane; ambiguity interpretation composable upstream without surface change."
+}

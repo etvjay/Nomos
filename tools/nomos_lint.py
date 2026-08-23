@@ -63,7 +63,6 @@ JUDGMENT_EXPECTED = {
     "claim-verification",
     "mandate-allocation",
     "financial-contract",
-    "gaia",
 }
 
 DETERMINISTIC_EXPECTED = {
@@ -74,6 +73,7 @@ DETERMINISTIC_EXPECTED = {
     "claim-encumbrance",
     "capital-commitment",
     "dal",
+    "gaia",
 }
 
 

@@ -150,11 +150,13 @@
     {
       "id": "gaia",
       "name": "Gaia",
-      "status": "RESEARCHING",
+      "status": "SPECIFIED",
       "qualification": "QUALIFIED",
-      "judgmentBearing": true,
+      "judgmentBearing": false,
       "genlayerRequired": true,
-      "canonicalPath": "primitives/gaia"
+      "canonicalPath": "primitives/gaia",
+      "capabilityVersion": "0.1.0",
+      "convergenceMode": "EXACT"
     }
   ]
 }

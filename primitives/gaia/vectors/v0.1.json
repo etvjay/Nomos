@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "0.1.0",
+  "primitive": "gaia",
+  "convergenceMode": "EXACT",
+  "statuses": { "case": ["OPEN", "CLASSIFIED", "RESOLVED"], "obligation": ["PRESCRIBED", "DISCHARGED", "WAIVED"] },
+  "vectors": [
+    {
+      "id": "ga-open-case-001",
+      "description": "Opening a case registers OPEN with subject binding and empty obligations",
+      "actions": [
+        {"op": "open_case", "args": ["CASE1", "settlement-mismatch", "SETTLE-77", "{\"expected\":\"100\",\"actual\":\"90\"}"], "expect": "ok"},
+        {"op": "get_case", "args": ["CASE1"], "expect": {"case_id": "CASE1", "category": "settlement-mismatch", "subject_ref": "SETTLE-77", "status": "OPEN", "resolution_evidence_hash": ""}}
+      ]
+    },
+    {
+      "id": "ga-case-duplicate-invalid-002",
+      "description": "Duplicate case ids, unknown category, empty fields, malformed facts rejected",
+      "actions": [
+        {"op": "open_case", "args": ["CASE1", "settlement-mismatch", "S-1", "{}"], "expect": "ok"},
+        {"op": "open_case", "args": ["CASE1", "other", "S-2", "{}"], "expect": "reject"},
+        {"op": "open_case", "args": ["CASE2", "unknown-category", "S-2", "{}"], "expect": "reject"},
+        {"op": "open_case", "args": ["", "other", "S-3", "{}"], "expect": "reject"},
+        {"op": "open_case", "args": ["CASE4", "other", "", "{}"], "expect": "reject"},
+        {"op": "open_case", "args": ["CASE5", "other", "S-5", "not-json"], "expect": "reject"}
+      ]
+    },
+    {
+      "id": "ga-classify-prescribes-obligations-003",
+      "description": "Classifying a case attaches bounded rectification obligations; case becomes CLASSIFIED",
+      "actions": [
+        {"op": "open_case", "args": ["CASE1", "settlement-mismatch", "SETTLE-77", "{}"], "expect": "ok"},
+        {"op": "classify_case", "args": ["CASE1", "CLS-1", "[{\"type\":\"reconcile\",\"bound\":{\"ledger\":\"LEDGER-9\"}},{\"type\":\"correct_usage_record\",\"bound\":{\"record\":\"UR-12\"}}]"], "expect": "ok"},
+        {"op": "get_obligation", "args": ["CLS-1-O0"], "expect": {"obligation_id": "CLS-1-O0", "case_id": "CASE1", "type": "reconcile", "status": "PRESCRIBED"}},
+        {"op": "get_obligation", "args": ["CLS-1-O1"], "expect": {"obligation_id": "CLS-1-O1", "case_id": "CASE1", "type": "correct_usage_record", "status": "PRESCRIBED"}},
+        {"op": "get_case", "args": ["CASE1"], "expect": {"status": "CLASSIFIED"}}
+      ]
+    },
+    {
+      "id": "ga-classify-invalid-obligations-rejected-004",
+      "description": "Classification with unknown obligation types, non-list, or oversized list rejected deterministically",
+      "actions": [
+        {"op": "open_case", "args": ["CASE1", "other", "S-1", "{}"], "expect": "ok"},
+        {"op": "classify_case", "args": ["CASE1", "CLX", "\"refund\""], "expect": "reject"},
+        {"op": "classify_case", "args": ["CASE1", "CLX", "[{\"type\":\"magic_fix\"}]"], "expect": "reject"},
+        {"op": "get_case", "args": ["CASE1"], "expect": {"status": "OPEN"}}
+      ]
+    },
+    {
+      "id": "ga-double-classify-rejected-005",
+      "description": "A case can only be classified once; classification ids are unique",
+      "actions": [
+        {"op": "open_case", "args": ["CASE1", "other", "S-1", "{}"], "expect": "ok"},
+        {"op": "classify_case", "args": ["CASE1", "CLS-1", "[{\"type\":\"retry\"}]"], "expect": "ok"},
+        {"op": "classify_case", "args": ["CASE1", "CLS-2", "[{\"type\":\"retry\"}]"], "expect": "reject"}
+      ]
+    },
+    {
+      "id": "ga-discharge-obligation-006",
+      "description": "Discharging an obligation requires explicit evidence hash; discharge is recorded append-only",
+      "actions": [
+        {"op": "open_case", "args": ["CASE1", "other", "S-1", "{}"], "expect": "ok"},
+        {"op": "classify_case", "args": ["CASE1", "CLS-1", "[{\"type\":\"provide_evidence\"},{\"type\":\"retry\"}]"], "expect": "ok"},
+        {"op": "discharge_obligation", "args": ["CLS-1-O0", "sha256:evd001"], "expect": "ok"},
+        {"op": "get_obligation", "args": ["CLS-1-O0"], "expect": {"status": "DISCHARGED", "evidence_hash": "sha256:evd001"}},
+        {"op": "discharge_obligation", "args": ["CLS-1-O0", "sha256:evd002"], "expect": "reject"},
+        {"op": "discharge_obligation", "args": ["CLS-1-O1", ""], "expect": "reject"}
+      ]
+    },
+    {
+      "id": "ga-resolution-blocked-while-pending-007",
+      "description": "A case cannot resolve while required obligations remain undispositioned",
+      "actions": [
+        {"op": "open_case", "args": ["CASE1", "other", "S-1", "{}"], "expect": "ok"},
+        {"op": "classify_case", "args": ["CASE1", "CLS-1", "[{\"type\":\"retry\"},{\"type\":\"manual_review\"}]"], "expect": "ok"},
+        {"op": "resolve_case", "args": ["CASE1", "sha256:res1"], "expect": "reject"},
+        {"op": "discharge_obligation", "args": ["CLS-1-O0", "sha256:d0"], "expect": "ok"},
+        {"op": "resolve_case", "args": ["CASE1", "sha256:res1"], "expect": "reject"},
+        {"op": "waive_obligation", "args": ["CLS-1-O1", "waived by ops runbook 7.2"], "expect": "ok"},
+        {"op": "resolve_case", "args": ["CASE1", "sha256:res1"], "expect": "ok"},
+        {"op": "get_case", "args": ["CASE1"], "expect": {"status": "RESOLVED", "resolution_evidence_hash": "sha256:res1"}}
+      ]
+    },
+    {
+      "id": "ga-resolved-is-terminal-and-append-only-008",
+      "description": "Resolved cases are terminal; historical facts and obligations are never rewritten",
+      "actions": [
+        {"op": "open_case", "args": ["CASE1", "other", "S-1", "{}"], "expect": "ok"},
+        {"op": "classify_case", "args": ["CASE1", "CLS-1", "[{\"type\":\"retry\"}]"], "expect": "ok"},
+        {"op": "discharge_obligation", "args": ["CLS-1-O0", "sha256:d0"], "expect": "ok"},
+        {"op": "resolve_case", "args": ["CASE1", "sha256:res1"], "expect": "ok"},
+        {"op": "classify_case", "args": ["CASE1", "CLS-2", "[{\"type\":\"retry\"}]"], "expect": "reject"},
+        {"op": "resolve_case", "args": ["CASE1", "sha256:res2"], "expect": "reject"},
+        {"op": "get_obligation", "args": ["CLS-1-O0"], "expect": {"status": "DISCHARGED", "evidence_hash": "sha256:d0"}}
+      ]
+    },
+    {
+      "id": "ga-no-execution-authority-009",
+      "description": "Gaia prescribes remedies but holds no execution authority: no capital views exist, unknown lookups empty",
+      "actions": [
+        {"op": "get_obligation", "args": ["UNKNOWN"], "expect": ""},
+        {"op": "get_case", "args": ["UNKNOWN"], "expect": ""}
+      ]
+    }
+  ]
+}
