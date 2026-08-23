@@ -3,7 +3,7 @@
   "primitiveId": "policy-envelope",
   "name": "Policy Envelope",
   "capabilityVersion": "0.1.0",
-  "status": "SPECIFIED",
+  "status": "CONFORMANT",
   "convergenceMode": "EXACT",
   "judgmentBearing": false,
   "implementation": {
@@ -12,50 +12,214 @@
     "contract": "PolicyEnvelope"
   },
   "publicMethods": [
-    {"name": "create_envelope", "kind": "write", "inputs": [
-      {"name": "envelope_id", "type": "string"},
-      {"name": "policy_hash", "type": "string"},
-      {"name": "max_amount", "type": "uint-string"},
-      {"name": "asset", "type": "string"},
-      {"name": "valid_after", "type": "int-string"},
-      {"name": "valid_until", "type": "int-string"}
-    ], "output": "canonical-envelope-json-string"},
-    {"name": "expire_envelope", "kind": "write", "inputs": [{"name": "envelope_id", "type": "string"}], "output": "canonical-envelope-json-string"},
-    {"name": "attach_mandate_clause", "kind": "write", "inputs": [
-      {"name": "envelope_id", "type": "string"},
-      {"name": "clause_id", "type": "string"},
-      {"name": "clause_text", "type": "string (<=4096 bytes)"}
-    ], "output": "canonical-clause-json-string"},
-    {"name": "interpret_clause", "kind": "write (nondeterministic)", "inputs": [
-      {"name": "envelope_id", "type": "string"},
-      {"name": "clause_id", "type": "string"},
-      {"name": "facts_json", "type": "string (<=4096 bytes)"},
-      {"name": "interpretation_id", "type": "string"}
-    ], "output": "canonical-interpretation-json-string"},
-    {"name": "evaluate_request", "kind": "write", "inputs": [
-      {"name": "envelope_id", "type": "string"},
-      {"name": "request_id", "type": "string"},
-      {"name": "amount", "type": "uint-string"},
-      {"name": "asset", "type": "string"},
-      {"name": "actor", "type": "string"},
-      {"name": "target", "type": "string"},
-      {"name": "at_timestamp", "type": "int-string"}
-    ], "output": "canonical-decision-json-string"},
-    {"name": "get_envelope", "kind": "view", "inputs": [{"name": "envelope_id", "type": "string"}], "output": "json-or-empty"},
-    {"name": "get_request", "kind": "view", "inputs": [{"name": "envelope_id", "type": "string"}, {"name": "request_id", "type": "string"}], "output": "json-or-empty"},
-    {"name": "used_amount", "kind": "view", "inputs": [{"name": "envelope_id", "type": "string"}], "output": "uint-string-or-empty"},
-    {"name": "get_clause_interpretation", "kind": "view", "inputs": [{"name": "interpretation_id", "type": "string"}], "output": "json-or-empty"}
+    {
+      "name": "create_envelope",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "envelope_id",
+          "type": "string"
+        },
+        {
+          "name": "policy_hash",
+          "type": "string"
+        },
+        {
+          "name": "max_amount",
+          "type": "uint-string"
+        },
+        {
+          "name": "asset",
+          "type": "string"
+        },
+        {
+          "name": "valid_after",
+          "type": "int-string"
+        },
+        {
+          "name": "valid_until",
+          "type": "int-string"
+        }
+      ],
+      "output": "canonical-envelope-json-string"
+    },
+    {
+      "name": "expire_envelope",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "envelope_id",
+          "type": "string"
+        }
+      ],
+      "output": "canonical-envelope-json-string"
+    },
+    {
+      "name": "attach_mandate_clause",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "envelope_id",
+          "type": "string"
+        },
+        {
+          "name": "clause_id",
+          "type": "string"
+        },
+        {
+          "name": "clause_text",
+          "type": "string (<=4096 bytes)"
+        }
+      ],
+      "output": "canonical-clause-json-string"
+    },
+    {
+      "name": "interpret_clause",
+      "kind": "write (nondeterministic)",
+      "inputs": [
+        {
+          "name": "envelope_id",
+          "type": "string"
+        },
+        {
+          "name": "clause_id",
+          "type": "string"
+        },
+        {
+          "name": "facts_json",
+          "type": "string (<=4096 bytes)"
+        },
+        {
+          "name": "interpretation_id",
+          "type": "string"
+        }
+      ],
+      "output": "canonical-interpretation-json-string"
+    },
+    {
+      "name": "evaluate_request",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "envelope_id",
+          "type": "string"
+        },
+        {
+          "name": "request_id",
+          "type": "string"
+        },
+        {
+          "name": "amount",
+          "type": "uint-string"
+        },
+        {
+          "name": "asset",
+          "type": "string"
+        },
+        {
+          "name": "actor",
+          "type": "string"
+        },
+        {
+          "name": "target",
+          "type": "string"
+        },
+        {
+          "name": "at_timestamp",
+          "type": "int-string"
+        }
+      ],
+      "output": "canonical-decision-json-string"
+    },
+    {
+      "name": "get_envelope",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "envelope_id",
+          "type": "string"
+        }
+      ],
+      "output": "json-or-empty"
+    },
+    {
+      "name": "get_request",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "envelope_id",
+          "type": "string"
+        },
+        {
+          "name": "request_id",
+          "type": "string"
+        }
+      ],
+      "output": "json-or-empty"
+    },
+    {
+      "name": "used_amount",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "envelope_id",
+          "type": "string"
+        }
+      ],
+      "output": "uint-string-or-empty"
+    },
+    {
+      "name": "get_clause_interpretation",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "interpretation_id",
+          "type": "string"
+        }
+      ],
+      "output": "json-or-empty"
+    }
   ],
   "canonicalDecision": {
-    "decision": ["ADMIT", "DENY"],
-    "reasonCode": ["WITHIN_HARD_LIMITS", "AMOUNT_EXCEEDS_LIMIT", "CAPACITY_EXHAUSTED", "ASSET_MISMATCH", "OUTSIDE_VALIDITY_WINDOW", "ENVELOPE_INACTIVE"],
-    "interpretationDecision": ["ADMIT", "DENY", "UNDETERMINED"],
-    "equivalenceFields": ["decision", "reason_code"],
-    "nonCanonicalFields": ["analysis"]
+    "decision": [
+      "ADMIT",
+      "DENY"
+    ],
+    "reasonCode": [
+      "WITHIN_HARD_LIMITS",
+      "AMOUNT_EXCEEDS_LIMIT",
+      "CAPACITY_EXHAUSTED",
+      "ASSET_MISMATCH",
+      "OUTSIDE_VALIDITY_WINDOW",
+      "ENVELOPE_INACTIVE"
+    ],
+    "interpretationDecision": [
+      "ADMIT",
+      "DENY",
+      "UNDETERMINED"
+    ],
+    "equivalenceFields": [
+      "decision",
+      "reason_code"
+    ],
+    "nonCanonicalFields": [
+      "analysis"
+    ]
   },
   "stateOwnership": {
-    "owns": ["envelope hard-limit objects", "per-request deterministic decisions", "declared mandate clauses and their bounded interpretations"],
-    "doesNotOwn": ["delegation/standing authority", "capital allocation or commitment", "claim encumbrance", "settlement", "replay lanes", "execution authority of any kind"]
+    "owns": [
+      "envelope hard-limit objects",
+      "per-request deterministic decisions",
+      "declared mandate clauses and their bounded interpretations"
+    ],
+    "doesNotOwn": [
+      "delegation/standing authority",
+      "capital allocation or commitment",
+      "claim encumbrance",
+      "settlement",
+      "replay lanes",
+      "execution authority of any kind"
+    ]
   },
   "limits": {
     "maxClauseBytes": 4096,
@@ -67,7 +231,9 @@
     "deniedRequestDoesNotConsumeCapacityOrId": true
   },
   "dominanceRule": "Deterministic evaluate_request results are final and dominate all interpretations; an interpreted ADMIT can never relax a hard limit, and a DENY interpretation does not block otherwise-admissible requests.",
-  "vectors": ["primitives/policy-envelope/vectors/v0.1.json"],
+  "vectors": [
+    "primitives/policy-envelope/vectors/v0.1.json"
+  ],
   "reproduce": [
     "python tools/nomos_lint.py",
     "python tools/nomos_converge.py check",
@@ -75,8 +241,15 @@
     "python -m pytest primitives/policy-envelope/implementations/genlayer/tests/ -v"
   ],
   "composition": {
-    "typicalUpstream": ["proof-of-payable", "claim-verification"],
-    "typicalDownstream": ["workflow-authorization", "daa", "financial-contract"]
+    "typicalUpstream": [
+      "proof-of-payable",
+      "claim-verification"
+    ],
+    "typicalDownstream": [
+      "workflow-authorization",
+      "daa",
+      "financial-contract"
+    ]
   },
   "unsupported": [
     "interpreted clause results creating execution authority",

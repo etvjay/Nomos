@@ -1,0 +1,12 @@
+{
+  "receipt_id": "RECEIPT-CONV-DAL-B",
+  "primitive": "dal",
+  "date": "2026-08-23",
+  "convergence_mode": "EXACT",
+  "lane": "convergence-lanes/dal/your_build.py",
+  "builder": "fresh-context subagent (spec+vectors only)",
+  "vectors_total": 10,
+  "vectors_passed": 10,
+  "verdict": "CONVERGED",
+  "report": "convergence-lanes/dal/BUILD_REPORT.md"
+}

@@ -1,0 +1,12 @@
+{
+  "receipt_id": "RECEIPT-CONV-PE-B",
+  "primitive": "policy-envelope",
+  "date": "2026-08-23",
+  "convergence_mode": "SEMANTIC",
+  "lane": "convergence-lanes/policy-envelope/your_build.py",
+  "builder": "fresh-context subagent (spec+vectors only)",
+  "vectors_total": 12,
+  "vectors_passed": 12,
+  "verdict": "CONVERGED",
+  "report": "convergence-lanes/policy-envelope/BUILD_REPORT.md"
+}

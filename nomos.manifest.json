@@ -61,7 +61,7 @@
     {
       "id": "policy-envelope",
       "name": "Policy Envelope",
-      "status": "SPECIFIED",
+      "status": "CONFORMANT",
       "qualification": "QUALIFIED",
       "judgmentBearing": false,
       "genlayerRequired": true,
@@ -131,7 +131,7 @@
     {
       "id": "dal",
       "name": "Dynamic Authorization Lanes",
-      "status": "SPECIFIED",
+      "status": "CONFORMANT",
       "qualification": "QUALIFIED",
       "judgmentBearing": false,
       "genlayerRequired": true,
