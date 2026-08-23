@@ -1,0 +1,17 @@
+{
+  "date": "2026-08-23",
+  "finding": "Real-model comparative consensus VALIDATED on GenLayer mainline validators",
+  "evidence": {
+    "tx": "0xc9a1b6c005388890de836e1cb0de3ba64579912806dc51c2ad57ce1756e44e70",
+    "status": "FINALIZED / SUCCESS / ACCEPTED",
+    "validator_models": [
+      "gpt-oss (llm-router)",
+      "qwen (llm-router)",
+      "gpt-5-4 (llm-router)",
+      "claude-sonnet-4.6 (openrouter)"
+    ],
+    "flow": "web.render -> exec_prompt -> comparative validator -> votes -> accepted",
+    "root_cause_of_prior_failures": "CoinGecko API 429 rate limit on validators' shared egress"
+  },
+  "implication": "IAS machinery works under genuine model diversity; monitor data sources must be rate-limit-safe"
+}
