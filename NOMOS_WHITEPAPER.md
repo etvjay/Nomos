@@ -23,7 +23,6 @@ Financial applications keep re-deriving the same machinery: evidence that someth
 ## 2. The two-layer answer
 
 ```mermaid
-%%{init: {"theme": "base", "securityLevel": "strict", "htmlLabels": false, "flowchart": {"htmlLabels": false, "curve": "basis", "nodeSpacing": 46, "rankSpacing": 60, "padding": 14}}}%%
 flowchart TB
     subgraph L1["Layer 1 · The Registry"]
         P["11 primitives:<br/>evidence · authority · commitment ·<br/>replay · obligations · rectification"]
@@ -109,7 +108,6 @@ Evidence discipline is constitutional in Nomos: claims use PASS / FAIL / NOT_IMP
 ## 6. Future intentions
 
 ```mermaid
-%%{init: {"theme": "base", "securityLevel": "strict", "htmlLabels": false, "flowchart": {"htmlLabels": false, "curve": "basis", "nodeSpacing": 44, "rankSpacing": 60, "padding": 14}}}%%
 flowchart LR
     NOW["Today<br/>registry + PPA + ladder<br/>on testnet"] --> NEAR["Near term<br/>full live autonomous loop<br/>functional sweep · FC requal<br/>SDKs + examples"]
     NEAR --> MID["Mid term<br/>cross-contract extraction<br/>x402 facade · federated accounts<br/>identity-appended accounts"]

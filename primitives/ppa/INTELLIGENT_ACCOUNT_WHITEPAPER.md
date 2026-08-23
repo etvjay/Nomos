@@ -21,7 +21,6 @@ This paper defines the Intelligent Account, specifies its five-module architectu
 Ethereum's account model has been copied nearly everywhere:
 
 ```mermaid
-%%{init: {"theme": "base", "securityLevel": "strict", "htmlLabels": false, "flowchart": {"htmlLabels": false, "curve": "basis", "nodeSpacing": 44, "rankSpacing": 60, "padding": 14}}}%%
 flowchart LR
     subgraph EOA["Externally Owned Account"]
         K["private key<br/>absolute authority"]
@@ -56,7 +55,6 @@ Two converging forces make static-rule accounts insufficient.
 **Judgment in settlement is a solvency hazard.** On LLM-capable chains, it is trivially easy to write `if model_says_delivered(): release_funds()`. This pattern — already visible in early GenLayer escrow examples — makes model hallucination, prompt injection, or inter-model disagreement a direct cause of fund loss. The failure mode is structural, not incidental: a probabilistic component sitting on the only path between an event and a balance mutation converts epistemic uncertainty into insolvency risk.
 
 ```mermaid
-%%{init: {"theme": "base", "securityLevel": "strict", "htmlLabels": false, "flowchart": {"htmlLabels": false, "curve": "basis", "nodeSpacing": 40, "rankSpacing": 55, "padding": 12}}}%%
 flowchart LR
     E["external event"] --> M["LLM judgment"]
     M -->|"single path"| F["funds released"]
@@ -104,7 +102,6 @@ The judgment register — web observation, event classification, confidence scor
 This is not a coding convention; it is enforced by the account's module structure (§5). The worst case under total judgment compromise — every model hallucinating in concert — is a stream of denied-payment records, never a wrong settlement.
 
 ```mermaid
-%%{init: {"theme": "base", "securityLevel": "strict", "htmlLabels": false, "flowchart": {"htmlLabels": false, "curve": "basis", "nodeSpacing": 42, "rankSpacing": 58, "padding": 14}}}%%
 flowchart LR
     W["web / world"] --> OBS
     H["human action"] --> P1
@@ -139,7 +136,6 @@ An Intelligent Account decomposes into five composable modules plus the invarian
 | **E. Rectification** | Post-settlement correction | Dispute case lifecycle (open → classified → resolved); remedies issued as compensating entries; history annotated, never rewritten |
 
 ```mermaid
-%%{init: {"theme": "base", "securityLevel": "strict", "htmlLabels": false, "flowchart": {"htmlLabels": false, "curve": "basis", "nodeSpacing": 46, "rankSpacing": 62, "padding": 14}}}%%
 flowchart TB
     subgraph IA["Intelligent Account"]
         A["A · Authority<br/>owner · delegations · lanes"] --> B
@@ -182,7 +178,6 @@ The architecture is implemented, deployed, and partially live-verified on GenLay
   - *Stage 3 — Autonomous:* routes confirmed signals into the embedded PPA gate pipeline under per-group execution policies (minimum confidence, maximum per-action amount, daily autonomous ceilings, recipient allowlists, kill switch defaulting OFF).
 
 ```mermaid
-%%{init: {"theme": "base", "securityLevel": "strict", "htmlLabels": false, "flowchart": {"htmlLabels": false, "curve": "basis", "nodeSpacing": 44, "rankSpacing": 58, "padding": 14}}}%%
 flowchart LR
     subgraph T1["Stage 1 — Monitor"]
         M1["observe → propose"]
@@ -240,7 +235,6 @@ Three extensions define the roadmap, in increasing order of ambition.
 Today's implementation is one account with internal modules. The near-term architecture generalizes to federated Intelligent Accounts:
 
 ```mermaid
-%%{init: {"theme": "base", "securityLevel": "strict", "htmlLabels": false, "flowchart": {"htmlLabels": false, "curve": "basis", "nodeSpacing": 46, "rankSpacing": 60, "padding": 14}}}%%
 flowchart LR
     subgraph ACC_A["Account A (buyer)"]
         MA["monitors:<br/>delivery oracles"] --> GA["gates"]

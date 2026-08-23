@@ -70,7 +70,6 @@ burn rate). Available funds are always `balance − committed`; overcommitment
 is therefore structurally impossible, not merely forbidden.
 
 ```mermaid
-%%{init: {"theme": "base", "securityLevel": "strict", "htmlLabels": false, "flowchart": {"htmlLabels": false, "curve": "basis", "nodeSpacing": 44, "rankSpacing": 58, "padding": 14}}}%%
 flowchart TB
     OWNER["owner"] --> SA1
     subgraph PPA["PPA instance"]
@@ -91,7 +90,6 @@ flowchart TB
 Every payment passes four gates, in order, and no gate can be skipped:
 
 ```mermaid
-%%{init: {"theme": "base", "securityLevel": "strict", "htmlLabels": false, "flowchart": {"htmlLabels": false, "curve": "basis", "nodeSpacing": 42, "rankSpacing": 56, "padding": 12}}}%%
 flowchart LR
     REQ["send request"] --> G1["1 · Policy<br/>allowlist · caps · window"]
     G1 -->|"admitted"| G2["2 · Encumbrance<br/>available ≥ amount"]
