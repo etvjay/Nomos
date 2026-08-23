@@ -138,11 +138,11 @@ An Intelligent Account decomposes into five composable modules plus the invarian
 ```mermaid
 flowchart TB
     subgraph IA["Intelligent Account"]
-        A["A · Authority<br/>owner · delegations · lanes"] --> B
-        B["B · Policy<br/>fixed-order gates"] --> C
-        C["C · Settlement<br/>claims + evidence"] --> LED["Ledger"]
-        D["D · Judgment Interface"] -.->|"proposals"| B
-        E["E · Rectification"] -->|"compensating entries"| LED
+        A["A - Authority<br/>owner - delegations - lanes"] --> B
+        B["B - Policy<br/>fixed-order gates"] --> C
+        C["C - Settlement<br/>claims + evidence"] --> LED["Ledger"]
+        D["D - Judgment Interface"] -.->|"proposals"| B
+        E["E - Rectification"] -->|"compensating entries"| LED
         KS["kill switch — default OFF"] -.-> D
     end
     WORLD(("world")) --> D
@@ -180,13 +180,13 @@ The architecture is implemented, deployed, and partially live-verified on GenLay
 ```mermaid
 flowchart LR
     subgraph T1["Stage 1 — Monitor"]
-        M1["observe → propose"]
+        M1["observe -> propose"]
     end
     subgraph T2["Stage 2 — Coordinator"]
         M2["correlate n-of-M<br/>score confidence"] --> ESC{"≥ threshold?"}
     end
     subgraph T3["Stage 3 — Autonomous"]
-        POLICY["execution policy<br/>caps · allowlist · ceiling"] --> EXEC["gated auto-execution"]
+        POLICY["execution policy<br/>caps - allowlist - ceiling"] --> EXEC["gated auto-execution"]
     end
     T1 -->|"breach signals"| T2
     ESC -->|"yes"| T3

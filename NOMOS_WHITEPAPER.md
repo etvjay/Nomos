@@ -24,15 +24,15 @@ Financial applications keep re-deriving the same machinery: evidence that someth
 
 ```mermaid
 flowchart TB
-    subgraph L1["Layer 1 · The Registry"]
-        P["11 primitives:<br/>evidence · authority · commitment ·<br/>replay · obligations · rectification"]
+    subgraph L1["Layer 1 - The Registry"]
+        P["11 primitives:<br/>evidence - authority - commitment -<br/>replay - obligations - rectification"]
     end
-    subgraph L2["Layer 2 · The Products"]
+    subgraph L2["Layer 2 - The Products"]
         PPA["PPA<br/>programmable payment account"] --> IAS["IAS-1 standard<br/>the Intelligent Account type"]
-        IAS --> LADDER["3-stage ladder<br/>monitor → coordinate → act"]
+        IAS --> LADDER["3-stage ladder<br/>monitor -> coordinate -> act"]
     end
     L1 -->|"composition"| L2
-    L2 --> APPS["financial applications<br/>wallets · payroll · escrow ·<br/>agent commerce · treasuries"]
+    L2 --> APPS["financial applications<br/>wallets - payroll - escrow -<br/>agent commerce - treasuries"]
 ```
 
 *Figure 1 — Two layers, one guarantee system. The registry supplies verified mechanisms; the products supply usability. Both are deployed on GenLayer Testnet Bradbury.*
@@ -109,8 +109,8 @@ Evidence discipline is constitutional in Nomos: claims use PASS / FAIL / NOT_IMP
 
 ```mermaid
 flowchart LR
-    NOW["Today<br/>registry + PPA + ladder<br/>on testnet"] --> NEAR["Near term<br/>full live autonomous loop<br/>functional sweep · FC requal<br/>SDKs + examples"]
-    NEAR --> MID["Mid term<br/>cross-contract extraction<br/>x402 facade · federated accounts<br/>identity-appended accounts"]
+    NOW["Today<br/>registry + PPA + ladder<br/>on testnet"] --> NEAR["Near term<br/>full live autonomous loop<br/>functional sweep - FC requal<br/>SDKs + examples"]
+    NEAR --> MID["Mid term<br/>cross-contract extraction<br/>x402 facade - federated accounts<br/>identity-appended accounts"]
     MID --> FAR["Endgame<br/>Intelligent Accounts as infrastructure<br/>standardized, interoperable,<br/>as unremarkable as smart accounts"]
 ```
 

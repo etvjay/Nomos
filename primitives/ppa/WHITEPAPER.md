@@ -73,11 +73,11 @@ is therefore structurally impossible, not merely forbidden.
 flowchart TB
     OWNER["owner"] --> SA1
     subgraph PPA["PPA instance"]
-        subgraph SA1["sub-account · rules envelope"]
+        subgraph SA1["sub-account - rules envelope"]
             direction LR
             R["allowlist<br/>per-tx cap<br/>daily limit"] --- LED1["balance / committed /<br/>daily_spent"]
         end
-        subgraph SA2["sub-account · rules envelope"]
+        subgraph SA2["sub-account - rules envelope"]
             R2["own rules"] --- LED2["own ledger"]
         end
     end
@@ -91,10 +91,10 @@ Every payment passes four gates, in order, and no gate can be skipped:
 
 ```mermaid
 flowchart LR
-    REQ["send request"] --> G1["1 · Policy<br/>allowlist · caps · window"]
-    G1 -->|"admitted"| G2["2 · Encumbrance<br/>available ≥ amount"]
-    G2 -->|"reserved"| G3["3 · Claim<br/>evidence hash attached"]
-    G3 --> G4["4 · Settle<br/>claim attested → SETTLED"]
+    REQ["send request"] --> G1["1 - Policy<br/>allowlist - caps - window"]
+    G1 -->|"admitted"| G2["2 - Encumbrance<br/>available ≥ amount"]
+    G2 -->|"reserved"| G3["3 - Claim<br/>evidence hash attached"]
+    G3 --> G4["4 - Settle<br/>claim attested -> SETTLED"]
     G1 -->|"DENIED<br/>audited, retryable"| DENY["denial record"]
     G2 --> DENY
     G4 --> OUT["balance −= amount<br/>history append-only"]
