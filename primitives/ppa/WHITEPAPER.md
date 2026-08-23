@@ -69,9 +69,40 @@ Each sub-account tracks three quantities: `balance` (total deposited),
 burn rate). Available funds are always `balance − committed`; overcommitment
 is therefore structurally impossible, not merely forbidden.
 
+```mermaid
+%%{init: {"theme": "base", "securityLevel": "strict", "htmlLabels": false, "flowchart": {"htmlLabels": false, "curve": "basis", "nodeSpacing": 44, "rankSpacing": 58, "padding": 14}}}%%
+flowchart TB
+    OWNER["owner"] --> SA1
+    subgraph PPA["PPA instance"]
+        subgraph SA1["sub-account · rules envelope"]
+            direction LR
+            R["allowlist<br/>per-tx cap<br/>daily limit"] --- LED1["balance / committed /<br/>daily_spent"]
+        end
+        subgraph SA2["sub-account · rules envelope"]
+            R2["own rules"] --- LED2["own ledger"]
+        end
+    end
+```
+
+*Figure 1 — The account model. One owner; many sub-accounts, each pairing its own rules envelope with its own ledger. Available funds = balance − committed at all times.*
+
 ### 3.2 The send pipeline
 
 Every payment passes four gates, in order, and no gate can be skipped:
+
+```mermaid
+%%{init: {"theme": "base", "securityLevel": "strict", "htmlLabels": false, "flowchart": {"htmlLabels": false, "curve": "basis", "nodeSpacing": 42, "rankSpacing": 56, "padding": 12}}}%%
+flowchart LR
+    REQ["send request"] --> G1["1 · Policy<br/>allowlist · caps · window"]
+    G1 -->|"admitted"| G2["2 · Encumbrance<br/>available ≥ amount"]
+    G2 -->|"reserved"| G3["3 · Claim<br/>evidence hash attached"]
+    G3 --> G4["4 · Settle<br/>claim attested → SETTLED"]
+    G1 -->|"DENIED<br/>audited, retryable"| DENY["denial record"]
+    G2 --> DENY
+    G4 --> OUT["balance −= amount<br/>history append-only"]
+```
+
+*Figure 2 — The send pipeline. Denials at any gate produce an auditable record that moves no funds and does not consume the payment id; only settlement mutates the balance.*
 
 | Gate | Question | Failure mode |
 |---|---|---|
@@ -160,17 +191,21 @@ that is machine-checkable instead of policy-documentary.
 ## 5. Evidence
 
 - **Component level:** the eleven underlying primitives carry canonical vector
-  suites (9–17 vectors each, all passing), adversarial test batteries, and
-  independent-build convergence receipts for the three CONFORMANT mechanisms.
+  suites (9–17 vectors each, all passing), adversarial test batteries, and —
+  as of the August 2026 convergence campaign — independent-build convergence
+  for ten of eleven mechanisms: fresh-context builders reading only each
+  primitive's specification reproduced it, with every canonical vector passing
+  against every independent build (receipts in `convergence/receipts/`).
 - **Composite level:** six live flow tests execute the full PPA pipeline
   (settle, deny-and-retry, allowlist denial, insufficient commitment, invoice
   cycle, dispute refund) through GenLayer consensus on GLSim localnet — all
   passing.
 - **Network level:** the PPA is deployed on GenLayer Testnet Bradbury
-  (chainId 4221) with bytecode verified on-chain; functional write/read calls
-  have been executed against the deployed instance (account creation, deposits
-  verified by read-back), with full payment-cycle verification ongoing against
-  the shared node's rate limits.
+  (chainId 4221) with bytecode verified on-chain, and carries a complete live
+  functional verification: account creation, deposit, policy-gated send, and
+  settlement confirmed by read-back with exact balance reconciliation
+  (`convergence/deployment/ppa-bradbury.json`). Invoice, dispute, and
+  delegation paths are sim-proven; their live calls are tracked as open work.
 
 Per the project's evidence language: component behavior is PASS-backed;
 testnet functional coverage is expanding and marked as such rather than
@@ -209,14 +244,14 @@ instead of re-deriving them.
 
 - **v0.2** — cross-contract extraction: PPA calls the deployed primitive
   contracts directly, restoring per-primitive convergence attestation.
-- **Monitor composition** — integrate the Autonomous Monitor (web-observing,
-  tolerance-consensus Layer 1) so threshold breaches propose gated actions:
-  "if BTC crosses X, settle invoice Y." Judgment proposes; determinism
-  disposes.
+- **Monitor composition (shipped as the IAS ladder)** — the Intelligent
+  Account stack (`ias/`) already composes monitors, correlation, and gated
+  autonomous execution on top of the PPA's gate pipeline; see the companion
+  whitepaper `INTELLIGENT_ACCOUNT_WHITEPAPER.md`.
 - **Swap action** — gated exchange once liquidity venues exist on testnet.
 - **Multi-currency commitments** — per-asset sub-account ledgers.
-- **Independent convergence builds** — partner lanes for the composite, the
-  same process that produced CONFORMANT status for the core primitives.
+- **financial-contract re-qualification + composite convergence lane** —
+  completing 11/11 CONFORMANT and an independent build of the PPA itself.
 
 ---
 
