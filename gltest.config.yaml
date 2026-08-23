@@ -1,7 +1,6 @@
 paths:
   contracts: contracts/
   artifacts: .gltest_cache/
-
 networks:
   default: localnet
   localnet:
@@ -12,5 +11,5 @@ networks:
     url: https://rpc-bradbury.genlayer.com/api
     chain_type: testnet_asimov
     accounts:
-      - "0xc7493f3dcee304b55b0a7284642a929bf8f1455026557e99517c7575861fd073"
-
+    - '0xc7493f3dcee304b55b0a7284642a929bf8f1455026557e99517c7575861fd073'
+    id: 4221
