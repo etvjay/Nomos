@@ -4,6 +4,16 @@ Nomos is a **financial primitive stack for building applications on GenLayer**.
 
 It defines reusable economic objects, state machines, authority models, invariants, conformance tests, implementation contracts, and developer-facing modules that application builders can compose into lending, receivables, treasury, trade-finance, insurance, capital-allocation, agentic-finance, and other financial systems.
 
+## Documentation
+
+| Document | What it covers |
+|---|---|
+| **[Master Whitepaper](NOMOS_WHITEPAPER.md)** | The full stack: registry, evidence campaign, products, future intentions |
+| **[The Intelligent Account](primitives/ppa/INTELLIGENT_ACCOUNT_WHITEPAPER.md)** | The new account type — architecture, autonomy ladder, boundary conditions |
+| **[Programmable Payment Account](primitives/ppa/WHITEPAPER.md)** | The PPA product: gated payments, invoices, disputes, delegation |
+| **[IAS-1 Standard](primitives/ppa/IAS-1.md)** | The Intelligent Account specification — five modules, conformance levels |
+| **[Fact-Check Ledger](docs/FACT_CHECK_LEDGER.md)** | Claim-by-claim verification of every whitepaper statement against receipts and primary sources |
+
 ## Product goal
 
 > Build primitives developers can use to build financial applications on GenLayer without repeatedly re-inventing evidence, authority, allocation, commitment, replay, financial-obligation, and rectification machinery.
