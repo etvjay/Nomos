@@ -187,6 +187,10 @@ class PolicyEnvelope(gl.Contract):
             return {"decision": decision, "analysis": str(raw.get("analysis", ""))}
 
         def validators(leader_out) -> bool:
+            # Comparative validation: each validator independently re-runs the
+            # interpretation and compares the canonical decision field.
+            # Leader-output-only validation (enum check without re-evaluation)
+            # is an anti-pattern per official GenLayer guidance.
             if not isinstance(leader_out, gl.vm.Return):
                 return False
             mine = leader()
