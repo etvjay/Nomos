@@ -36,6 +36,54 @@ For non-deterministic operations, each primitive MUST define the evidence, bound
 
 For deterministic primitives, the Intelligent Contract implements the state machine and invariants without inventing unnecessary LLM judgment. Optimistic Democracy remains the network consensus mechanism validating execution; it is not itself a Nomos primitive.
 
+## Primitive registry status
+
+All 11 primitives are deployed on GenLayer Testnet Bradbury. **10 of 11 are CONFORMANT** — independently reimplemented by fresh-context builders who read only the specification and canonical vectors, with every canonical vector passing against every independent build (EXACT convergence; convergence receipts in `convergence/receipts/`).
+
+| Primitive | Status | Convergence |
+|---|---|---|
+| Claim Verification | CONFORMANT | SEMANTIC |
+| Claim Encumbrance | CONFORMANT | EXACT |
+| Capital Commitment | CONFORMANT | EXACT |
+| Proof of Payable | CONFORMANT | EXACT |
+| Policy Envelope | CONFORMANT | SEMANTIC |
+| Workflow Authorization | CONFORMANT | EXACT |
+| Mandate Allocation | CONFORMANT | EXACT |
+| Dynamic Authority Allocation (DAA) | CONFORMANT | EXACT |
+| Dynamic Authorization Lanes (DAL) | CONFORMANT | EXACT |
+| Gaia | CONFORMANT | EXACT |
+| Financial Contract | SPECIFIED | converged 9/9 via independent lane; SCOPE_PROVISIONAL — advances after public state model re-qualification |
+
+The Programmable Payment Account (PPA) composite has full live functional verification on Testnet Bradbury: account creation, funding, policy-gated send, settlement, and exact balance reconciliation (`primitives/ppa/`, whitepaper at `primitives/ppa/WHITEPAPER.md`).
+
+## Composites: the Intelligent Account stack
+
+Nomos composes into user-facing accounts through three layers:
+
+1. **PPA — Programmable Payment Account** (`primitives/ppa/`). One contract that feels like a bank account with rules: send through four deterministic gates (policy → encumbrance → claim → settle), invoices that settle through payer-side gates, disputes with compensating-entry refunds, delegation that narrows and never widens.
+2. **IAS-1 — The Intelligent Account Standard** (`primitives/ppa/IAS-1.md`). The account-type specification extracted from the PPA: five modules (authority, policy, settlement, judgment interface, rectification) with one structural invariant — *judgment proposes; determinism disposes*.
+3. **Three-stage ladder** (`ias/`) — escalating autonomy over the same interface:
+   - Stage 1 Monitor: observes web data under comparative validator consensus, creates proposals
+   - Stage 2 Coordinator: correlates n-of-M signals within time windows, scores confidence
+   - Stage 3 Autonomous: routes confirmed signals into the embedded PPA gate pipeline under per-group caps, recipient allowlists, daily ceilings, and a default-off kill switch
+
+All stages are deployed on Testnet Bradbury. Real-model comparative consensus (GPT-OSS, Qwen, GPT-5.4, Claude Sonnet 4.6 as independent validators) is validated — see `convergence/receipts/RECEIPT-IAS-DIVERSITY-001-A.json`.
+
+## Quick start
+
+Consume a primitive through its `CAPABILITY.json`:
+
+```bash
+# inspect a primitive's public contract
+cat primitives/proof-of-payable/CAPABILITY.json
+
+# run its canonical conformance vectors (embedded runner, plain CPython)
+python3 convergence-lanes/pop/your_build.py \
+  primitives/proof-of-payable/vectors/v0.1.json
+```
+
+Deploy the PPA for a ready-made programmable payment account, or compose individual primitives per the canonical progression below.
+
 ## Initial primitive registry
 
 1. Proof of Payable
@@ -170,7 +218,6 @@ Read, in order:
 - `environments/genlayer/PROFILE.md`
 - `conformance/README.md`
 - `experiments/README.md`
-- `RESEARCH_LEDGER.md`
 
 Run governance checks with:
 
