@@ -73,6 +73,7 @@ class MonitorAccount(gl.Contract):
     def create_monitor(self, monitor_id: str, name: str, data_source: str,
                        metric_type: str, threshold_value: str,
                        condition: str, tolerance_percent: str,
+                       min_confidence: str = "medium",
                        proposal_template: str = "") -> str:
         """Register an observation. proposal_template is a JSON skeleton with
         {value} placeholder — what the owner's PPA should do on breach."""
@@ -86,6 +87,7 @@ class MonitorAccount(gl.Contract):
             "data_source": data_source, "metric_type": metric_type,
             "threshold_value": threshold_value, "condition": condition,
             "tolerance_percent": tolerance_percent,
+            "min_confidence": min_confidence,
             "proposal_template": proposal_template,
             "is_active": True,
             "last_value": "", "last_check": "", "last_status": "",
@@ -144,20 +146,26 @@ class MonitorAccount(gl.Contract):
                 'If not clearly present: {"found":false,"value":"0","confidence":"none"}'
             )
 
-            def validator_fn(leaders_res) -> bool:
-                my = leader_fn()
-                if not hasattr(leaders_res, "calldata"):
-                    return False
-                ld = leaders_res.calldata
-                if not my.get("found") or not ld.get("found"):
-                    return my.get("found") == ld.get("found")
-                try:
-                    ln, vn = float(ld.get("value", "0")), float(my.get("value", "0"))
-                    delta_ok = abs(ln - vn) <= abs(ln * (tolerance / 100.0))
-                except (TypeError, ValueError):
-                    delta_ok = str(ld.get("value", "")).strip() == str(my.get("value", "")).strip()
-                conf_ok = True
-                return delta_ok and conf_ok
+            _CONF_RANK = {"none": 0, "low": 1, "medium": 2, "high": 3}
+
+        def validator_fn(leaders_res) -> bool:
+            my = leader_fn()
+            if not hasattr(leaders_res, "calldata"):
+                return False
+            ld = leaders_res.calldata
+            if not my.get("found") or not ld.get("found"):
+                return my.get("found") == ld.get("found")
+            conf_rank = {"none": 0, "low": 1, "medium": 2, "high": 3}
+            floor = conf_rank.get(str(m.get("min_confidence", "medium")), 2)
+            if (conf_rank.get(str(ld.get("confidence", "none")), 0) < floor
+                    or conf_rank.get(str(my.get("confidence", "none")), 0) < floor):
+                return False
+            try:
+                ln, vn = float(ld.get("value", "0")), float(my.get("value", "0"))
+                delta_ok = abs(ln - vn) <= abs(ln * (tolerance / 100.0))
+            except (TypeError, ValueError):
+                delta_ok = str(ld.get("value", "")).strip() == str(my.get("value", "")).strip()
+            return delta_ok
 
             res = gl.vm.run_nondet(leader_fn, validator_fn)
             return res
@@ -166,6 +174,7 @@ class MonitorAccount(gl.Contract):
 
         m["last_check"] = _now_iso()
         m["last_value"] = str(result.get("value", ""))
+        m["last_confidence"] = str(result.get("confidence", "none"))
         m["last_status"] = "success" if result.get("found") else "extraction_failed"
 
         if not result.get("found"):
@@ -183,6 +192,7 @@ class MonitorAccount(gl.Contract):
             breach_id = f"BR-{monitor_id}-{_ts(_now_iso())}"
             rec = {"breach_id": breach_id, "monitor_id": monitor_id,
                    "name": m["name"], "value": value_str,
+                   "confidence": str(result.get("confidence", "none")),
                    "threshold": threshold, "condition": condition,
                    "detected": _now_iso(), "status": "OPEN"}
             self.breaches[breach_id] = json.dumps(rec)
