@@ -145,8 +145,8 @@ class MonitorAccount(gl.Contract):
                 'Respond ONLY as JSON: {"value":"<number>","confidence":"high|medium|low","found":true}\n'
                 'If not clearly present: {"found":false,"value":"0","confidence":"none"}'
             )
-
-            _CONF_RANK = {"none": 0, "low": 1, "medium": 2, "high": 3}
+            result = gl.nondet.exec_prompt(task, response_format="json")
+            return result
 
         def validator_fn(leaders_res) -> bool:
             my = leader_fn()

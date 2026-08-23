@@ -28,20 +28,30 @@ def _install_mock():
         return json.loads(resp.read())
 
 
+def _install_mock():
+    import urllib.request
+    from gltest_cli.config.general import get_general_config
+    endpoint = get_general_config().get_rpc_url()
+    body = json.dumps({
+        "jsonrpc": "2.0",
+        "method": "sim_installMocks",
+        "params": {
+            "llm_mocks": {r".*": {"value": "42", "confidence": "high", "found": True}},
+            "strict": False,
+        },
+        "id": 1,
+    }).encode()
+    req = urllib.request.Request(endpoint, data=body,
+                                 headers={"Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=10) as resp:
+        json.loads(resp.read())
+
+
 def test_stage1_consensus_machinery():
     f = get_contract_factory(contract_file_path="ias_stage1.py")
     c = f.deploy()
-    # ensure consensus contract is set on the shared client (fresh-sim quirk:
-    # sim_getConsensusContract can fail post-restart, leaving it None; the
-    # first write after deploy re-initializes lazily but nondet writes hit
-    # the None check first)
-    from gltest.clients import get_gl_client
-    cl = get_gl_client()
-    if getattr(cl.chain, "consensus_main_contract", None) is None or \
-       not cl.chain.consensus_main_contract.get("address"):
-        cl.chain.consensus_main_contract = {
-            "address": "0x0112Bf6e83497965A5fdD6Dad1E447a6E004271D"  # placeholder for sim
-        }
+    # NOTE: do not mutate chain.consensus_main_contract here — it's a shared
+    # singleton and partial dicts (address without abi) poison later calls.
     tx = c.initialize(args=[OWNER]).transact(wait_interval=2000, wait_retries=10)
     assert tx_execution_succeeded(tx)
 
@@ -50,6 +60,8 @@ def test_stage1_consensus_machinery():
         "price", "1", "above", "25.0", "medium",
         json.dumps({"action": "test"})]).transact(wait_interval=3000, wait_retries=10)
     assert tx_execution_succeeded(tx2)
+
+    _install_mock()
 
     tx3 = c.check_monitor(args=["M-MOCK"]).transact(wait_interval=15000, wait_retries=30)
     if not tx_execution_succeeded(tx3):
