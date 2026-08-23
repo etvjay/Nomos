@@ -96,11 +96,13 @@
     {
       "id": "daa",
       "name": "Dynamic Authority Allocation",
-      "status": "RESEARCHING",
+      "status": "SPECIFIED",
       "qualification": "QUALIFIED",
-      "judgmentBearing": true,
+      "judgmentBearing": false,
       "genlayerRequired": true,
-      "canonicalPath": "primitives/daa"
+      "canonicalPath": "primitives/daa",
+      "capabilityVersion": "0.1.0",
+      "convergenceMode": "EXACT"
     },
     {
       "id": "claim-encumbrance",

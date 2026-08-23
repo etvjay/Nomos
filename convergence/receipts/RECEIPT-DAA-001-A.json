@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0.0",
+  "receiptId": "RECEIPT-DAA-001-A",
+  "workId": "WORK-DAA-001",
+  "primitiveId": "daa",
+  "baseCommit": "SET_AT_COMMIT",
+  "resultCommit": "SET_AT_COMMIT",
+  "authorityFingerprint": "sha256:cbe12564c7172bb465fe03339e441512d3167b73a4b5f964c20ea645d5dbd9f0",
+  "capabilityVersion": "0.1.0",
+  "convergenceMode": "EXACT",
+  "commands": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "python tools/nomos_run_vectors.py primitives/daa/implementations/genlayer/daa.py --vectors primitives/daa/vectors/v0.1.json",
+    "python -m pytest primitives/daa/implementations/genlayer/tests/ -v"
+  ],
+  "gates": [
+    {"id": "nomos-lint", "state": "PASS", "evidence": "NOMOS-LINT PASS"},
+    {"id": "nomos-converge-check", "state": "PASS", "evidence": "NOMOS-CONVERGE PASS"},
+    {"id": "canonical-vectors", "state": "PASS", "evidence": "11/11 vectors passed for daa"},
+    {"id": "authority-gate-direct-tests", "state": "PASS", "evidence": "4/4 passed (authority-source gating, undetermined-no-authority)"},
+    {"id": "independent-partner-convergence", "state": "NOT_IMPLEMENTED", "evidence": null},
+    {"id": "integration/deployment", "state": "NOT_IMPLEMENTED", "evidence": null}
+  ],
+  "runtimeVersions": {"python": "3.12.14", "genlayer-py": "0.18.0", "genlayer-test": "0.29.2"},
+  "knownGaps": ["no independent partner build yet", "no GLSim integration test yet"],
+  "notes": "Lane-A canonical authority build; deterministic allocation state machine per Article XVI record in SPEC.md."
+}

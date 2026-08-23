@@ -1,6 +1,6 @@
 # DAA — Decision Boundary
 
-GenLayer may judge only the **allocation of bounded authority itself** when the authority mandate cannot be reduced to deterministic predicates without changing the problem.
+`JUDGMENT_BOUNDARY = NONE` for the v0.1 canonical slice. Qualitative mandate interpretation is externalized to Policy Envelope / Claim Verification before requesting; DAA v0.1 allocates authority through deterministic predicates only. The historical judgment examples below remain valid future extensions requiring a new capability version.
 
 Examples:
 - interpreting a qualitative authority-allocation mandate;

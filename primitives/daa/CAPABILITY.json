@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "1.0.0",
+  "primitiveId": "daa",
+  "name": "Dynamic Authority Allocation (DAA)",
+  "capabilityVersion": "0.1.0",
+  "status": "SPECIFIED",
+  "convergenceMode": "EXACT",
+  "judgmentBearing": false,
+  "implementation": {
+    "environment": "genlayer",
+    "path": "primitives/daa/implementations/genlayer/daa.py",
+    "contract": "Daa"
+  },
+  "publicMethods": [
+    {"name": "request_allocation", "kind": "write", "inputs": [
+      {"name": "request_id", "type": "string"},
+      {"name": "resource", "type": "string"},
+      {"name": "asset", "type": "string"},
+      {"name": "beneficiary", "type": "address-string"},
+      {"name": "purpose", "type": "string"},
+      {"name": "requested_bound", "type": "uint-string"},
+      {"name": "policy_hash", "type": "string"},
+      {"name": "valid_after", "type": "int-string"},
+      {"name": "valid_until", "type": "int-string"}
+    ], "output": "canonical-request-json-string"},
+    {"name": "award", "kind": "write", "authority": "only the recorded authority source", "inputs": [
+      {"name": "request_id", "type": "string"},
+      {"name": "allocation_id", "type": "string"},
+      {"name": "max_authority", "type": "uint-string (<= requested_bound)"},
+      {"name": "awarded_at", "type": "int-string"}
+    ], "output": "canonical-award-json-string"},
+    {"name": "reject_request", "kind": "write", "authority": "only the authority source", "inputs": [{"name": "request_id", "type": "string"}], "output": "canonical-request-json-string"},
+    {"name": "undetermine_request", "kind": "write", "authority": "only the authority source", "inputs": [{"name": "request_id", "type": "string"}], "output": "canonical-request-json-string"},
+    {"name": "revoke_award", "kind": "write", "authority": "only the authority source", "inputs": [{"name": "allocation_id", "type": "string"}], "output": "canonical-award-json-string"},
+    {"name": "verify_authority", "kind": "view", "inputs": [
+      {"name": "allocation_id", "type": "string"},
+      {"name": "actor", "type": "address-string"},
+      {"name": "resource", "type": "string"},
+      {"name": "purpose", "type": "string"},
+      {"name": "action_amount", "type": "uint-string"},
+      {"name": "at_timestamp", "type": "int-string"}
+    ], "output": "canonical-decision-json-string"},
+    {"name": "get_request", "kind": "view", "inputs": [{"name": "request_id", "type": "string"}], "output": "json-or-empty"},
+    {"name": "get_award", "kind": "view", "inputs": [{"name": "allocation_id", "type": "string"}], "output": "json-or-empty"}
+  ],
+  "canonicalDecision": {
+    "decision": ["AUTHORIZE", "DENY"],
+    "reasonCode": ["WITHIN_AWARD", "AWARD_REVOKED", "AWARD_EXPIRED", "BENEFICIARY_MISMATCH", "RESOURCE_MISMATCH", "PURPOSE_MISMATCH", "EXCEEDS_AWARD_BOUND"],
+    "equivalenceFields": ["decision", "reason_code"]
+  },
+  "stateMachine": {
+    "request": "REQUESTED -> AWARDED | REQUESTED -> REJECTED | REQUESTED -> UNDETERMINED",
+    "award": "AWARDED -> REVOKED | AWARDED -> EXPIRED(implicit by window)",
+    "rules": [
+      "only the recorded authority source may award/reject/undetermine/revoke",
+      "award bound may never exceed requested_bound (escalation structurally impossible)",
+      "one award per request; allocation_ids unique",
+      "REJECTED/UNDETERMINED create no authority",
+      "verify_authority is fail-closed and mutates nothing"
+    ]
+  },
+  "stateOwnership": {
+    "owns": ["bounded authority awards keyed by unique allocation_id", "allocation request state"],
+    "doesNotOwn": ["capital reservation or commitment (capital-commitment)", "claim encumbrance", "replay lanes (dal)", "settlement", "underwriting/ranking (mandate-allocation)", "evidence judgment (claim-verification)"]
+  },
+  "vectors": ["primitives/daa/vectors/v0.1.json"],
+  "reproduce": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "python tools/nomos_run_vectors.py primitives/daa/implementations/genlayer/daa.py --vectors primitives/daa/vectors/v0.1.json",
+    "python -m pytest primitives/daa/implementations/genlayer/tests/ -v"
+  ],
+  "composition": {
+    "typicalUpstream": ["claim-verification", "policy-envelope", "workflow-authorization", "mandate-allocation (optional ranking)"],
+    "typicalDownstream": ["claim-encumbrance", "capital-commitment", "dal"]
+  },
+  "unsupported": [
+    "qualitative mandate interpretation inside DAA (compose policy-envelope)",
+    "creditworthiness scoring or opportunity ranking",
+    "capital reservation, encumbrance, replay lanes, or value movement of any kind",
+    "deployment/conformance guarantee until receipts exist"
+  ]
+}

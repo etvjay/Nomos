@@ -1,44 +1,61 @@
-# DAA — GenLayer Implementation Contract
+# DAA — GenLayer Implementation
 
-Status: NOT_IMPLEMENTED
+Deterministic Intelligent Contract implementing Dynamic Authority Allocation v0.1.
 
-## Required GenLayer behavior
+## Public modules/interfaces
 
-The GenLayer implementation must create a **bounded authority award**, not perform generic underwriting.
+Single contract: `Daa` in `daa.py`.
 
-It must:
+Write methods:
+- `request_allocation(request_id, resource, asset, beneficiary, purpose, requested_bound, policy_hash, valid_after, valid_until)` — register REQUESTED. The caller becomes the recorded **authority source**.
+- `award(request_id, allocation_id, max_authority, awarded_at)` — authority source only; bound ≤ requested_bound enforced (escalation structurally impossible); award time inside window.
+- `reject_request(request_id)` / `undetermine_request(request_id)` — authority source only; neither creates authority.
+- `revoke_award(allocation_id)` — authority source only.
 
-- receive an authority source/allocator, candidate beneficiary, governed resource/capital scope, requested authority bounds, purpose, policy/conditions, validity, and any optional upstream evidence/mandate result;
-- enforce deterministic preconditions before judgment;
-- use validator-mediated judgment only where the **allocation of authority itself** requires qualitative interpretation;
-- return a structured authority-allocation decision;
-- preserve `REJECTED` and `UNDETERMINED` as outcomes that create no authority;
-- enforce deterministic postconditions on bounds, identity, resource scope, validity and uniqueness;
-- store or emit an immutable `AllocationAward` / `AuthorityAllocation` object.
+View method (the sole downstream surface):
+- `verify_authority(allocation_id, actor, resource, purpose, action_amount, at_timestamp)` — deterministic AUTHORIZE/DENY with reason code. Fail-closed order: revoked → expired → beneficiary → resource → purpose → bound.
 
-## Suggested structured result
+Views: `get_request`, `get_award`.
 
-```text
-outcome: AWARDED | REJECTED | UNDETERMINED
-beneficiary
-maxAuthority
-purpose
-conditionsHash
-validUntil
-evidenceOrDecisionRoot
+## State machine
+
+```
+REQUESTED -> AWARDED -> REVOKED | EXPIRED(implicit)
+REQUESTED -> REJECTED | UNDETERMINED   # create no authority
 ```
 
-## Must never do
+## State ownership
 
-- act as a general credit-scoring engine;
-- rank an open universe of opportunities as part of DAA semantics;
-- replace Claim Verification;
-- move funds from a judgment result;
-- treat authority allocation as commitment or encumbrance;
-- assign a DAL lane or nonce as part of the award;
-- mutate unrelated pool accounting;
-- hide validator disagreement behind approval.
+Awards and requests only. An award does NOT reserve capital, encumber claims,
+assign replay lanes, or move value (Article V). Downstream primitives consume
+`verify_authority` decisions.
 
-## Required evidence
+## Expected errors
 
-GenVM lint, direct tests, bounded-authority tests, identity/substitution tests, decision-boundary tests, canonical vectors, adversarial authority-allocation tests, integration tests, and deployment/CLI evidence.
+`DAA:`-prefixed ValueError/UserError: unknown ids, duplicates, empty fields,
+zero/malformed bounds, inverted windows, non-authority-source operations,
+bound escalation, awards outside validity windows, terminal-state mutations,
+malformed amounts/timestamps in verify_authority.
+
+## Security assumptions
+
+- The authority source is whoever calls `request_allocation`; composition
+  layers must ensure that caller actually holds authority over the resource.
+- Beneficiary/actor addresses compare case/prefix-insensitively.
+- Qualitative mandate interpretation belongs upstream (Policy Envelope);
+  v0.1 expresses allocation purely through deterministic predicates.
+
+## How to run tests
+
+```bash
+python tools/nomos_run_vectors.py primitives/daa/implementations/genlayer/daa.py --vectors primitives/daa/vectors/v0.1.json
+python -m pytest primitives/daa/implementations/genlayer/tests/ -v
+```
+
+11 canonical vectors + 4 direct tests (authority-source gating).
+
+## What remains unsupported
+
+Qualitative mandate interpretation inside the primitive, underwriting/ranking,
+any capital effects, deployment receipts, and independent-partner convergence
+evidence do not exist yet.

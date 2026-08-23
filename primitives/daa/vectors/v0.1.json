@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "0.1.0",
+  "primitive": "daa",
+  "convergenceMode": "EXACT",
+  "statuses": { "request": ["REQUESTED", "EVALUATING", "AWARDED", "REJECTED", "UNDETERMINED"], "award": ["AWARDED", "EXPIRED", "REVOKED"] },
+  "vectors": [
+    {
+      "id": "daa-request-001",
+      "description": "Requesting an authority allocation registers REQUESTED with deterministic bindings",
+      "actions": [
+        {"op": "request_allocation", "args": ["REQ1", "POOL-1", "USD", "BENEFICIARY-B", "treasury-facility", "5000", "POLICYHASH-1", "0", "9999999999"], "expect": "ok"},
+        {"op": "get_request", "args": ["REQ1"], "expect": {"request_id": "REQ1", "resource": "POOL-1", "asset": "USD", "beneficiary": "BENEFICIARY-B", "purpose": "treasury-facility", "requested_bound": "5000", "policy_hash": "POLICYHASH-1", "status": "REQUESTED"}}
+      ]
+    },
+    {
+      "id": "daa-request-duplicate-invalid-002",
+      "description": "Duplicate request ids, empty fields, zero bound, inverted window rejected",
+      "actions": [
+        {"op": "request_allocation", "args": ["REQ1", "POOL-1", "USD", "B", "p", "100", "PH", "0", "99"], "expect": "ok"},
+        {"op": "request_allocation", "args": ["REQ1", "POOL-2", "USD", "C", "p", "200", "PH", "0", "99"], "expect": "reject"},
+        {"op": "request_allocation", "args": ["", "POOL-1", "USD", "B", "p", "10", "PH", "0", "9"], "expect": "reject"},
+        {"op": "request_allocation", "args": ["RQ3", "", "USD", "B", "p", "10", "PH", "0", "9"], "expect": "reject"},
+        {"op": "request_allocation", "args": ["RQ4", "POOL-1", "", "B", "p", "10", "PH", "0", "9"], "expect": "reject"},
+        {"op": "request_allocation", "args": ["RQ5", "POOL-1", "USD", "", "p", "10", "PH", "0", "9"], "expect": "reject"},
+        {"op": "request_allocation", "args": ["RQ6", "POOL-1", "USD", "B", "", "10", "PH", "0", "9"], "expect": "reject"},
+        {"op": "request_allocation", "args": ["RQ7", "POOL-1", "USD", "B", "p", "0", "PH", "0", "9"], "expect": "reject"},
+        {"op": "request_allocation", "args": ["RQ8", "POOL-1", "USD", "B", "p", "10", "", "0", "9"], "expect": "reject"},
+        {"op": "request_allocation", "args": ["RQ9", "POOL-1", "USD", "B", "p", "10", "PH", "20", "10"], "expect": "reject"}
+      ]
+    },
+    {
+      "id": "daa-award-by-authority-source-003",
+      "description": "The authority source can award a pending request with a bound not exceeding the requested bound",
+      "actions": [
+        {"op": "request_allocation", "args": ["REQ1", "POOL-1", "USD", "BENEFICIARY-B", "treasury-facility", "5000", "PH1", "0", "9999999999"], "expect": "ok"},
+        {"op": "award", "args": ["REQ1", "AWD1", "4000", "5000000000"], "expect": "ok"},
+        {"op": "get_award", "args": ["AWD1"], "expect": {"allocation_id": "AWD1", "request_id": "REQ1", "beneficiary": "BENEFICIARY-B", "resource": "POOL-1", "asset": "USD", "max_authority": "4000", "purpose": "treasury-facility", "policy_hash": "PH1", "status": "AWARDED"}},
+        {"op": "get_request", "args": ["REQ1"], "expect": {"status": "AWARDED"}}
+      ]
+    },
+    {
+      "id": "daa-award-exceeds-requested-bound-rejected-004",
+      "description": "An award bound above the requested bound is rejected (bound escalation blocked)",
+      "actions": [
+        {"op": "request_allocation", "args": ["REQ1", "POOL-1", "USD", "B", "p", "100", "PH1", "0", "9999999999"], "expect": "ok"},
+        {"op": "award", "args": ["REQ1", "AWD1", "101", "5000000000"], "expect": "reject"}
+      ]
+    },
+    {
+      "id": "daa-non-authority-cannot-award-005",
+      "description": "Only the authority source (requester) may award; beneficiary cannot self-award",
+      "actions": [
+        {"op": "request_allocation", "args": ["REQ1", "POOL-1", "USD", "BENEFICIARY-B", "p", "100", "PH1", "0", "9999999999"], "expect": "ok"}
+      ],
+      "note": "sender-gating covered by direct tests"
+    },
+    {
+      "id": "daa-double-award-rejected-006",
+      "description": "A request can only be awarded once; second award attempt rejects",
+      "actions": [
+        {"op": "request_allocation", "args": ["REQ1", "POOL-1", "USD", "B", "p", "100", "PH1", "0", "9999999999"], "expect": "ok"},
+        {"op": "award", "args": ["REQ1", "AWD1", "50", "5000000000"], "expect": "ok"},
+        {"op": "award", "args": ["REQ1", "AWD2", "60", "5000000001"], "expect": "reject"}
+      ]
+    },
+    {
+      "id": "daa-reject-and-undetermined-create-no-authority-007",
+      "description": "REJECTED and UNDETERMINED requests create no award surface",
+      "actions": [
+        {"op": "request_allocation", "args": ["REQ1", "POOL-1", "USD", "B", "p", "100", "PH1", "0", "9999999999"], "expect": "ok"},
+        {"op": "reject_request", "args": ["REQ1"], "expect": "ok"},
+        {"op": "get_request", "args": ["REQ1"], "expect": {"status": "REJECTED"}},
+        {"op": "award", "args": ["REQ1", "AWDX", "10", "5000000000"], "expect": "reject"}
+      ]
+    },
+    {
+      "id": "daa-award-expiry-008",
+      "description": "An award outside its validity window is EXPIRED and authorizes nothing",
+      "actions": [
+        {"op": "request_allocation", "args": ["REQ1", "POOL-1", "USD", "B", "p", "100", "PH1", "0", "50"], "expect": "ok"},
+        {"op": "award", "args": ["REQ1", "AWD1", "100", "50"], "expect": "ok"},
+        {"op": "verify_authority", "args": ["AWD1", "B", "POOL-1", "p", "100", "60"], "expect": {"decision": "DENY", "reason_code": "AWARD_EXPIRED"}}
+      ]
+    },
+    {
+      "id": "daa-revoke-authorizes-nothing-009",
+      "description": "A revoked award denies downstream verification fail-closed",
+      "actions": [
+        {"op": "request_allocation", "args": ["REQ1", "POOL-1", "USD", "B", "p", "100", "PH1", "0", "9999999999"], "expect": "ok"},
+        {"op": "award", "args": ["REQ1", "AWD1", "100", "5000000000"], "expect": "ok"},
+        {"op": "revoke_award", "args": ["AWD1"], "expect": "ok"},
+        {"op": "get_award", "args": ["AWD1"], "expect": {"status": "REVOKED"}},
+        {"op": "verify_authority", "args": ["AWD1", "B", "POOL-1", "p", "50", "5000000001"], "expect": {"decision": "DENY", "reason_code": "AWARD_REVOKED"}}
+      ]
+    },
+    {
+      "id": "daa-downstream-overreach-denied-010",
+      "description": "Downstream action exceeding the award bound, wrong beneficiary/resource/purpose, or over amount denies deterministically",
+      "actions": [
+        {"op": "request_allocation", "args": ["REQ1", "POOL-1", "USD", "BENEFICIARY-B", "treasury-facility", "500", "PH1", "0", "9999999999"], "expect": "ok"},
+        {"op": "award", "args": ["REQ1", "AWD1", "400", "5000000000"], "expect": "ok"},
+        {"op": "verify_authority", "args": ["AWD1", "BENEFICIARY-B", "POOL-1", "treasury-facility", "401", "5000000001"], "expect": {"decision": "DENY", "reason_code": "EXCEEDS_AWARD_BOUND"}},
+        {"op": "verify_authority", "args": ["AWD1", "IMPOSTOR", "POOL-1", "treasury-facility", "100", "5000000001"], "expect": {"decision": "DENY", "reason_code": "BENEFICIARY_MISMATCH"}},
+        {"op": "verify_authority", "args": ["AWD1", "BENEFICIARY-B", "POOL-9", "treasury-facility", "100", "5000000001"], "expect": {"decision": "DENY", "reason_code": "RESOURCE_MISMATCH"}},
+        {"op": "verify_authority", "args": ["AWD1", "BENEFICIARY-B", "POOL-1", "other-purpose", "100", "5000000001"], "expect": {"decision": "DENY", "reason_code": "PURPOSE_MISMATCH"}},
+        {"op": "verify_authority", "args": ["AWD1", "BENEFICIARY-B", "POOL-1", "treasury-facility", "400", "5000000002"], "expect": {"decision": "AUTHORIZE", "reason_code": "WITHIN_AWARD"}}
+      ]
+    },
+    {
+      "id": "daa-no-capital-effects-011",
+      "description": "Awards create no reservation/encumbrance/commitment/replay state: unknown lookups empty",
+      "actions": [
+        {"op": "get_award", "args": ["UNKNOWN"], "expect": ""},
+        {"op": "get_request", "args": ["UNKNOWN"], "expect": ""}
+      ]
+    }
+  ]
+}
