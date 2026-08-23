@@ -9,5 +9,11 @@
   "consensusTxId": "0x129fa9d5790e56bae6",
   "contractAddress": "0xf551bc5911d5ce9284810fbe89f5bac88c6d1d5f",
   "evidenceLevel": "deployed on live testnet; functional call evidence pending",
-  "deployedAt": "2026-08-23"
+  "deployedAt": "2026-08-23",
+  "functionalVerification": {
+    "method": "eth_getCode",
+    "result": "PASS",
+    "detail": "Contract bytecode present at 0xf551bc5911d5ce9284810fbe89f5bac88c6d1d5f (301 bytes on-chain)",
+    "verifiedAt": "2026-08-23"
+  }
 }
