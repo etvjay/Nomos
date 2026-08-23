@@ -1,0 +1,13 @@
+{
+  "network": "genlayer-testnet-bradbury",
+  "chainId": "4221",
+  "rpc": "https://rpc-bradbury.genlayer.com",
+  "deployer": "0x8311bfd717708d6e9c4933e80762cc4901f836bf",
+  "contractFile": "contracts/ppa.py",
+  "primitive": "ppa",
+  "evmTxHash": "0xd4129d0ab152c952403b4299036f4db591ec014bda71d9cb1350aa025ef469ff",
+  "contractAddress": "0xe4d3f0b1119f940c5e98bc3899a595a92c988f7a",
+  "codeBytesOnChain": 300,
+  "evidenceLevel": "deployed on live testnet; bytecode verified via eth_getCode; functional write-call evidence pending",
+  "deployedAt": "2026-08-23"
+}
