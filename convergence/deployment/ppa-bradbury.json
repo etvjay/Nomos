@@ -12,9 +12,9 @@
   "deployedAt": "2026-08-23",
   "note": "v0.1.1 redeploy with robust ISO timestamp parsing (Z-suffix fix found via Bradbury-only revert)",
   "functionalVerification": {
-    "method": "live write+read calls",
+    "method": "live write+read calls (full lifecycle)",
     "result": "PASS",
-    "detail": "Full payment lifecycle executed on-chain: initialize, create_account (ACTIVE), deposit 3000, send 1200 -> SETTLED, balance read-back 1800 = exact expected delta. Payment id LIFE-945168.",
+    "detail": "Full payment lifecycle on Testnet Bradbury against the fixed v0.1.1 deployment: initialize ok; create_account LIFE-ACC -> ACTIVE; deposit 3000 landed; send 1200 -> payment LIFE-945168 SETTLED; final balance read-back 1800 = exact expected delta (3000 - 1200). Intermediate deposit read raced consensus and is superseded by the exact final-state proof.",
     "verifiedAt": "2026-08-23"
   }
 }
