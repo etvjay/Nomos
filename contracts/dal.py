@@ -1,1 +1,1 @@
-/home/ubuntu/nomos/primitives/dal/implementations/genlayer/dal.py
+../primitives/dal/implementations/genlayer/dal.py

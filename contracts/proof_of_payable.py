@@ -1,1 +1,1 @@
-/home/ubuntu/nomos/primitives/proof-of-payable/implementations/genlayer/proof_of_payable.py
+../primitives/proof-of-payable/implementations/genlayer/proof_of_payable.py

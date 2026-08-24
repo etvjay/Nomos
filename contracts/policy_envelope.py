@@ -1,1 +1,1 @@
-/home/ubuntu/nomos/primitives/policy-envelope/implementations/genlayer/policy_envelope.py
+../primitives/policy-envelope/implementations/genlayer/policy_envelope.py

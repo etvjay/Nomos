@@ -1,1 +1,1 @@
-/home/ubuntu/nomos/primitives/claim-verification/implementations/genlayer/claim_verification.py
+../primitives/claim-verification/implementations/genlayer/claim_verification.py

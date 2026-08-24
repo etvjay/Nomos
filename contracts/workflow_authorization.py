@@ -1,1 +1,1 @@
-/home/ubuntu/nomos/primitives/workflow-authorization/implementations/genlayer/workflow_authorization.py
+../primitives/workflow-authorization/implementations/genlayer/workflow_authorization.py

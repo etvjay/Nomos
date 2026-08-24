@@ -1,1 +1,1 @@
-/home/ubuntu/nomos/ias/stage3-autonomous/stage3_debug.py
+../ias/stage3-autonomous/stage3_debug.py

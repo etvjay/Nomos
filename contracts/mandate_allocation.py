@@ -1,1 +1,1 @@
-/home/ubuntu/nomos/primitives/mandate-allocation/implementations/genlayer/mandate_allocation.py
+../primitives/mandate-allocation/implementations/genlayer/mandate_allocation.py

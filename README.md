@@ -50,19 +50,21 @@ For deterministic primitives, the Intelligent Contract implements the state mach
 
 All 11 primitives are deployed on GenLayer Testnet Bradbury. **10 of 11 are CONFORMANT** — independently reimplemented by fresh-context builders who read only the specification and canonical vectors, with every canonical vector passing against every independent build (EXACT convergence; convergence receipts in `convergence/receipts/`).
 
-| Primitive | Status | Convergence |
-|---|---|---|
-| Claim Verification | CONFORMANT | SEMANTIC |
-| Claim Encumbrance | CONFORMANT | EXACT |
-| Capital Commitment | CONFORMANT | EXACT |
-| Proof of Payable | CONFORMANT | EXACT |
-| Policy Envelope | CONFORMANT | SEMANTIC |
-| Workflow Authorization | CONFORMANT | EXACT |
-| Mandate Allocation | CONFORMANT | EXACT |
-| Dynamic Authority Allocation (DAA) | CONFORMANT | EXACT |
-| Dynamic Authorization Lanes (DAL) | CONFORMANT | EXACT |
-| Gaia | CONFORMANT | EXACT |
-| Financial Contract | SPECIFIED | converged 9/9 via independent lane; SCOPE_PROVISIONAL — advances after public state model re-qualification |
+| Primitive | What it does | Status | Convergence |
+|---|---|---|---|
+| Proof of Payable | Evidence-bearing payment claims: attest → settle; every payment is a claim, never a naked transfer | CONFORMANT | EXACT |
+| Claim Encumbrance | Reserves capital against pending obligations — overcommitment structurally impossible | CONFORMANT | EXACT |
+| Capital Commitment | Committed-vs-available treasury accounting for deposits and their encumbrance capacity | CONFORMANT | EXACT |
+| Policy Envelope | Deterministic spend gates (allowlist, per-tx caps, daily windows); denials are audited records that consume nothing | CONFORMANT | SEMANTIC |
+| Workflow Authorization | Propose → accept → execute pacts with validity windows — stale evidence cannot authorize new state | CONFORMANT | EXACT |
+| Mandate Allocation | Binds capital to upstream mandates; evaluation ids burn on ineligible attempts too (auditable) | CONFORMANT | EXACT |
+| Dynamic Authority Allocation (DAA) | Authority awarded as bounded capacity with lifecycle: award ≠ usage; expiry never resets on activity | CONFORMANT | EXACT |
+| Dynamic Authorization Lanes (DAL) | Replay-proof execution nonces consumed atomically — time-boxed keys are also single-use per action | CONFORMANT | EXACT |
+| Financial Contract | Obligation/cash-flow lifecycle: ACTIVE → MATURED/DEFAULTED/CLOSED; creditor-gated default | SPECIFIED* | converged 9/9 via independent lane |
+| Gaia | Dispute/exception plane: cases open → classify → resolve; remedies are compensating entries — history annotated, never rewritten | CONFORMANT | EXACT |
+| Claim Verification | LLM interpretation of mandate clauses under semantic consensus across validators | CONFORMANT | SEMANTIC |
+
+*\*Financial Contract converged via independent lane (9/9 vectors); blocked from CONFORMANT only by a scope re-qualification of its public state model.*
 
 The Programmable Payment Account (PPA) composite has full live functional verification on Testnet Bradbury: account creation, funding, policy-gated send, settlement, and exact balance reconciliation (`primitives/ppa/`, whitepaper at `primitives/ppa/WHITEPAPER.md`).
 
