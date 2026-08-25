@@ -1,4 +1,4 @@
-# DAA — Threat Model
+# DAA - Threat Model
 
 Test:
 

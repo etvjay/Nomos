@@ -1,4 +1,4 @@
-# Claim Encumbrance — Canonical Specification
+# Claim Encumbrance - Canonical Specification
 
 Status: SPECIFIED
 Version: 0.1.0

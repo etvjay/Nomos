@@ -1,4 +1,4 @@
-# IAS-1 v0.2 — Account Role Profiles (Catalog Draft)
+# IAS-1 v0.2 - Account Role Profiles (Catalog Draft)
 
 **The Intelligent Account type system: one core, composable role profiles.**
 
@@ -33,14 +33,14 @@ interfaces shown to counterparties, not separate contracts.
 - **New mechanism needed:** refund-reserve encumbrance on inbound revenue.
 
 ### 3. Agent Account
-- **Holds:** delegated capital only · **Acts for:** a principal · **Governed by:** lanes only — no owner-key co-tenancy
+- **Holds:** delegated capital only · **Acts for:** a principal · **Governed by:** lanes only - no owner-key co-tenancy
 - **Does:** fully agent-native occupancy. Authority exclusively via delegation lanes (caps/expiry/replay-proof); principal attestation hook binding agent to owner; kill switch defaults off; cannot self-grant authority.
 - **Constitution inherited from OpenRails guardrails:** agents do not receive private keys, do not approve their own authority, do not claim success without verifiable evidence.
 
 ### 4. Trustee Account
 - **Holds:** assets owned by a beneficiary · **Acts for:** beneficiary · **Owes:** accounting and duty of care
-- **Does:** fiduciary custody — escrow agent, custodian, DAO treasurer, executor. Committed-vs-available segregation is trustee duty; gaia is the beneficiary's remedy path; workflow pacts are the trust terms.
-- **New mechanism needed:** beneficiary rights as first-class state — inspect, demand accounting, revoke-for-cause via gaia.
+- **Does:** fiduciary custody - escrow agent, custodian, DAO treasurer, executor. Committed-vs-available segregation is trustee duty; gaia is the beneficiary's remedy path; workflow pacts are the trust terms.
+- **New mechanism needed:** beneficiary rights as first-class state - inspect, demand accounting, revoke-for-cause via gaia.
 
 ### 5. Attestation Account
 - **Holds:** nothing (or minimal stake) · **Emits:** signed statements about things
@@ -49,15 +49,15 @@ interfaces shown to counterparties, not separate contracts.
 
 ### 6. Order Account
 - **Holds:** standing/limit/scheduled orders against capital elsewhere · **Emits:** order fills
-- **Does:** orderbook participant semantics — limit orders, recurring payments, scheduled transfers. Orders are encumbrances on a linked Payment Account; fills route through its gates.
+- **Does:** orderbook participant semantics - limit orders, recurring payments, scheduled transfers. Orders are encumbrances on a linked Payment Account; fills route through its gates.
 
 ### 7. Demand Account
 - **Holds:** claims owed TO it · **Emits:** payment demands, calls on obligation
-- **Does:** the collector side of commerce — receives demands lifecycle, tracks aging, escalates to gaia when obligations go unpaid. Counterpart of Merchant.
+- **Does:** the collector side of commerce - receives demands lifecycle, tracks aging, escalates to gaia when obligations go unpaid. Counterpart of Merchant.
 
 ### 8. Agreement Account
 - **Holds:** terms, not capital · **Acts for:** two parties simultaneously · **Emits:** pact state changes
-- **Does:** OpenRails' Pact promoted to accounthood — a bilateral agreement as an on-chain entity with its own lifecycle (proposed → accepted → active → fulfilled/breached), holding both parties' obligations and the evidence schema that governs them.
+- **Does:** OpenRails' Pact promoted to accounthood - a bilateral agreement as an on-chain entity with its own lifecycle (proposed → accepted → active → fulfilled/breached), holding both parties' obligations and the evidence schema that governs them.
 
 ### 9. Slot Account
 - **Holds:** reservable capacity (time, inventory, bandwidth, seats) · **Emits:** bookings, confirmations
@@ -73,15 +73,15 @@ interfaces shown to counterparties, not separate contracts.
 
 ### 12. Clause Account
 - **Holds:** attached clauses that define behavior · **Governed by:** the clauses themselves
-- **Does:** policy-envelope-as-account — behavior is entirely clause-driven; add/remove clauses (via governance) to reshape the account. The purest expression of "rules as data."
+- **Does:** policy-envelope-as-account - behavior is entirely clause-driven; add/remove clauses (via governance) to reshape the account. The purest expression of "rules as data."
 
 ### 13. Dynamic Account
 - **Holds:** anything · **Governed by:** rules that change at runtime
-- **Does:** Module D applied to Module B — judgment proposes rule reconfigurations; deterministic dispose applies them within declared bounds. The shape-shifter: risk parameters evolve with observed reality, never by direct model mutation.
+- **Does:** Module D applied to Module B - judgment proposes rule reconfigurations; deterministic dispose applies them within declared bounds. The shape-shifter: risk parameters evolve with observed reality, never by direct model mutation.
 
 ### 14. Compositor (Account of Accounts)
 - **Holds:** sub-accounts · **Acts for:** the hierarchy · **Emits:** consolidated views, portfolio actions
-- **Does:** the root object — Workspace-meets-PPA. Portfolio-level policies, consolidated audit, hierarchical authority (OpenRails Workspace integration). An account whose balance sheet includes other accounts.
+- **Does:** the root object - Workspace-meets-PPA. Portfolio-level policies, consolidated audit, hierarchical authority (OpenRails Workspace integration). An account whose balance sheet includes other accounts.
 
 ### 15. Role Account *(meta)*
 - **Does:** declares/enumerates which profiles it currently plays; the registry entry point for discovery. Any account can expose this view; it's how counterparties learn what interfaces an account supports.

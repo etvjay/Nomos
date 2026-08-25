@@ -2,7 +2,7 @@
 
 This document is the highest-authority engineering document in the Nomos repository.
 
-## Article I — Product Purpose
+## Article I - Product Purpose
 
 Nomos exists to provide **reusable financial primitives for developers building applications on GenLayer**.
 
@@ -10,7 +10,7 @@ A Nomos primitive is not merely a research abstraction. Its released form must b
 
 Cross-environment implementations may exist for research, interoperability, reference modeling, or conformance comparison. They are secondary to the GenLayer product target.
 
-## Article II — Semantic Sovereignty
+## Article II - Semantic Sovereignty
 
 A Nomos primitive is defined by its economic meaning, state model, invariants, authority boundaries, failure semantics, and observable guarantees.
 
@@ -18,7 +18,7 @@ GenLayer, GenVM, Intelligent Contracts, Optimistic Democracy, SDKs, standards, a
 
 This semantic separation exists to make GenLayer implementations correct and composable, not to make GenLayer optional.
 
-## Article III — Mandatory GenLayer Implementation
+## Article III - Mandatory GenLayer Implementation
 
 Every Nomos primitive MUST have an executable GenLayer implementation before it may be `CONFORMANT` or `RELEASED`.
 
@@ -40,7 +40,7 @@ Intelligent Contracts are the programmable implementation surface. Optimistic De
 
 Neither is itself a Nomos financial primitive.
 
-## Article IV — Intelligence and Equivalence Boundary
+## Article IV - Intelligence and Equivalence Boundary
 
 Non-deterministic intelligence is allowed only where the primitive intrinsically requires judgment that cannot be reduced to deterministic computation without changing the problem.
 
@@ -73,7 +73,7 @@ A deterministic primitive still implements as an Intelligent Contract, but MUST 
 
 `free-form model output → unrestricted money movement` is forbidden.
 
-## Article V — Authority Separation
+## Article V - Authority Separation
 
 Nomos MUST preserve the distinction:
 
@@ -97,7 +97,7 @@ Examples:
 - DAL does not prove economic independence of authorizations.
 - Gaia does not gain execution authority from exception state.
 
-## Article VI — Evidence Before Assertion
+## Article VI - Evidence Before Assertion
 
 Claims about implementation, security, compatibility, performance, GenLayer behavior, consensus behavior, or production status require evidence.
 
@@ -116,7 +116,7 @@ Acceptable evidence includes:
 
 A demo is not evidence of a guarantee unless the guarantee is directly measured by the demo.
 
-## Article VII — Research Before Reinvention
+## Article VII - Research Before Reinvention
 
 Before introducing or materially changing a primitive, Research Foundry MUST establish:
 
@@ -129,7 +129,7 @@ Before introducing or materially changing a primitive, Research Foundry MUST est
 - falsifiers;
 - smallest discriminating experiment.
 
-## Article VIII — Identity and Lineage
+## Article VIII - Identity and Lineage
 
 Economic identity MUST remain distinct from evidence snapshots.
 
@@ -143,13 +143,13 @@ A lifecycle update may create a new immutable proof without creating a new econo
 
 Any primitive with mutable evidence MUST define stable identity, versioning, lineage, amendment semantics, and supersession rules.
 
-## Article IX — Deterministic Economic Safety
+## Article IX - Deterministic Economic Safety
 
 Capacity, conservation, replay, uniqueness, accounting, expiry, reservation, encumbrance, and authority checks MUST remain deterministic unless the canonical specification proves why deterministic treatment is impossible.
 
 Subjective judgment may determine a bounded decision. It may not mutate unrelated accounting or bypass the safety core.
 
-## Article X — Exception Does Not Suspend Authorization
+## Article X - Exception Does Not Suspend Authorization
 
 Failure, dispute, mismatch, or rectification does not create authority.
 
@@ -157,7 +157,7 @@ Gaia may prescribe a resolution obligation. Corrective execution MUST pass the s
 
 Historical truth is append-only. Rectification creates new evidence and state transitions; it does not rewrite confirmed prior events.
 
-## Article XI — GenLayer Conformance
+## Article XI - GenLayer Conformance
 
 A released primitive MUST demonstrate that its GenLayer implementation preserves the canonical observable guarantees.
 
@@ -174,13 +174,13 @@ Conformance must include, as applicable:
 
 Additional environment conformance is additive and does not replace GenLayer conformance.
 
-## Article XII — Explicit Unsupported State
+## Article XII - Explicit Unsupported State
 
 An implementation MUST say `UNSUPPORTED`, `NOT_IMPLEMENTED`, `BLOCKED`, or `FAIL` when appropriate.
 
 It is forbidden to simulate support by weakening a requirement, omitting the hard case, returning optimistic defaults, substituting documentation for execution evidence, or treating validator disagreement as approval.
 
-## Article XIII — Adversarial Completion
+## Article XIII - Adversarial Completion
 
 A primitive is not implementation-grade until tested against its own invariants and adversarial model.
 
@@ -199,7 +199,7 @@ Minimum adversarial categories include:
 - unauthorized recovery;
 - semantic drift between primitive specification and Intelligent Contract.
 
-## Article XIV — Developer Consumption Is Part of Completion
+## Article XIV - Developer Consumption Is Part of Completion
 
 A released primitive MUST be usable by another GenLayer application developer without reverse-engineering its implementation.
 
@@ -216,7 +216,7 @@ Where appropriate, releases must include:
 
 Every reusable module must include adjacent usage documentation.
 
-## Article XV — Receipts
+## Article XV - Receipts
 
 Every claimed release MUST produce a receipt containing:
 
@@ -231,7 +231,7 @@ Every claimed release MUST produce a receipt containing:
 - known limitations;
 - timestamp.
 
-## Article XVI — Change Control
+## Article XVI - Change Control
 
 A change to implementation code is ordinary engineering.
 

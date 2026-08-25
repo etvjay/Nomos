@@ -1,4 +1,4 @@
-# Capital Commitment v0.1 — Conformance Record
+# Capital Commitment v0.1 - Conformance Record
 
 Status: CONFORMANT (claimed 2026-08-23)
 Capability version: 0.1.0
@@ -16,8 +16,8 @@ Per CONSTITUTION Article XI, applicable categories and their evidence:
 | Direct GenVM tests | Vector runner executes the contract in GenLayer direct mode (GenVM) | PASS |
 | Independent-build convergence | EXP-CONV-003: lane B and lane C independently built from authority package only; all vectors byte-identical; RECEIPT-CONV-003-DIFF | PASS |
 | Adversarial experiments | Overcommit, replay-by-id, expiry double-restore, cross-pool confusion covered as vector rejections | PASS (vector-scope) |
-| Integration tests | NOT_IMPLEMENTED — no GLSim integration test for this primitive yet | NOT_IMPLEMENTED |
-| Deployment/runtime evidence | NOT_IMPLEMENTED — no deployment receipt yet | NOT_IMPLEMENTED |
+| Integration tests | NOT_IMPLEMENTED - no GLSim integration test for this primitive yet | NOT_IMPLEMENTED |
+| Deployment/runtime evidence | NOT_IMPLEMENTED - no deployment receipt yet | NOT_IMPLEMENTED |
 
 ## Known limitations
 

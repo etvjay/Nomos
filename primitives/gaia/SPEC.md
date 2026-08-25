@@ -1,4 +1,4 @@
-# Gaia — Exception, Reconciliation & Rectification
+# Gaia - Exception, Reconciliation & Rectification
 
 Status: SPECIFIED
 Version: 0.1.0

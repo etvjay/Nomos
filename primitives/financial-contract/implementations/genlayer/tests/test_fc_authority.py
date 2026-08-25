@@ -1,4 +1,4 @@
-"""Direct tests for Financial Contract v0.1 — creditor authority gate.
+"""Direct tests for Financial Contract v0.1 - creditor authority gate.
 
 Covers sender-dependent default declaration the single-sender vector runner
 cannot express.

@@ -1,4 +1,4 @@
-# Proof of Payable — GenLayer Implementation
+# Proof of Payable - GenLayer Implementation
 
 Deterministic Intelligent Contract implementing Proof of Payable v0.1.
 
@@ -8,18 +8,18 @@ Single contract: `ProofOfPayable` in `proof_of_payable.py`.
 
 Write methods:
 
-- `open_claim(claim_id, amount, external_ref, obligor)` — register a payable claim. `amount` must be a positive decimal uint-string; identity fields immutable after creation.
-- `attach_evidence(claim_id, proof_id, proof_id_hash, metadata_json)` — append one immutable proof snapshot (`proof_id` globally unique, `metadata_json` ≤ 4096 bytes). First attachment moves `DRAFT → EVIDENCED` and sets `latest_proof_hash`.
-- `attest_claim(claim_id)` — requires ≥1 attached proof.
-- `dispute_claim(claim_id)` — any live status → `DISPUTED`.
-- `reject_claim(claim_id)` — `DISPUTED → REJECTED` (terminal).
-- `settle_claim(claim_id)` — `ATTESTED → SETTLED` (terminal); does not move capital.
-- `void_claim(claim_id)` — live → `VOID` (terminal).
+- `open_claim(claim_id, amount, external_ref, obligor)` - register a payable claim. `amount` must be a positive decimal uint-string; identity fields immutable after creation.
+- `attach_evidence(claim_id, proof_id, proof_id_hash, metadata_json)` - append one immutable proof snapshot (`proof_id` globally unique, `metadata_json` ≤ 4096 bytes). First attachment moves `DRAFT → EVIDENCED` and sets `latest_proof_hash`.
+- `attest_claim(claim_id)` - requires ≥1 attached proof.
+- `dispute_claim(claim_id)` - any live status → `DISPUTED`.
+- `reject_claim(claim_id)` - `DISPUTED → REJECTED` (terminal).
+- `settle_claim(claim_id)` - `ATTESTED → SETTLED` (terminal); does not move capital.
+- `void_claim(claim_id)` - live → `VOID` (terminal).
 
 View methods:
 
-- `get_claim(claim_id)` — canonical claim JSON or empty string if unknown.
-- `get_evidence(proof_id)` — canonical proof JSON or empty string if unknown.
+- `get_claim(claim_id)` - canonical claim JSON or empty string if unknown.
+- `get_evidence(proof_id)` - canonical proof JSON or empty string if unknown.
 
 ## Inputs and outputs
 
@@ -46,7 +46,7 @@ and any mutation of a terminal (`REJECTED`/`SETTLED`/`VOID`) or non-live claim.
 ## Security assumptions
 
 - Callers supply `proof_hash`; this primitive does not fetch or hash remote evidence.
-- No access control on lifecycle transitions in v0.1 — authorization belongs to
+- No access control on lifecycle transitions in v0.1 - authorization belongs to
   upstream Workflow Authorization / DAA composition. Do not expose an uncomposed
   deployment to untrusted writers expecting permissioned behavior.
 - Deterministic accounting only: `JUDGMENT_BOUNDARY = NONE`.
@@ -65,6 +65,6 @@ terminal immutability, replay/duplicate rejection, and absence of capital effect
 ## What remains unsupported
 
 Substantive judgment over whether evidence supports the claimed condition is
-explicitly out of scope — that is Claim Verification's SEMANTIC boundary consuming
+explicitly out of scope - that is Claim Verification's SEMANTIC boundary consuming
 the snapshots produced here. Deployment receipts and independent-partner convergence
 evidence do not yet exist for this primitive.

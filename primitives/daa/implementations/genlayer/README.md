@@ -1,4 +1,4 @@
-# DAA — GenLayer Implementation
+# DAA - GenLayer Implementation
 
 Deterministic Intelligent Contract implementing Dynamic Authority Allocation v0.1.
 
@@ -7,13 +7,13 @@ Deterministic Intelligent Contract implementing Dynamic Authority Allocation v0.
 Single contract: `Daa` in `daa.py`.
 
 Write methods:
-- `request_allocation(request_id, resource, asset, beneficiary, purpose, requested_bound, policy_hash, valid_after, valid_until)` — register REQUESTED. The caller becomes the recorded **authority source**.
-- `award(request_id, allocation_id, max_authority, awarded_at)` — authority source only; bound ≤ requested_bound enforced (escalation structurally impossible); award time inside window.
-- `reject_request(request_id)` / `undetermine_request(request_id)` — authority source only; neither creates authority.
-- `revoke_award(allocation_id)` — authority source only.
+- `request_allocation(request_id, resource, asset, beneficiary, purpose, requested_bound, policy_hash, valid_after, valid_until)` - register REQUESTED. The caller becomes the recorded **authority source**.
+- `award(request_id, allocation_id, max_authority, awarded_at)` - authority source only; bound ≤ requested_bound enforced (escalation structurally impossible); award time inside window.
+- `reject_request(request_id)` / `undetermine_request(request_id)` - authority source only; neither creates authority.
+- `revoke_award(allocation_id)` - authority source only.
 
 View method (the sole downstream surface):
-- `verify_authority(allocation_id, actor, resource, purpose, action_amount, at_timestamp)` — deterministic AUTHORIZE/DENY with reason code. Fail-closed order: revoked → expired → beneficiary → resource → purpose → bound.
+- `verify_authority(allocation_id, actor, resource, purpose, action_amount, at_timestamp)` - deterministic AUTHORIZE/DENY with reason code. Fail-closed order: revoked → expired → beneficiary → resource → purpose → bound.
 
 Views: `get_request`, `get_award`.
 

@@ -8,18 +8,18 @@ Read `CONVERGENCE.md` for the full parallel-build and independent-reproduction p
 
 Every Nomos primitive moves through these gates:
 
-1. **Problem / Product Truth** — state the economic problem and intended guarantee without implementation language.
-2. **Research Foundry** — prior art, standards, competing models, falsifiers, smallest discriminating experiment.
-3. **Canonical Specification** — state, transitions, authority boundaries, invariants, failures, composition interfaces.
-4. **Judgment Boundary** — identify deterministic versus judgment-bearing semantics.
-5. **Capability Contract** — publish the portable consumer surface and convergence mode in `CAPABILITY.json`.
-6. **Work Contract** — freeze the base commit, semantic target, lane, allowed paths, dependencies, and acceptance gates for material parallel work.
-7. **GenLayer Implementation** — implement the primitive as an Intelligent Contract/state machine without semantic drift.
-8. **Conformance** — run canonical vectors and implementation-specific tests.
-9. **Adversarial Experiment** — red-team invariants, concurrency, revocation, stale state, failure, disagreement, and recovery.
-10. **Convergence Receipt** — record the exact target fingerprint, commands, gates, commit and known gaps.
-11. **Release Receipt** — record exactly what was proven for release/deployment claims.
-12. **Interface / Demo** — expose only registered capabilities.
+1. **Problem / Product Truth** - state the economic problem and intended guarantee without implementation language.
+2. **Research Foundry** - prior art, standards, competing models, falsifiers, smallest discriminating experiment.
+3. **Canonical Specification** - state, transitions, authority boundaries, invariants, failures, composition interfaces.
+4. **Judgment Boundary** - identify deterministic versus judgment-bearing semantics.
+5. **Capability Contract** - publish the portable consumer surface and convergence mode in `CAPABILITY.json`.
+6. **Work Contract** - freeze the base commit, semantic target, lane, allowed paths, dependencies, and acceptance gates for material parallel work.
+7. **GenLayer Implementation** - implement the primitive as an Intelligent Contract/state machine without semantic drift.
+8. **Conformance** - run canonical vectors and implementation-specific tests.
+9. **Adversarial Experiment** - red-team invariants, concurrency, revocation, stale state, failure, disagreement, and recovery.
+10. **Convergence Receipt** - record the exact target fingerprint, commands, gates, commit and known gaps.
+11. **Release Receipt** - record exactly what was proven for release/deployment claims.
+12. **Interface / Demo** - expose only registered capabilities.
 
 A stage may feed evidence backward. No stage may skip a higher-authority semantic requirement.
 
@@ -85,7 +85,7 @@ Workers must not silently widen their lane.
 
 ## Review gates
 
-### Gate A — Semantic Integrity
+### Gate A - Semantic Integrity
 
 Reject when:
 - the implementation changes the meaning of the primitive;
@@ -93,7 +93,7 @@ Reject when:
 - an environment-specific limitation is hidden;
 - two distinct authority/economic states are collapsed.
 
-### Gate B — Intelligence Necessity
+### Gate B - Intelligence Necessity
 
 For any judgment-bearing implementation, ask:
 
@@ -103,11 +103,11 @@ If no, prefer deterministic implementation.
 
 Require exact evaluator question, evidence, equivalence rule, structured output, deterministic bounds, and `UNDETERMINED` behavior.
 
-### Gate C — Economic Safety
+### Gate C - Economic Safety
 
 Require tests for conservation/capacity, replay, identity/versioning, expiry, revocation, atomicity where claimed, and competing/concurrent actions.
 
-### Gate D — Convergence
+### Gate D - Convergence
 
 Require:
 - current authority fingerprint;
@@ -117,7 +117,7 @@ Require:
 - no undocumented public surface;
 - no hidden dependency on partner/agent memory.
 
-### Gate E — Evidence
+### Gate E - Evidence
 
 No claim is upgraded from `NOT_IMPLEMENTED` or `BLOCKED` without executable evidence. A URL or file presence is not runtime proof.
 
@@ -125,11 +125,11 @@ No claim is upgraded from `NOT_IMPLEMENTED` or `BLOCKED` without executable evid
 
 Nomos uses the existing foundry discipline as follows:
 
-- **Research Foundry** — prior art, standards, research questions, falsifiers.
-- **Experiment Foundry** — smallest discriminating benchmarks, repeatability, receipts.
-- **Product Foundry / red-team** — adversarial product and system assumptions.
-- **Interface Foundry** — interaction design only after capability truth is established.
-- **Demo Foundry** — deterministic evidence-driven demonstrations, never capability theater.
+- **Research Foundry** - prior art, standards, research questions, falsifiers.
+- **Experiment Foundry** - smallest discriminating benchmarks, repeatability, receipts.
+- **Product Foundry / red-team** - adversarial product and system assumptions.
+- **Interface Foundry** - interaction design only after capability truth is established.
+- **Demo Foundry** - deterministic evidence-driven demonstrations, never capability theater.
 
 Environment-specific skills supplement these gates. For GenLayer, use current official contract-writing, GenVM linting, direct-test, integration-test, documentation and CLI/deployment guidance.
 
@@ -143,10 +143,10 @@ Any state may move to `BLOCKED`. A failed invariant returns the primitive to the
 
 ## Change classes
 
-- **PATCH** — implementation change preserving canonical semantics and public capability compatibility.
-- **PROFILE** — implementation/environment mapping change preserving canonical semantics.
-- **CAPABILITY** — public developer surface change; incompatible changes require capability versioning and compatibility analysis.
-- **SPEC** — canonical semantic/invariant change.
-- **CONSTITUTIONAL** — repository-wide law/convergence change.
+- **PATCH** - implementation change preserving canonical semantics and public capability compatibility.
+- **PROFILE** - implementation/environment mapping change preserving canonical semantics.
+- **CAPABILITY** - public developer surface change; incompatible changes require capability versioning and compatibility analysis.
+- **SPEC** - canonical semantic/invariant change.
+- **CONSTITUTIONAL** - repository-wide law/convergence change.
 
 `CAPABILITY`, `SPEC`, and `CONSTITUTIONAL` changes require explicit compatibility analysis. `SPEC` and `CONSTITUTIONAL` changes also require updated research rationale, vectors, and adversarial evidence.

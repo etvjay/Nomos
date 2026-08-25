@@ -1,4 +1,4 @@
-"""Dynamic Authority Allocation (DAA) — independent reimplementation.
+"""Dynamic Authority Allocation (DAA) - independent reimplementation.
 
 Nomos primitive: daa | capability 0.1.0 | convergence mode: EXACT
 JUDGMENT_BOUNDARY = NONE (deterministic predicates only)
@@ -10,7 +10,7 @@ Award creation is distinct from usage: downstream execution proves it is
 within the award via verify_authority (fail-closed, mutating nothing).
 Evaluation attempts consume monotonically increasing evaluation ids even
 when the attempt is INELIGIBLE (auditable burn). Validity windows are
-immutable after request time — activity never resets expiry.
+immutable after request time - activity never resets expiry.
 
 Embedded vector runner:
     python3 your_build.py <vectors.json>

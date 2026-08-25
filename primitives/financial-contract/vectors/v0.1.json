@@ -90,7 +90,7 @@
     },
     {
       "id": "fc-no-capital-effects-009",
-      "description": "Unknown lookups return empty; the primitive moves no funds itself — payments are recorded obligations",
+      "description": "Unknown lookups return empty; the primitive moves no funds itself - payments are recorded obligations",
       "actions": [
         {"op": "get_contract", "args": ["UNKNOWN"], "expect": ""},
         {"op": "get_payment", "args": ["UNKNOWN", "NOPE"], "expect": ""}

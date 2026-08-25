@@ -1,4 +1,4 @@
-# Financial Contract — Invariants
+# Financial Contract - Invariants
 
 - Principal, balance, payment application, and conservation are deterministic.
 - Contract origin binds exact Pact/allocation/commitment lineage.

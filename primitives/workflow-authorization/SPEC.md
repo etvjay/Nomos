@@ -1,4 +1,4 @@
-# Workflow Authorization — Canonical Specification
+# Workflow Authorization - Canonical Specification
 
 Status: SPECIFIED
 Version: 0.1.0

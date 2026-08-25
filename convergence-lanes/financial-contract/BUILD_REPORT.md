@@ -1,7 +1,7 @@
-# BUILD_REPORT — financial-contract (convergence lane)
+# BUILD_REPORT - financial-contract (convergence lane)
 
 ## Result
-- **PASS** — all 9 canonical v0.1 vectors pass in EXACT mode, plus direct tests for the sender-gated default path (vector fc-default-declared-by-authority-006 declares itself "sender-gated; covered by direct tests").
+- **PASS** - all 9 canonical v0.1 vectors pass in EXACT mode, plus direct tests for the sender-gated default path (vector fc-default-declared-by-authority-006 declares itself "sender-gated; covered by direct tests").
 - Build: `your_build.py` (independent reimplementation from spec artifacts only).
 
 ## Inputs read
@@ -14,7 +14,7 @@ Only: `primitives/financial-contract/{SPEC.md, CAPABILITY.json}` and `vectors/v0
 - Contract statuses ACTIVE/MATURED/DEFAULTED/CLOSED; payments APPLIED.
 
 ## Key interpretation choice
-Vector fc-maturity-and-full-repayment-005 applies a payment at ts far past maturity and expects APPLIED — so in v0.1 the **maturity timestamp gates default declaration, not payment application**. MATURED is a declared status; CONTRACT_MATURED denial is returned only from that explicit status. Documented inline in code.
+Vector fc-maturity-and-full-repayment-005 applies a payment at ts far past maturity and expects APPLIED - so in v0.1 the **maturity timestamp gates default declaration, not payment application**. MATURED is a declared status; CONTRACT_MATURED denial is returned only from that explicit status. Documented inline in code.
 
 ## Verification
 ```

@@ -1,4 +1,4 @@
-# Mandate Allocation — Canonical Specification
+# Mandate Allocation - Canonical Specification
 
 Status: SPECIFIED
 Version: 0.1.0

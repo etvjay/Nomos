@@ -1,4 +1,4 @@
-# Financial Contract — Canonical Specification
+# Financial Contract - Canonical Specification
 
 Status: SPECIFIED
 Version: 0.1.0

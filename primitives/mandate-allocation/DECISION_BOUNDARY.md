@@ -1,4 +1,4 @@
-# Mandate Allocation — Decision Boundary
+# Mandate Allocation - Decision Boundary
 
 GenLayer may evaluate qualitative mandate language, contradictory evidence, comparative opportunity quality, relative prioritization, and bounded recommended allocations.
 

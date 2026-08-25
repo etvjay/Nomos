@@ -1,4 +1,4 @@
-# Workflow Authorization — Invariants
+# Workflow Authorization - Invariants
 
 - Path represents standing bounded authority; Pact represents specific accepted terms.
 - Revoked/expired Path cannot authorize later execution.

@@ -3,13 +3,13 @@
 #     { "Depends": "py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6" }
 #   ]
 # }
-"""IAS Stage 3 — Autonomous Account (GenLayer Intelligent Contract).
+"""IAS Stage 3 - Autonomous Account (GenLayer Intelligent Contract).
 
 Third tier: Layer 1 + Layer 2 + Layer 3.
 
 Stage 2 capability, plus the Executor: confirmed signals above a confidence
 threshold can be routed INTO an embedded PPA gate pipeline. The executor
-never bypasses gates — it is *the only caller allowed to submit proposals as
+never bypasses gates - it is *the only caller allowed to submit proposals as
 executable actions*, and even then every payment passes policy -> encumbrance
 -> claim -> settle exactly like a human send.
 
@@ -49,7 +49,7 @@ def _norm(a: str) -> str:
 
 
 class AutonomousAccount(gl.Contract):
-    """Stage 3: full loop — observe, correlate, act within hard caps."""
+    """Stage 3: full loop - observe, correlate, act within hard caps."""
 
     owner: TreeMap[str, str]
 

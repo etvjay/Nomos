@@ -1,6 +1,6 @@
-# BUILD_REPORT — workflow-authorization (fresh-context convergence lane)
+# BUILD_REPORT - workflow-authorization (fresh-context convergence lane)
 
-Build: `your_build.py` — independent reimplementation of Nomos primitive
+Build: `your_build.py` - independent reimplementation of Nomos primitive
 `workflow-authorization` v0.1.0, EXACT mode, JUDGMENT_BOUNDARY = NONE.
 
 ## Independence confirmation
@@ -25,10 +25,10 @@ wa-expired-path-010, wa-no-capital-effects-013.
 Two flat maps owned by the contract; nothing else:
 
 - `paths[path_id] = {path_id, principal, agent, purpose_scope, max_per_action,
-  asset, valid_after, valid_until, status}` — status ACTIVE/REVOKED explicit;
+  asset, valid_after, valid_until, status}` - status ACTIVE/REVOKED explicit;
   EXPIRED is implicit by window (`_path_status(path, now)`), never stored.
 - `pacts[pact_id] = {pact_id, path_id, workflow_ref, terms (parsed object),
-  proposed_at, status, [accepted_at], [executed_at], [executed_amount]}` —
+  proposed_at, status, [accepted_at], [executed_at], [executed_amount]}` -
   PROPOSED → ACCEPTED → EXECUTED; PROPOSED/ACCEPTED → VOID; terminal states
   immutable.
 

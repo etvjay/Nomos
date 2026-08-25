@@ -1,4 +1,4 @@
-# Dynamic Authority Allocation (DAA) — Canonical Specification
+# Dynamic Authority Allocation (DAA) - Canonical Specification
 
 Status: RESEARCHING
 Version: 0.2.0
@@ -101,7 +101,7 @@ NONE for the v0.1 canonical slice. The allocation of authority is expressed thro
 ### v0.1 classification change (Article XVI record)
 v0.1-draft declared DAA judgment-capable (SEMANTIC). Accepted v0.1 ships the deterministic allocation state machine with externalized judgment. Compatibility: additive; no prior release consumed a SEMANTIC DAA surface.
 
-DAA may use GenLayer when **the allocation of authority itself** requires judgment—for example, interpreting a qualitative authority mandate or resolving which already-admissible actor should receive a bounded grant.
+DAA may use GenLayer when **the allocation of authority itself** requires judgment-for example, interpreting a qualitative authority mandate or resolving which already-admissible actor should receive a bounded grant.
 
 DAA MUST NOT absorb upstream underwriting merely because GenLayer can perform it. Creditworthiness, evidence verification, broad opportunity ranking, and mandate analysis belong to Claim Verification and/or Mandate Allocation.
 

@@ -1,7 +1,7 @@
-# BUILD_REPORT — mandate-allocation (convergence lane)
+# BUILD_REPORT - mandate-allocation (convergence lane)
 
 ## Result
-- **PASS** — all 9 canonical v0.1 vectors pass in EXACT mode.
+- **PASS** - all 9 canonical v0.1 vectors pass in EXACT mode.
 - Build: `your_build.py` (independent reimplementation from spec artifacts only).
 
 ## Inputs read
@@ -10,7 +10,7 @@ Only: `primitives/mandate-allocation/{SPEC.md, CAPABILITY.json, DECISION_BOUNDAR
 
 ## Semantics implemented
 - `register_mandate`: binds doc_hash + deterministic hard constraints (max_total_exposure uint-string, asset bound via upstream composition, allowed_classes list). Rejects duplicate ids, empty id/doc_hash/asset, zero/non-numeric exposure.
-- `evaluate_opportunity`: deterministic eligibility — CLASS_NOT_PERMITTED / EXPOSURE_EXCEEDED / WITHIN_MANDATE. **Evaluation ids burn on INELIGIBLE attempts too** (duplicate-id rejection applies to all attempts — auditable); ineligible attempts consume no exposure. ELIGIBLE consumes advisory exposure capacity only (no authority).
+- `evaluate_opportunity`: deterministic eligibility - CLASS_NOT_PERMITTED / EXPOSURE_EXCEEDED / WITHIN_MANDATE. **Evaluation ids burn on INELIGIBLE attempts too** (duplicate-id rejection applies to all attempts - auditable); ineligible attempts consume no exposure. ELIGIBLE consumes advisory exposure capacity only (no authority).
 - `supersede_evaluation`: old record preserved and marked SUPERSEDED; successor record created with `supersedes` lineage link and the old record's exposure contribution moves with it (net-zero). Self-supersede rejected.
 - Views return canonical JSON or "" for unknown ids.
 

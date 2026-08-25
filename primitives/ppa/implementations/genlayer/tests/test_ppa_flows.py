@@ -1,6 +1,6 @@
 """PPA flow tests via gltest (contract runs in the GenVM on GLSim localnet).
 
-DENY paths are recorded as auditable DENIED payment records — asserted via
+DENY paths are recorded as auditable DENIED payment records - asserted via
 get_payment reads, since write-method return values aren't surfaced in the
 receipt by gltest 0.29.
 

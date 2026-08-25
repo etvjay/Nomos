@@ -1,4 +1,4 @@
-# DAA — Invariants
+# DAA - Invariants
 
 - DAA output is a bounded authority grant, not merely a recommendation.
 - Every award identifies authority source, beneficiary, governed resource/capital scope, purpose, bounds, policy and validity.

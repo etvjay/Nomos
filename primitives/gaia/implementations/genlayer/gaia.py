@@ -3,11 +3,11 @@
 #     { "Depends": "py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6" }
 #   ]
 # }
-"""Gaia — Exception, Reconciliation & Rectification (GenLayer) v0.1.
+"""Gaia - Exception, Reconciliation & Rectification (GenLayer) v0.1.
 
 Cross-cutting exception plane: cases classify exceptional state and prescribe
 bounded RectificationObligations. Gaia never executes remedies and never
-rewrites history — resolution requires every obligation to be explicitly
+rewrites history - resolution requires every obligation to be explicitly
 discharged (with evidence hash) or waived, and the resolved state is terminal.
 
 JUDGMENT_BOUNDARY = NONE for the v0.1 canonical slice. Classification of

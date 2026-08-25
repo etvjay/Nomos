@@ -2,7 +2,7 @@
 
 ### A whitepaper
 
-**Version 0.1 — August 2026**
+**Version 0.1 - August 2026**
 **Nomos Project · GenLayer Testnet Bradbury**
 
 ---
@@ -12,9 +12,9 @@
 The Programmable Payment Account (PPA) is an on-chain account that holds
 committed capital and moves it only through deterministic, rule-gated payment
 flows. It is a single Intelligent Contract, deployed once and configured
-freely, that packages verified financial mechanisms — policy gates,
+freely, that packages verified financial mechanisms - policy gates,
 encumbrance accounting, evidence-bearing settlement, dispute rectification,
-and scoped delegation — behind the verbs people already understand: *send*,
+and scoped delegation - behind the verbs people already understand: *send*,
 *invoice*, *dispute*, *delegate*.
 
 The PPA exists because correct components are not usable products. The Nomos
@@ -31,7 +31,7 @@ that every validator evaluates identically.
 Payment systems built on traditional infrastructure give developers accounts
 with rules: spend limits, approved counterparties, approval workflows,
 chargebacks, scheduled payments. Smart contracts gave us trust-minimized
-settlement but none of this ergonomics — and adding it ad hoc means every
+settlement but none of this ergonomics - and adding it ad hoc means every
 application re-invents (and re-mis-implements) the same safety mechanisms:
 double-spend prevention, authority revocation, dispute handling.
 
@@ -83,7 +83,7 @@ flowchart TB
     end
 ```
 
-*Figure 1 — The account model. One owner; many sub-accounts, each pairing its own rules envelope with its own ledger. Available funds = balance − committed at all times.*
+*Figure 1 - The account model. One owner; many sub-accounts, each pairing its own rules envelope with its own ledger. Available funds = balance − committed at all times.*
 
 ### 3.2 The send pipeline
 
@@ -100,14 +100,14 @@ flowchart LR
     G4 --> OUT["balance −= amount<br/>history append-only"]
 ```
 
-*Figure 2 — The send pipeline. Denials at any gate produce an auditable record that moves no funds and does not consume the payment id; only settlement mutates the balance.*
+*Figure 2 - The send pipeline. Denials at any gate produce an auditable record that moves no funds and does not consume the payment id; only settlement mutates the balance.*
 
 | Gate | Question | Failure mode |
 |---|---|---|
-| 1. Policy | Recipient allowlisted? Amount within per-tx and daily limits? | DENIED — recorded for audit; no funds move; id stays retryable |
-| 2. Encumbrance | Is available balance sufficient? | DENIED — same properties |
-| 3. Claim | Does the payment exist as a claim with evidence hash + memo? | — |
-| 4. Settle | Funds move; history written once | — |
+| 1. Policy | Recipient allowlisted? Amount within per-tx and daily limits? | DENIED - recorded for audit; no funds move; id stays retryable |
+| 2. Encumbrance | Is available balance sufficient? | DENIED - same properties |
+| 3. Claim | Does the payment exist as a claim with evidence hash + memo? | - |
+| 4. Settle | Funds move; history written once | - |
 
 Denied payments are first-class records. They are auditable proof that a rule
 was tested on-chain, they consume no funds, and they do not burn the payment
@@ -118,7 +118,7 @@ rule changes safely testable.
 
 An invoice is a structured receivable: payer, amount, line items, due date.
 Issuing creates an open claim. Settling an invoice routes the payment through
-the **payer-side** gates — an invoice cannot force money past a rule that would
+the **payer-side** gates - an invoice cannot force money past a rule that would
 deny it. This single property reimplements, on-chain, the enforcement gap that
 traditional invoicing leaves to law.
 
@@ -129,14 +129,14 @@ A settled payment can be disputed within declared economic categories
 mismatch, duplicate). Resolution belongs to the owner with one of three
 remedies:
 
-- **refund** — a compensating entry restores the balance; the original payment
+- **refund** - a compensating entry restores the balance; the original payment
   remains in history marked REFUNDED.
-- **waive** — the dispute is closed with no action.
-- **reject** — the dispute is denied.
+- **waive** - the dispute is closed with no action.
+- **reject** - the dispute is denied.
 
 History is annotated, never edited. Confirmed truth is immutable; recovery is
-a new, linked fact. (Dispute *classification* — deciding what category a
-complaint belongs to — is exactly where LLM judgment composes upstream; the
+a new, linked fact. (Dispute *classification* - deciding what category a
+complaint belongs to - is exactly where LLM judgment composes upstream; the
 PPA itself accepts the category as declared input.)
 
 ### 3.5 Delegation
@@ -146,7 +146,7 @@ per-transaction limit, daily limit, and expiry. Two properties are enforced by
 construction:
 
 - **Delegation narrows, never widens.** A delegate's payment must satisfy both
-  the sub-account's policy *and* the delegation's limits — the effective cap is
+  the sub-account's policy *and* the delegation's limits - the effective cap is
   the minimum of the two.
 - **Revocation is immediate; expiry is silent.** A revoked or expired delegate
   becomes an unauthorized caller at the next block boundary.
@@ -189,14 +189,14 @@ that is machine-checkable instead of policy-documentary.
 ## 5. Evidence
 
 - **Component level:** the eleven underlying primitives carry canonical vector
-  suites (9–17 vectors each, all passing), adversarial test batteries, and —
-  as of the August 2026 convergence campaign — independent-build convergence
+  suites (9–17 vectors each, all passing), adversarial test batteries, and -
+  as of the August 2026 convergence campaign - independent-build convergence
   for ten of eleven mechanisms: fresh-context builders reading only each
   primitive's specification reproduced it, with every canonical vector passing
   against every independent build (receipts in `convergence/receipts/`).
 - **Composite level:** six live flow tests execute the full PPA pipeline
   (settle, deny-and-retry, allowlist denial, insufficient commitment, invoice
-  cycle, dispute refund) through GenLayer consensus on GLSim localnet — all
+  cycle, dispute refund) through GenLayer consensus on GLSim localnet - all
   passing.
 - **Network level:** the PPA is deployed on GenLayer Testnet Bradbury
   (chainId 4221) with bytecode verified on-chain, and carries a complete live
@@ -228,7 +228,7 @@ rather than forks of the ledger.
 
 **Autonomous agents.** An agent holds a delegation, not a key to the treasury.
 Its spending is capped per transaction and per day, expires automatically, and
-can be revoked instantly — the missing piece for letting AI act financially
+can be revoked instantly - the missing piece for letting AI act financially
 without giving it the keys to everything.
 
 **Financial-system rebuilders.** The recurring-billing pattern is a monitor
@@ -240,15 +240,15 @@ instead of re-deriving them.
 
 ## 7. Roadmap
 
-- **v0.2** — cross-contract extraction: PPA calls the deployed primitive
+- **v0.2** - cross-contract extraction: PPA calls the deployed primitive
   contracts directly, restoring per-primitive convergence attestation.
-- **Monitor composition (shipped as the IAS ladder)** — the Intelligent
+- **Monitor composition (shipped as the IAS ladder)** - the Intelligent
   Account stack (`ias/`) already composes monitors, correlation, and gated
   autonomous execution on top of the PPA's gate pipeline; see the companion
   whitepaper `INTELLIGENT_ACCOUNT_WHITEPAPER.md`.
-- **Swap action** — gated exchange once liquidity venues exist on testnet.
-- **Multi-currency commitments** — per-asset sub-account ledgers.
-- **financial-contract re-qualification + composite convergence lane** —
+- **Swap action** - gated exchange once liquidity venues exist on testnet.
+- **Multi-currency commitments** - per-asset sub-account ledgers.
+- **financial-contract re-qualification + composite convergence lane** -
   completing 11/11 CONFORMANT and an independent build of the PPA itself.
 
 ---
@@ -259,8 +259,8 @@ The PPA is the bridge between two proofs. On one side, eleven primitive
 mechanisms proven correct in isolation. On the other, the way people actually
 want to use money: accounts with rules, payments with receipts, disputes with
 remedies, delegation with limits. The composite keeps the first side's
-guarantees intact while delivering the second side's usability — and it draws
+guarantees intact while delivering the second side's usability - and it draws
 one bright line that neither ergonomics nor intelligence is allowed to cross:
 **determinism settles; judgment advises.**
 
-*Nomos — financial primitives whose semantics survive any builder.*
+*Nomos - financial primitives whose semantics survive any builder.*

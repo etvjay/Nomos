@@ -1,4 +1,4 @@
-# Claim Encumbrance v0.1 — Conformance Record
+# Claim Encumbrance v0.1 - Conformance Record
 
 Status: CONFORMANT (claimed 2026-08-23)
 Capability version: 0.1.0
@@ -15,9 +15,9 @@ Per CONSTITUTION Article XI, applicable categories and their evidence:
 | Deterministic invariant tests | Vectors include capacity overcommit rejection, duplicate-id rejection, immutable financeable amount, capacity restoration after release/settle, unknown-claim rejection | PASS |
 | Direct GenVM tests | Vector runner executes the contract in GenLayer direct mode (GenVM) | PASS |
 | Independent-build convergence | EXP-CONV-001: lane B vs canonical, byte-identical observable state on all vectors; RECEIPT-CONV-001-DIFF | PASS |
-| Adversarial experiments | Replay (duplicate reservation id), stale/unknown claim references, concurrent overcommit attempts, partial-execution impossibility — covered as vector rejections | PASS (vector-scope) |
-| Integration tests | NOT_IMPLEMENTED — no GLSim integration test for this primitive yet | NOT_IMPLEMENTED |
-| Deployment/runtime evidence | NOT_IMPLEMENTED — no deployment receipt yet | NOT_IMPLEMENTED |
+| Adversarial experiments | Replay (duplicate reservation id), stale/unknown claim references, concurrent overcommit attempts, partial-execution impossibility - covered as vector rejections | PASS (vector-scope) |
+| Integration tests | NOT_IMPLEMENTED - no GLSim integration test for this primitive yet | NOT_IMPLEMENTED |
+| Deployment/runtime evidence | NOT_IMPLEMENTED - no deployment receipt yet | NOT_IMPLEMENTED |
 
 ## Known limitations
 

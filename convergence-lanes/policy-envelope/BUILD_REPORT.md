@@ -1,4 +1,4 @@
-# BUILD_REPORT — policy-envelope (independent build)
+# BUILD_REPORT - policy-envelope (independent build)
 
 Builder: independent convergence-lane agent (no access to
 `implementations/genlayer/`; built solely from SPEC.md, INVARIANTS.md,
@@ -6,7 +6,7 @@ THREAT_MODEL.md, DECISION_BOUNDARY.md, CAPABILITY.json, vectors/v0.1.json).
 
 ## Result
 
-`PASS` — all 12 canonical vectors (v0.1.json) pass.
+`PASS` - all 12 canonical vectors (v0.1.json) pass.
 
 ```
 python3 your_build.py /home/ubuntu/nomos/primitives/policy-envelope/vectors/v0.1.json
@@ -28,7 +28,7 @@ python3 your_build.py /home/ubuntu/nomos/primitives/policy-envelope/vectors/v0.1
   replay-guarded (`admittedRequestIdReuse: rejected`).
 - Cumulative usage tracked per envelope; `used_amount` view exposed.
 - actor/target bound to decision records but not enforced against
-  registries — per CAPABILITY `unsupported` list for v0.1.
+  registries - per CAPABILITY `unsupported` list for v0.1.
 - Views return `""` for unknown keys (json-or-empty convention).
 
 ## Judgment component interpretation (SEMANTIC notes)

@@ -1,4 +1,4 @@
-# Claim Verification v0.1 — Implementation Receipt
+# Claim Verification v0.1 - Implementation Receipt
 
 Status: IMPLEMENTING
 Receipt type: implementation evidence, **not a release receipt**

@@ -1,4 +1,4 @@
-# DAL — GenLayer Implementation
+# DAL - GenLayer Implementation
 
 Deterministic Intelligent Contract implementing Dynamic Authorization Lanes v0.1.
 
@@ -7,9 +7,9 @@ Deterministic Intelligent Contract implementing Dynamic Authorization Lanes v0.1
 Single contract: `Dal` in `dal.py`.
 
 Write methods:
-- `open_lane(issuer, domain_id, expiry_window)` — open a fresh replay domain; one lane per (issuer, domain_id); revoked lanes cannot be reopened.
-- `exercise(issuer, domain_id, nonce, at_timestamp)` — authorize one execution inside the lane's domain. AUTHORIZE (nonce consumed atomically) or DENY with reason code (`NONCE_REUSED`, `NONCE_INVALID`, `LANE_REVOKED`, `LANE_EXPIRED`). Denials mutate nothing.
-- `revoke_lane(issuer, domain_id)` — explicit revocation.
+- `open_lane(issuer, domain_id, expiry_window)` - open a fresh replay domain; one lane per (issuer, domain_id); revoked lanes cannot be reopened.
+- `exercise(issuer, domain_id, nonce, at_timestamp)` - authorize one execution inside the lane's domain. AUTHORIZE (nonce consumed atomically) or DENY with reason code (`NONCE_REUSED`, `NONCE_INVALID`, `LANE_REVOKED`, `LANE_EXPIRED`). Denials mutate nothing.
+- `revoke_lane(issuer, domain_id)` - explicit revocation.
 
 View: `get_lane`.
 
@@ -21,7 +21,7 @@ NONCE_INVALID (gap). Fail-closed order: status → expiry → nonce.
 
 ## State ownership
 
-Replay domains only. DAL deliberately exposes NO balances/capacity/policy —
+Replay domains only. DAL deliberately exposes NO balances/capacity/policy -
 replay independence must never be mistaken for independence of shared
 economic state (Article V).
 

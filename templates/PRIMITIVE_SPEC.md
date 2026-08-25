@@ -1,4 +1,4 @@
-# <Primitive Name> — Canonical Specification
+# <Primitive Name> - Canonical Specification
 
 Status: DISCOVERY | RESEARCHING | SPECIFIED | IMPLEMENTING | CONFORMANT | RELEASED | BLOCKED
 Version: 0.x

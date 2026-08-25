@@ -1,6 +1,6 @@
-# DAA Build Report — Independent Reimplementation (fresh-context lane)
+# DAA Build Report - Independent Reimplementation (fresh-context lane)
 
-Build: `your_build.py` — canonical vector runner result: **11/11 PASS** against
+Build: `your_build.py` - canonical vector runner result: **11/11 PASS** against
 `primitives/daa/vectors/v0.1.json`.
 
 ## Independence confirmation
@@ -24,7 +24,7 @@ simulated sender), not a semantic change.
 - `_request_award`: request_id → allocation_id (enforces one award per request).
 - `_evaluations`: append-only ledger of burned evaluation ids
   (`EVAL-<seq>`, request_id, eligibility ELIGIBLE|INELIGIBLE, burned=True) with a
-  monotonic counter — INELIGIBLE attempts consume an id exactly like eligible ones.
+  monotonic counter - INELIGIBLE attempts consume an id exactly like eligible ones.
 
 ## Key semantics implemented
 

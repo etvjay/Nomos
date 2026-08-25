@@ -1,4 +1,4 @@
-# Gaia — Invariants
+# Gaia - Invariants
 
 - Failure does not create authority.
 - Gaia may prescribe but cannot directly execute a remedy.

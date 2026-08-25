@@ -1,4 +1,4 @@
-# AGENTS.md — Nomos Build Contract
+# AGENTS.md - Nomos Build Contract
 
 This file governs all human and agent contributors.
 

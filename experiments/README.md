@@ -1,4 +1,4 @@
-# Experiment Foundry — Nomos
+# Experiment Foundry - Nomos
 
 Experiments exist to discriminate between competing architectural claims, not to decorate implementation work.
 

@@ -1,4 +1,4 @@
-# DAL — Invariants
+# DAL - Invariants
 
 - Independent authorizations may use independent replay domains.
 - Exercising one cannot invalidate another solely because they share an issuer.

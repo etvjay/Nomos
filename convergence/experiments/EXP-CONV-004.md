@@ -1,4 +1,4 @@
-# EXP-CONV-004 — Claim Verification SEMANTIC Convergence (Partner A vs Partner B)
+# EXP-CONV-004 - Claim Verification SEMANTIC Convergence (Partner A vs Partner B)
 
 Primitive: claim-verification v0.1.0
 Convergence mode: SEMANTIC
@@ -13,9 +13,9 @@ the bounded decision relation declared by `CAPABILITY.json`?
 ## Lanes
 
 - **Lane A** (canonical): `primitives/claim-verification/implementations/genlayer/claim_verification.py`
-  — recorded in RECEIPT-CONV-001-A (direct 13/13, integration 1/1).
+  - recorded in RECEIPT-CONV-001-A (direct 13/13, integration 1/1).
 - **Lane B** (independent): `convergence/experiments/EXP-CONV-004/lane-b/claim_verification_b.py`
-  — different storage field name (`verdicts`), different validation order, different
+  - different storage field name (`verdicts`), different validation order, different
   prompt phrasing, different internal helper structure; same deterministic
   preconditions, size limits, status/reason vocabulary, mandatory pairing, and
   equivalence rule (consensus binds {status, reason_code} only).
@@ -29,7 +29,7 @@ the bounded decision relation declared by `CAPABILITY.json`?
    before LLM work, status/reason mismatch not accepted, UNDETERMINED is distinct
    from VERIFIED, decision binds claim_id + evidence_digest.
 4. Integration: Lane A verified under real consensus on GLSim localnet
-   (sim_installMocks) — see RECEIPT-CONV-001-A.
+   (sim_installMocks) - see RECEIPT-CONV-001-A.
 
 ## Result
 
@@ -39,7 +39,7 @@ assertions: 9/9 direct tests passed
 
 ## Evidence
 
-- `convergence/experiments/EXP-CONV-004/lane-b/` — independent build + tests
+- `convergence/experiments/EXP-CONV-004/lane-b/` - independent build + tests
 - `convergence/receipts/RECEIPT-CONV-004-B.json`
 
 ## Known gaps

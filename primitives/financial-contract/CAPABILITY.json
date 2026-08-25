@@ -78,9 +78,9 @@
     "typicalDownstream": ["gaia (exceptions)", "settlement"]
   },
   "unsupported": [
-    "contingent clauses, covenants, interest accrual, restructuring — future capability versions with declared judgment boundaries",
+    "contingent clauses, covenants, interest accrual, restructuring - future capability versions with declared judgment boundaries",
     "in-contract interpretation of external events (compose claim-verification)",
-    "actual fund transfer — apply_payment records application; movement is settlement-layer",
+    "actual fund transfer - apply_payment records application; movement is settlement-layer",
     "deployment/conformance guarantee until receipts exist"
   ]
 }

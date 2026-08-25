@@ -1,4 +1,4 @@
-# Claim Verification — GenLayer Implementation
+# Claim Verification - GenLayer Implementation
 
 Status: IMPLEMENTING
 Version: 0.1.0

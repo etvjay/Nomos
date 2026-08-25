@@ -49,9 +49,9 @@ Offchain implementations may serve as reference models, simulators, indexers, AP
 
 Create `environments/<name>/PROFILE.md` and map every canonical guarantee to one of:
 
-- `NATIVE` — directly enforced by the environment;
-- `ADAPTER` — enforced through a named dependency/adapter;
-- `EXTERNAL` — depends on an explicitly named external system;
-- `UNSUPPORTED` — cannot currently preserve the guarantee.
+- `NATIVE` - directly enforced by the environment;
+- `ADAPTER` - enforced through a named dependency/adapter;
+- `EXTERNAL` - depends on an explicitly named external system;
+- `UNSUPPORTED` - cannot currently preserve the guarantee.
 
 `UNSUPPORTED` is valid. Silent semantic substitution is not.

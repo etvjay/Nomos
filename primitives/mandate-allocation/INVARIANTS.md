@@ -1,4 +1,4 @@
-# Mandate Allocation — Invariants
+# Mandate Allocation - Invariants
 
 - Output is evaluative/recommendatory and creates no executable authority.
 - Every result binds the exact mandate and evaluated opportunity/evidence set.

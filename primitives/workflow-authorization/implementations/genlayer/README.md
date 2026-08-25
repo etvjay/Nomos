@@ -1,4 +1,4 @@
-# Workflow Authorization — GenLayer Implementation
+# Workflow Authorization - GenLayer Implementation
 
 Deterministic Intelligent Contract implementing Workflow Authorization v0.1
 (Path + Pact).
@@ -8,12 +8,12 @@ Deterministic Intelligent Contract implementing Workflow Authorization v0.1
 Single contract: `WorkflowAuthorization` in `workflow_authorization.py`.
 
 Write methods:
-- `grant_path(path_id, principal, agent, purpose_scope, max_per_action, asset, valid_after, valid_until)` — create standing bounded delegated authority. Self-delegation rejected.
-- `revoke_path(path_id)` — ACTIVE → REVOKED (permanent).
-- `propose_pact(pact_id, path_id, workflow_ref, terms_json, proposed_at)` — propose a specific economic relation bound to the exact workflow reference. Path must be ACTIVE and `proposed_at` inside its window.
-- `accept_pact(pact_id)` — **only the Path principal** may accept; Path must be ACTIVE.
-- `void_pact(pact_id)` — terminal void for non-executed pacts.
-- `execute_pact(pact_id, action_amount, at_timestamp)` — deterministic authorization gate. Returns AUTHORIZE (pact becomes EXECUTED, terminal) or a DENY decision with reason code that mutates nothing.
+- `grant_path(path_id, principal, agent, purpose_scope, max_per_action, asset, valid_after, valid_until)` - create standing bounded delegated authority. Self-delegation rejected.
+- `revoke_path(path_id)` - ACTIVE → REVOKED (permanent).
+- `propose_pact(pact_id, path_id, workflow_ref, terms_json, proposed_at)` - propose a specific economic relation bound to the exact workflow reference. Path must be ACTIVE and `proposed_at` inside its window.
+- `accept_pact(pact_id)` - **only the Path principal** may accept; Path must be ACTIVE.
+- `void_pact(pact_id)` - terminal void for non-executed pacts.
+- `execute_pact(pact_id, action_amount, at_timestamp)` - deterministic authorization gate. Returns AUTHORIZE (pact becomes EXECUTED, terminal) or a DENY decision with reason code that mutates nothing.
 
 View methods: `get_path`, `get_pact`.
 
@@ -41,7 +41,7 @@ and reuse of executed pacts.
 - Principal identity is an address string; comparisons normalize case and an
   optional `0x` prefix (EIP-55 safe).
 - v0.1 has no on-chain verification that `principal`/`agent` are real account
-  addresses — composition layers must bind them to wallet identities.
+  addresses - composition layers must bind them to wallet identities.
 - Substantive purpose-fit ("is this payment really treasury-scope?") is out of
   scope: compose Policy Envelope's `interpret_clause` before proposing Pacts.
 

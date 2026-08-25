@@ -1,4 +1,4 @@
-# Claim Encumbrance — Invariants
+# Claim Encumbrance - Invariants
 
 - `sum(activeEncumbrances(claimId)) <= financeableAmount(claimId)`.
 - Stable claim identity, not proof hash, keys capacity.

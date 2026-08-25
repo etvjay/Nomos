@@ -1,6 +1,6 @@
 # IAS-1: The Intelligent Account Standard
 
-**Draft 0.1 — August 2026**
+**Draft 0.1 - August 2026**
 **Nomos Project · for GenLayer**
 
 ---
@@ -10,7 +10,7 @@
 GenLayer has two account types: Externally Owned Accounts (key-controlled) and
 Intelligent Contract Accounts (code deployed at an address). Both are inert.
 Neither can hold spending rules, grant scoped authority, process evidence-
-bearing payments, dispute its own history, or safely host an AI agent —
+bearing payments, dispute its own history, or safely host an AI agent -
 unless every developer re-invents those mechanisms ad hoc, and gets them
 wrong in new ways.
 
@@ -19,7 +19,7 @@ whose authorization logic is programmable. But smart accounts only abstract
 *signature verification and transaction flow*. Their rules are written in
 rigid code, and their holders cannot reason.
 
-IAS-1 defines the next account type: the **Intelligent Account** — a GenVM-
+IAS-1 defines the next account type: the **Intelligent Account** - a GenVM-
 native account standard with five composable modules (Authority, Policy,
 Settlement, Judgment Interface, Rectification) and one inviolable invariant:
 
@@ -33,7 +33,7 @@ a policy preference; it is enforced by the account's own execution semantics.
 
 ## 1. Motivation
 
-### 1.1 What smart accounts gave us — and what they lack
+### 1.1 What smart accounts gave us - and what they lack
 
 Smart accounts (ERC-4337, Safe, and successors) made authorization
 programmable: social recovery, batched calls, session keys, spend limits,
@@ -52,8 +52,8 @@ gas abstraction. Three limits define their ceiling:
 ### 1.2 Why GenLayer changes the possible
 
 GenLayer's Optimistic Democracy lets Intelligent Contracts reach consensus on
-*non-deterministic* outputs — LLM reasoning over web data, classification of
-unstructured facts — with validator diversity and appeal finality. This makes
+*non-deterministic* outputs - LLM reasoning over web data, classification of
+unstructured facts - with validator diversity and appeal finality. This makes
 judgment *settleable* for the first time: not trusted to one model, but agreed
 by many.
 
@@ -88,7 +88,7 @@ above in-account and executed its full payment lifecycle on Testnet Bradbury.
 An Intelligent Account is any GenLayer contract implementing the five modules
 below, honoring the Invariant, and exposing the Core Interface.
 
-### Module A — Authority
+### Module A - Authority
 
 *Who may act, with what scope, until when.*
 
@@ -99,13 +99,13 @@ below, honoring the Invariant, and exposing the Core Interface.
   - *Narrowing:* a delegate's effective cap is the minimum of delegation and
     account policy. Delegation never widens authority.
   - *Termination:* revocation is immediate; expiry is evaluated at call time
-    against block time — silent, exact, no keeper required.
+    against block time - silent, exact, no keeper required.
 - **A3 Execution lanes (replay discipline).** Time-windowed lanes with
   monotonic nonces: each authorization is single-use within its domain,
   atomically consumed, immune to replay even by the delegate itself.
   *(Drawn directly from DAL: `open_lane` / `exercise` / nonce advancement.)*
 
-### Module B — Policy
+### Module B - Policy
 
 *Deterministic gates evaluated before any state mutation.*
 
@@ -116,10 +116,10 @@ below, honoring the Invariant, and exposing the Core Interface.
   claim → settle); no gate may be skipped and no later gate may authorize what
   an earlier gate denied.
 - **B3 Auditable denials.** Denials are permanent records (reason code,
-  timestamp) that consume no funds and do not burn request identifiers —
+  timestamp) that consume no funds and do not burn request identifiers -
   rule changes are safely testable by retry.
 
-### Module C — Settlement
+### Module C - Settlement
 
 *Evidence-bearing value movement.*
 
@@ -133,12 +133,12 @@ below, honoring the Invariant, and exposing the Core Interface.
   rewritten. Corrections (refunds) are new compensating entries linked to the
   original.
 
-### Module D — Judgment Interface
+### Module D - Judgment Interface
 
-*Where intelligence enters — bounded.*
+*Where intelligence enters - bounded.*
 
 - **D1 Observation.** The account may consume consensus-verified external
-  facts (web data, metrics) produced via comparative equivalence — validators
+  facts (web data, metrics) produced via comparative equivalence - validators
   agree on extracted values within declared tolerance.
 - **D2 Classification.** Structured decisions over unstructured input
   (e.g., dispute category, clause interpretation) may be produced by LLM
@@ -150,7 +150,7 @@ below, honoring the Invariant, and exposing the Core Interface.
   denial. Judgment's only power is proposal. **Enforcement is structural:**
   proposal paths terminate in the same gate pipeline as human-initiated ones.
 
-### Module E — Rectification
+### Module E - Rectification
 
 *When settled things go wrong.*
 
@@ -201,7 +201,7 @@ balances, authority, or history except through the gate pipeline (D4).
 
 ## 3. Drawn from the primitives: what each contributes
 
-### From DAL — replay-scoped execution
+### From DAL - replay-scoped execution
 
 DAL's contribution is the hardest-won insight in the stack: **authority must
 be single-use at the execution layer, not just time-boxed.** A session key
@@ -211,10 +211,10 @@ that mutate nothing) becomes IAS-1 §A3. Every delegated action consumes exactly
 one lane nonce; replays are structurally impossible rather than detected.
 
 Sharpening applied: lanes bind to *domains* (what kind of action), not just
-identities — so "the agent may make three settlement calls" is expressible
+identities - so "the agent may make three settlement calls" is expressible
 without allowing three arbitrary calls.
 
-### From DAA — authority as allocated capacity
+### From DAA - authority as allocated capacity
 
 DAA's contribution: authority is **awarded against a declared maximum**, and
 the award is a distinct, auditable state transition (REQUESTED → AWARDED →
@@ -224,27 +224,27 @@ award/revoke lifecycle and the max-capacity bound. Sharpening applied: DAA's
 delegation limits being independent of actual spend, and expiry never resets
 on activity.
 
-### From Workflow Authorization — the pact between proposal and execution
+### From Workflow Authorization - the pact between proposal and execution
 
 Workflow Authorization separates *proposing* a pact (anyone) from *accepting*
 it (principal only) from *executing* it (within path validity). This is the
 exact shape of the Judgment Interface: AI proposals are pacts proposed to the
 account; acceptance and execution remain deterministic. Sharpening applied:
-path validity windows become proposal TTLs — stale intelligence cannot execute.
+path validity windows become proposal TTLs - stale intelligence cannot execute.
 
-### From Policy Envelope — deny without consuming
+### From Policy Envelope - deny without consuming
 
 The denied-request pattern (recorded, fund-free, retryable) came from testing
 policy-envelope live: burning request ids on denial made rule changes
 untestable. IAS-1 §B3 standardizes it.
 
-### From Proof of Payable + Claim Encumbrance — settlement with memory
+### From Proof of Payable + Claim Encumbrance - settlement with memory
 
 Claims carry evidence hashes; encumbrance splits committed from available.
 Together they mean every settlement is post-hoc verifiable and no payment can
 strand another. IAS-1 §C inherits both.
 
-### From Gaia — rectification without revision
+### From Gaia - rectification without revision
 
 Gaia proved the case lifecycle and the compensating-entry refund. IAS-1 §E
 standardizes both, plus the category taxonomy boundary: categories are
@@ -264,7 +264,7 @@ entering resolution.
 | Reads external world | ✗ | ✗ | ✓ (consensus-verified observation) |
 | Classifies unstructured input | ✗ | ✗ | ✓ (SEMANTIC consensus, bounded) |
 | Proposes actions | ✗ | ✗ | ✓ (gated proposals) |
-| Judgment moves funds | n/a | n/a | **✗ — structural invariant** |
+| Judgment moves funds | n/a | n/a | **✗ - structural invariant** |
 | Native dispute lifecycle | ✗ | ✗ | ✓ (cases + remedies) |
 | Replay-proof delegation | ✗ | partial (nonces) | ✓ (lane nonces, atomic) |
 
@@ -310,14 +310,14 @@ deployment receipt constitute the first conformance evidence.)
 
 ## 7. Roadmap
 
-- **0.2** — cross-contract extraction (modules call the deployed primitive
+- **0.2** - cross-contract extraction (modules call the deployed primitive
   contracts), restoring per-primitive convergence attestation chains.
-- **0.3** — x402 facade (HTTP 402 flows settle through the gate pipeline) and
+- **0.3** - x402 facade (HTTP 402 flows settle through the gate pipeline) and
   ERC-7710-style export of delegations for EVM-side composability.
-- **1.0** — multi-implementation conformance: at least two independent builds
+- **1.0** - multi-implementation conformance: at least two independent builds
   passing identical canonical vectors, per the Nomos repository-mediated
   convergence protocol.
 
 ---
 
-*Nomos — financial primitives whose semantics survive any builder.*
+*Nomos - financial primitives whose semantics survive any builder.*

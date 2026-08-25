@@ -1,4 +1,4 @@
-# Gaia — GenLayer Implementation
+# Gaia - GenLayer Implementation
 
 Deterministic Intelligent Contract implementing the Gaia exception plane v0.1.
 
@@ -7,11 +7,11 @@ Deterministic Intelligent Contract implementing the Gaia exception plane v0.1.
 Single contract: `Gaia` in `gaia.py`.
 
 Write methods:
-- `open_case(case_id, category, subject_ref, facts_json)` — open an exception case. Categories are declared vocabulary: settlement-mismatch, delivery-mismatch, duplicate-execution, stale-evidence, unauthorized-action, reconciliation-failure, other.
-- `classify_case(case_id, classification_id, obligations_json)` — attach 1–8 bounded rectification obligations (refund / retry / provide_evidence / correct_usage_record / reconcile / manual_review). Obligation ids derive deterministically as `<classification_id>-O<index>`. OPEN → CLASSIFIED.
-- `discharge_obligation(obligation_id, evidence_hash)` — explicit satisfaction with auditable evidence.
-- `waive_obligation(obligation_id, waiver_note)` — explicit waiver with recorded justification.
-- `resolve_case(case_id, resolution_evidence_hash)` — CLASSIFIED → RESOLVED (terminal) once **every** obligation is dispositioned.
+- `open_case(case_id, category, subject_ref, facts_json)` - open an exception case. Categories are declared vocabulary: settlement-mismatch, delivery-mismatch, duplicate-execution, stale-evidence, unauthorized-action, reconciliation-failure, other.
+- `classify_case(case_id, classification_id, obligations_json)` - attach 1–8 bounded rectification obligations (refund / retry / provide_evidence / correct_usage_record / reconcile / manual_review). Obligation ids derive deterministically as `<classification_id>-O<index>`. OPEN → CLASSIFIED.
+- `discharge_obligation(obligation_id, evidence_hash)` - explicit satisfaction with auditable evidence.
+- `waive_obligation(obligation_id, waiver_note)` - explicit waiver with recorded justification.
+- `resolve_case(case_id, resolution_evidence_hash)` - CLASSIFIED → RESOLVED (terminal) once **every** obligation is dispositioned.
 
 Views: `get_case`, `get_obligation`.
 
@@ -20,7 +20,7 @@ Views: `get_case`, `get_obligation`.
 - Failure does not create authority: Gaia prescribes remedies but executes nothing.
 - Historical truth append-only: facts, obligations, and dispositions are never rewritten; RESOLVED is terminal.
 - No silent resolution: the completeness gate scans all obligations bound to the case.
-- Ordinary deterministic rejection never auto-creates a case — cases are explicitly opened.
+- Ordinary deterministic rejection never auto-creates a case - cases are explicitly opened.
 
 ## State ownership
 

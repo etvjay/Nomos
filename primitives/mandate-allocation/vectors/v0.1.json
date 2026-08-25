@@ -55,7 +55,7 @@
     },
     {
       "id": "ma-duplicate-evaluation-id-rejected-006",
-      "description": "Evaluation ids are unique — including INELIGIBLE attempts (attempts are auditable)",
+      "description": "Evaluation ids are unique - including INELIGIBLE attempts (attempts are auditable)",
       "actions": [
         {"op": "register_mandate", "args": ["MAN1", "sha256:m1", "100000", "USD", "[\"invoice\"]"], "expect": "ok"},
         {"op": "evaluate_opportunity", "args": ["RES1", "MAN1", "OPP-1", "invoice", "10", "5000000000"], "expect": {"eligibility": "ELIGIBLE"}},

@@ -1,4 +1,4 @@
-"""Partner-B direct tests — EXP-CONV-004 (claim-verification SEMANTIC lane).
+"""Partner-B direct tests - EXP-CONV-004 (claim-verification SEMANTIC lane).
 
 Replays the canonical vectors and the adversarial surface against the
 independent Partner-B build and asserts convergence on equivalence fields

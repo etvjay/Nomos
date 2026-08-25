@@ -1,11 +1,11 @@
-"""Mandate Allocation — independent build (convergence lane, capability v0.1.0).
+"""Mandate Allocation - independent build (convergence lane, capability v0.1.0).
 
-Convergence mode: EXACT (judgmentBearing: false — JUDGMENT_BOUNDARY = NONE)
+Convergence mode: EXACT (judgmentBearing: false - JUDGMENT_BOUNDARY = NONE)
 
 Deterministic advisory evaluation of opportunities against a registered
 mandate. Results are recommendations only: no authority, no commitment, no
 encumbrance, no value movement. Evaluation ids are unique INCLUDING
-INELIGIBLE attempts (attempts burn their id — auditable) but INELIGIBLE
+INELIGIBLE attempts (attempts burn their id - auditable) but INELIGIBLE
 attempts consume no exposure capacity. Assets bind via upstream composition:
 the mandate's `asset` field is supplied by upstream composition and every
 evaluation is bound to it through mandate_id.
@@ -94,7 +94,7 @@ class MandateAllocation:
                              at_timestamp):
         _require(isinstance(evaluation_id, str) and evaluation_id != "",
                  "evaluation_id required")
-        # Ids burn on every attempt, ELIGIBLE or INELIGIBLE — auditable.
+        # Ids burn on every attempt, ELIGIBLE or INELIGIBLE - auditable.
         _require(evaluation_id not in self._evaluations,
                  "duplicate evaluation_id")
         _require(at_timestamp is not None, "at_timestamp required")

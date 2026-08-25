@@ -1,4 +1,4 @@
-# EXP-CONV-001 — Independent Primitive Reproduction
+# EXP-CONV-001 - Independent Primitive Reproduction
 
 **Purpose:** Demonstrate that two independent builders (Partners B and C), given the
 same canonical authority for a deterministic primitive, produce the same observable
@@ -24,7 +24,7 @@ economic state and reject the same invalid transitions.
 **Gates**
 - `python tools/nomos_lint.py`
 - `python tools/nomos_converge.py check`
-- `python tools/nomos_run_vectors.py <impl>` — all vectors PASS for both lanes
-- `genvm-lint check <impl>` — PASS for both lanes
+- `python tools/nomos_run_vectors.py <impl>` - all vectors PASS for both lanes
+- `genvm-lint check <impl>` - PASS for both lanes
 
 **Result:** see convergence/receipts/WORK-CONV-001-B.json and WORK-CONV-001-C.json.

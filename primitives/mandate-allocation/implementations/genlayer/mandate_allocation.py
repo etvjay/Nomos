@@ -14,7 +14,7 @@ deterministic (EXACT).
 
 Article V: a result is NOT authority, commitment, or encumbrance; it cannot
 move value. DAA must independently create any downstream authority grant.
-`committed_exposure` is advisory bookkeeping inside this primitive only —
+`committed_exposure` is advisory bookkeeping inside this primitive only -
 it reserves nothing in any pool.
 
 JUDGMENT_BOUNDARY = NONE for v0.1. Comparative/qualitative ranking composes

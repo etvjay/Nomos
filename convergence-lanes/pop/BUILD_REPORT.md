@@ -1,4 +1,4 @@
-# BUILD_REPORT — proof-of-payable (convergence lane, independent build)
+# BUILD_REPORT - proof-of-payable (convergence lane, independent build)
 
 Primitive: `proof-of-payable` v0.1.0 · Mode: EXACT · JUDGMENT_BOUNDARY = NONE
 
@@ -23,7 +23,7 @@ Four TreeMap-keyed stores:
 Public projections are canonical JSON (sorted keys, compact separators) over
 exactly the `equivalenceFields` for claims and
 `{proof_id, claim_id, proof_hash, status}` for proofs. Non-canonical fields
-(`created_at`, `created_by`) exist internally but are empty and never emitted —
+(`created_at`, `created_by`) exist internally but are empty and never emitted -
 the canonical surface stays deterministic.
 
 ## Lifecycle / rules implemented

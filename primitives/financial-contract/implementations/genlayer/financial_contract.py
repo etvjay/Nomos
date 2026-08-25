@@ -3,10 +3,10 @@
 #     { "Depends": "py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6" }
 #   ]
 # }
-"""Financial Contract primitive (GenLayer) v0.1 — narrowed scope.
+"""Financial Contract primitive (GenLayer) v0.1 - narrowed scope.
 
 SCOPE_NARROWED per PRIMITIVE_QUALIFICATION: v0.1 implements a canonical
-**obligation / cash-flow lifecycle** — principal conservation, deterministic
+**obligation / cash-flow lifecycle** - principal conservation, deterministic
 payment application, maturity, closure, and creditor-declared default.
 Contingent clauses, interest accrual rules, covenants, restructuring, and
 natural-language conditions are explicitly OUT of this version; where
@@ -136,7 +136,7 @@ class FinancialContract(gl.Contract):
         if requested > outstanding:
             return self._deny(pay_key, amount, "EXCEEDS_OUTSTANDING")
 
-        # Deterministic application — conservation exact.
+        # Deterministic application - conservation exact.
         contract["outstanding"] = str(outstanding - requested)
         contract["total_paid"] = str(int(contract["total_paid"]) + requested)
         new_status = "CLOSED" if contract["outstanding"] == "0" else contract["status"]

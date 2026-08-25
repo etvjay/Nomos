@@ -1,4 +1,4 @@
-# Proof of Payable — Invariants
+# Proof of Payable - Invariants
 
 - `claimId` is stable across evidence snapshots.
 - `claimId != proofHash`.

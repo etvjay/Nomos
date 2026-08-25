@@ -1,4 +1,4 @@
-# Capital Commitment — Invariants
+# Capital Commitment - Invariants
 
 - Every active commitment is economically backed.
 - Backing capacity is unavailable to competing uses while committed.

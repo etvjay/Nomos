@@ -53,7 +53,7 @@ def test_non_principal_cannot_accept(direct_vm, direct_deploy, direct_alice):
     result = json.loads(contract.execute_pact("K1", "10", "5000000000"))
     assert result["decision"] == "DENY"
     assert result["reason_code"] == "PACT_NOT_ACCEPTED"
-    # Principal still can accept afterwards — the failed attempt changed nothing.
+    # Principal still can accept afterwards - the failed attempt changed nothing.
     direct_vm.sender = direct_alice
     contract.accept_pact("K1")
     assert json.loads(contract.get_pact("K1"))["status"] == "ACCEPTED"

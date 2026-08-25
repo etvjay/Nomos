@@ -3,9 +3,9 @@
 ## Why we built it
 
 Ask a developer to build a payment app. They don't start by reasoning about
-claims, encumbrances, and policy envelopes — they start with an account that
+claims, encumbrances, and policy envelopes - they start with an account that
 holds money and a `send()` function that moves it under rules they control.
-Everything else — invoicing, recurring billing, disputes, delegated access —
+Everything else - invoicing, recurring billing, disputes, delegated access -
 hangs off those two ideas.
 
 The Nomos primitive stack was built the opposite way: bottom-up, one verified
@@ -18,7 +18,7 @@ went wrong gets disputed and rectified without rewriting history.
 Each piece was correct. None of them, alone, was something a builder could use.
 
 The Programmable Payment Account (PPA) is the layer where those two worlds
-meet. It is one contract you deploy once and configure however you want — an
+meet. It is one contract you deploy once and configure however you want - an
 account with money in it, rules around it, and every internal movement routed
 through the verified primitives underneath.
 
@@ -38,23 +38,23 @@ A PPA is opened by an owner and configured with a **rules envelope**:
 
 From there, the account exposes the verbs people actually expect:
 
-**`send`** — the core flow. Every payment passes through four gates in order,
+**`send`** - the core flow. Every payment passes through four gates in order,
 and no gate can be skipped:
 
 1. **Policy gate.** Is the recipient allowed? Is the amount within per-transaction
    and daily limits? Denied requests are recorded for audit but move nothing
-   and consume nothing — fix the rule, retry the same payment id.
+   and consume nothing - fix the rule, retry the same payment id.
 2. **Encumbrance gate.** Is there uncommitted balance to cover this? The
    account tracks committed vs available funds separately, so overcommitment
    is structurally impossible rather than merely forbidden.
 3. **Payable claim.** The payment exists as a claim with an evidence hash and
-   memo — not just a ledger line, but a settlement record that downstream
+   memo - not just a ledger line, but a settlement record that downstream
    verification (claim-verification) can later attest.
 4. **Settle.** Funds move. History is written once and never rewritten.
 
 **Invoices** are structured receivables. Issuing one creates an open claim
 against a payer; settling it runs the payer's own policy and encumbrance
-gates — an invoice cannot force a payment that rules would deny.
+gates - an invoice cannot force a payment that rules would deny.
 
 **Disputes** follow the gaia lifecycle: open a case against a settled payment
 in a declared economic category (settlement-mismatch, unauthorized-payment,
@@ -65,14 +65,14 @@ The past is annotated, never edited.
 **Delegation** grants scoped spending authority to another principal, with its
 own per-transaction and daily limits plus expiry. The critical property:
 delegation narrows, never widens. A delegate's payments still run through the
-full account policy — the effective limit is always the *minimum* of the
+full account policy - the effective limit is always the *minimum* of the
 account's rule and the delegation's rule. Revoke takes effect immediately;
 expiry takes effect silently at the block boundary.
 
 ## What it deliberately doesn't do
 
-**No judgment moves money.** Every decision inside the send path — allowlist
-checks, limits, encumbrance arithmetic — is deterministic code evaluated by
+**No judgment moves money.** Every decision inside the send path - allowlist
+checks, limits, encumbrance arithmetic - is deterministic code evaluated by
 every validator identically. LLM judgment has a place in the broader system
 (monitoring external data, classifying dispute categories), but it enters only
 through upstream composition, never through the value-moving path itself. This
@@ -86,7 +86,7 @@ real venue exists.
 
 **Single-contract composition in v0.1.** The primitive semantics are embedded
 in-account rather than called cross-contract. The state machines mirror the
-canonical primitives exactly — the extraction into separate contracts with
+canonical primitives exactly - the extraction into separate contracts with
 cross-calls is mechanical once Bradbury's cross-contract story stabilizes.
 
 ## Evidence

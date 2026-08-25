@@ -1,4 +1,4 @@
-# Dynamic Authorization Lanes (DAL) — Canonical Specification
+# Dynamic Authorization Lanes (DAL) - Canonical Specification
 
 Status: SPECIFIED
 Version: 0.1.0

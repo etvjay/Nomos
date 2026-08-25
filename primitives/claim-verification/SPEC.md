@@ -1,4 +1,4 @@
-# Claim Verification — Canonical Specification
+# Claim Verification - Canonical Specification
 
 Status: RESEARCHING
 Version: 0.1.0

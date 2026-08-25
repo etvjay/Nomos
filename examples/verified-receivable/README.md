@@ -3,10 +3,10 @@
 A tiny financial application composed from two canonical Nomos primitives using
 only their published capability contracts, SDK types, and composition docs:
 
-- **Claim Verification** (`primitives/claim-verification`) — SEMANTIC,
+- **Claim Verification** (`primitives/claim-verification`) - SEMANTIC,
   judgment-bearing. Produces a canonical decision (`VERIFIED` | `CONFLICTED` |
   `INSUFFICIENT` | `UNDETERMINED`) for a claim against immutable evidence.
-- **Claim Encumbrance** (`primitives/claim-encumbrance`) — EXACT,
+- **Claim Encumbrance** (`primitives/claim-encumbrance`) - EXACT,
   deterministic. Owns immutable financeable capacity per claim and a reservation
   lifecycle (`RESERVED -> COMMITTED`, `-> RELEASED/SETTLED`).
 

@@ -1,4 +1,4 @@
-# Financial Contract — GenLayer Implementation
+# Financial Contract - GenLayer Implementation
 
 Obligation/cash-flow lifecycle Intelligent Contract, v0.1 (scope-narrowed).
 
@@ -7,9 +7,9 @@ Obligation/cash-flow lifecycle Intelligent Contract, v0.1 (scope-narrowed).
 Single contract: `FinancialContract` in `financial_contract.py`.
 
 Write methods:
-- `open_contract(contract_id, creditor, obligor, principal, asset, valid_after, maturity, authority_ref)` — open an ACTIVE obligation bound to its exact upstream authority origin. Self-dealing rejected.
-- `apply_payment(contract_id, payment_id, amount, at_timestamp)` — deterministic application with exact conservation. Returns applied amounts or a DENY decision (`EXCEEDS_OUTSTANDING`, `BEFORE_VALIDITY_WINDOW`, `CONTRACT_CLOSED`, `CONTRACT_DEFAULTED`, `CONTRACT_MATURED`). Full repayment → CLOSED.
-- `declare_default(contract_id)` — **creditor only**, after maturity, with outstanding balance. ACTIVE → DEFAULTED (terminal for payments).
+- `open_contract(contract_id, creditor, obligor, principal, asset, valid_after, maturity, authority_ref)` - open an ACTIVE obligation bound to its exact upstream authority origin. Self-dealing rejected.
+- `apply_payment(contract_id, payment_id, amount, at_timestamp)` - deterministic application with exact conservation. Returns applied amounts or a DENY decision (`EXCEEDS_OUTSTANDING`, `BEFORE_VALIDITY_WINDOW`, `CONTRACT_CLOSED`, `CONTRACT_DEFAULTED`, `CONTRACT_MATURED`). Full repayment → CLOSED.
+- `declare_default(contract_id)` - **creditor only**, after maturity, with outstanding balance. ACTIVE → DEFAULTED (terminal for payments).
 
 Views: `get_contract`, `get_payment`.
 
@@ -35,7 +35,7 @@ duplicate payment ids per contract.
 ## Security assumptions
 
 - Addresses compare case/prefix-insensitively.
-- v0.1 implements no interest/fees/covenants — deferred to future capability
+- v0.1 implements no interest/fees/covenants - deferred to future capability
   versions with declared judgment boundaries.
 - Block time read from the transaction datetime; default requires maturity
   strictly past.

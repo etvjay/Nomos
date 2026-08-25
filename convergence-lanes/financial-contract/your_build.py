@@ -1,6 +1,6 @@
-"""Financial Contract — independent build (convergence lane, capability v0.1.0).
+"""Financial Contract - independent build (convergence lane, capability v0.1.0).
 
-Convergence mode: EXACT (judgmentBearing: false — JUDGMENT_BOUNDARY = NONE)
+Convergence mode: EXACT (judgmentBearing: false - JUDGMENT_BOUNDARY = NONE)
 
 Obligation/cash-flow lifecycle narrowed scope: principal conservation,
 deterministic payment application (status APPLIED), timestamp-based maturity,
@@ -55,7 +55,7 @@ def _require(cond, msg):
 
 class FinancialContract:
     """Obligation lifecycle state + append-only applied-payment records.
-    Does NOT move funds — application is a recorded obligation; actual
+    Does NOT move funds - application is a recorded obligation; actual
     movement belongs to the settlement layer."""
 
     def __init__(self):
@@ -123,7 +123,7 @@ class FinancialContract:
             return deny("CONTRACT_DEFAULTED")
         if ts < int(rec["valid_after"]):
             return deny("BEFORE_VALIDITY_WINDOW")
-        # NOTE: v0.1 semantics — the maturity timestamp gates DEFAULT
+        # NOTE: v0.1 semantics - the maturity timestamp gates DEFAULT
         # declaration, not payment application. Post-maturity payments still
         # apply deterministically; CONTRACT_MATURED is denied only from an
         # explicitly MATURED terminal-leaning status.
@@ -133,7 +133,7 @@ class FinancialContract:
         if amount_i > outstanding:
             return deny("EXCEEDS_OUTSTANDING")
 
-        # Deterministic application — exact integer arithmetic.
+        # Deterministic application - exact integer arithmetic.
         new_total = int(rec["total_paid"]) + amount_i
         new_outstanding = int(rec["principal"]) - new_total
         rec["total_paid"] = str(new_total)

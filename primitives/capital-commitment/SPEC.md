@@ -1,4 +1,4 @@
-# Capital Commitment — Canonical Specification
+# Capital Commitment - Canonical Specification
 
 Status: SPECIFIED
 Version: 0.1.0

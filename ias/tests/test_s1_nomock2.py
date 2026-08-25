@@ -50,7 +50,7 @@ def _install_mock():
 def test_stage1_consensus_machinery():
     f = get_contract_factory(contract_file_path="ias_stage1.py")
     c = f.deploy()
-    # NOTE: do not mutate chain.consensus_main_contract here — it's a shared
+    # NOTE: do not mutate chain.consensus_main_contract here - it's a shared
     # singleton and partial dicts (address without abi) poison later calls.
     tx = c.initialize(args=[OWNER]).transact(wait_interval=2000, wait_retries=10)
     assert tx_execution_succeeded(tx)

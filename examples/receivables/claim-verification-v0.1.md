@@ -1,4 +1,4 @@
-# Receivables Example — Claim Verification v0.1
+# Receivables Example - Claim Verification v0.1
 
 This example shows how a financial application can consume Nomos Claim Verification before authority allocation or capital reservation.
 

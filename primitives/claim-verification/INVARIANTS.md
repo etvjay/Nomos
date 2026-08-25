@@ -1,4 +1,4 @@
-# Claim Verification — Invariants
+# Claim Verification - Invariants
 
 - Verification binds exact claim and proof identities.
 - Verification never mutates the source claim.

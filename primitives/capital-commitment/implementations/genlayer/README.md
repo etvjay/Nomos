@@ -1,4 +1,4 @@
-# Capital Commitment — GenLayer Implementation
+# Capital Commitment - GenLayer Implementation
 
 Canonical deterministic implementation of the Capital Commitment primitive
 (capabilityVersion 0.1.0, convergenceMode EXACT).

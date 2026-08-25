@@ -1,4 +1,4 @@
-# Policy Envelope — Invariants
+# Policy Envelope - Invariants
 
 - Hard deterministic constraints dominate interpreted mandate clauses.
 - Policy approval is not delegation, allocation, commitment, or settlement.

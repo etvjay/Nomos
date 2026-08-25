@@ -1,4 +1,4 @@
-# EXP-CONV-002 — Blind Downstream Composition
+# EXP-CONV-002 - Blind Downstream Composition
 
 **Purpose:** Demonstrate that a downstream builder (Partner D) can compose a tiny
 application from canonical CAPABILITYs alone, without access to implementation

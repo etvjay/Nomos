@@ -1,4 +1,4 @@
-# BUILD_REPORT — dal (independent build)
+# BUILD_REPORT - dal (independent build)
 
 Builder: independent convergence-lane agent (no access to
 `implementations/genlayer/`; built solely from SPEC.md, INVARIANTS.md,
@@ -6,7 +6,7 @@ THREAT_MODEL.md, DECISION_BOUNDARY.md, CAPABILITY.json, vectors/v0.1.json).
 
 ## Result
 
-`PASS` — all 10 canonical vectors (v0.1.json) pass.
+`PASS` - all 10 canonical vectors (v0.1.json) pass.
 
 ```
 python3 your_build.py /home/ubuntu/nomos/primitives/dal/vectors/v0.1.json
@@ -19,7 +19,7 @@ State: one replay domain per `(issuer, domain_id)`; lane carries
 `expiry_window`, expected `nonce` (starts at "1"), status
 ACTIVE/REVOKED/EXPIRED(implicit).
 
-- `open_lane`: rejects duplicates — including revoked lanes, which can
+- `open_lane`: rejects duplicates - including revoked lanes, which can
   never be reopened (dal-reopen-after-revoke-rejected-010).
 - `exercise`, ordered fail-closed validation:
   1. LANE_REVOKED (explicit revocation dominates expiry),
