@@ -1,238 +1,190 @@
 # Nomos
 
-Nomos is a **financial primitive stack for building applications on GenLayer**.
+Financial primitives and Intelligent Accounts for GenLayer.
 
-It defines reusable economic objects, state machines, authority models, invariants, conformance tests, implementation contracts, and developer-facing modules that application builders can compose into lending, receivables, treasury, trade-finance, insurance, capital-allocation, agentic-finance, and other financial systems.
+## What Nomos is
+
+Nomos provides reusable mechanisms for financial applications:
+
+- evidence and claims;
+- authority and delegation;
+- spending policies;
+- capital commitment and encumbrance;
+- workflow agreements;
+- replay protection;
+- financial obligations;
+- disputes and rectification;
+- payment account composition.
+
+## Why GenLayer
+
+GenLayer is designed for contracts that require adjudication, not only fixed code. Its Intelligent Contracts can process language, unstructured evidence, live web inputs, and AI reasoning. Optimistic Democracy and Equivalence Principles let validators evaluate and accept or reject nondeterministic results.
+
+Nomos uses GenLayer in two ways:
+
+1. **Adjudication:** external evidence, language, and judgment can produce a consensus-backed result.
+2. **Execution:** accepted results enter explicit authority, policy, capital, and settlement rules.
+
+The account does not treat an accepted judgment as an automatic payment. The account evaluates what consequences are permitted.
 
 ## Documentation
 
-| Document | What it covers |
-|---|---|
-| **[Master Whitepaper](NOMOS_WHITEPAPER.md)** | The full stack: registry, evidence campaign, products, future intentions |
-| **[The Intelligent Account](primitives/ppa/INTELLIGENT_ACCOUNT_WHITEPAPER.md)** | The new account type — architecture, autonomy ladder, boundary conditions |
-| **[Programmable Payment Account](primitives/ppa/WHITEPAPER.md)** | The PPA product: gated payments, invoices, disputes, delegation |
-| **[IAS-1 Standard](primitives/ppa/IAS-1.md)** | The Intelligent Account specification — five modules, conformance levels |
-| **[Fact-Check Ledger](docs/FACT_CHECK_LEDGER.md)** | Claim-by-claim verification of every whitepaper statement against receipts and primary sources |
+- [Nomos Master Whitepaper](NOMOS_WHITEPAPER.md)
+- [Intelligent Account Whitepaper](primitives/ppa/INTELLIGENT_ACCOUNT_WHITEPAPER.md)
+- [PPA Whitepaper](primitives/ppa/WHITEPAPER.md)
+- [IAS-1 Standard](primitives/ppa/IAS-1.md)
+- [Fact-Check Ledger](docs/FACT_CHECK_LEDGER.md)
+- [GenLayer Truth Freeze](docs/GENLAYER_TRUTH_FREEZE.md)
 
-## Product goal
+## Primitive status
 
-> Build primitives developers can use to build financial applications on GenLayer without repeatedly re-inventing evidence, authority, allocation, commitment, replay, financial-obligation, and rectification machinery.
+10 of 11 primitives are **CONFORMANT** through independent implementation and canonical vector convergence. One remains **SPECIFIED** pending scope re-qualification.
 
-Nomos' product target is GenLayer.
+| Primitive | Function | Status | Mode |
+|---|---|---|---|
+| Proof of Payable | Evidence-bearing claims and settlement | CONFORMANT | EXACT |
+| Claim Verification | Judgment over mandate clauses and evidence | CONFORMANT | SEMANTIC |
+| Policy Envelope | Allowlists, amount limits, daily limits, and denials | CONFORMANT | SEMANTIC |
+| Workflow Authorization | Paths and pacts with validity windows | CONFORMANT | EXACT |
+| Mandate Allocation | Eligibility of capital under mandates | CONFORMANT | EXACT |
+| Dynamic Authority Allocation | Bounded authority grants and lifecycle | CONFORMANT | EXACT |
+| Claim Encumbrance | Capital reservations against obligations | CONFORMANT | EXACT |
+| Capital Commitment | Available and committed capital | CONFORMANT | EXACT |
+| Dynamic Authorization Lanes | Replay-proof authorization nonces | CONFORMANT | EXACT |
+| Gaia | Disputes, reconciliation, and rectification | CONFORMANT | EXACT |
+| Financial Contract | Obligation and cash-flow lifecycle | SPECIFIED* | EXACT |
 
-Canonical primitive specifications remain semantically explicit and mechanism-independent so that GenLayer implementation details cannot silently redefine the economic object. Cross-environment implementations may be used for research, reference models, interoperability, or conformance comparison, but they are not the primary product goal.
+*Financial Contract has an independent 9/9 vector convergence result. Its public state model must be re-qualified before promotion.*
 
-## GenLayer implementation model
+Evidence receipts are in [`convergence/receipts/`](convergence/receipts/).
 
-Every Nomos primitive MUST ship an executable GenLayer implementation.
+## Products built on the primitives
 
-Nomos uses GenLayer through two distinct protocol capabilities:
+### Programmable Payment Account
+
+The PPA is the payment account product. It provides:
+
+- sub-accounts;
+- account balances;
+- payment rules;
+- deposits;
+- invoices;
+- disputes;
+- delegation;
+- policy-gated sends.
+
+Every send follows:
 
 ```text
-Nomos financial primitive
-        ↓
-Intelligent Contract
-(programmable implementation surface)
-        ↓
-GenVM execution
-        ↓
-Optimistic Democracy
-(network consensus / validation)
-        ↓
-finalized GenLayer state
+policy → encumbrance → claim → settlement
 ```
 
-For non-deterministic operations, each primitive MUST define the evidence, bounded decision schema, and Equivalence Principle required for validators to determine whether outcomes are acceptable.
+The PPA payment lifecycle is live-verified on GenLayer Testnet Bradbury:
 
-For deterministic primitives, the Intelligent Contract implements the state machine and invariants without inventing unnecessary LLM judgment. Optimistic Democracy remains the network consensus mechanism validating execution; it is not itself a Nomos primitive.
+```text
+create account → deposit 3,000 → send 1,200 → settled balance 1,800
+```
 
-## Primitive registry status
+See [`primitives/ppa/WHITEPAPER.md`](primitives/ppa/WHITEPAPER.md).
 
-All 11 primitives are deployed on GenLayer Testnet Bradbury. **10 of 11 are CONFORMANT** — independently reimplemented by fresh-context builders who read only the specification and canonical vectors, with every canonical vector passing against every independent build (EXACT convergence; convergence receipts in `convergence/receipts/`).
+### Intelligent Account
 
-| Primitive | What it does | Status | Convergence |
-|---|---|---|---|
-| Proof of Payable | Evidence-bearing payment claims: attest → settle; every payment is a claim, never a naked transfer | CONFORMANT | EXACT |
-| Claim Encumbrance | Reserves capital against pending obligations — overcommitment structurally impossible | CONFORMANT | EXACT |
-| Capital Commitment | Committed-vs-available treasury accounting for deposits and their encumbrance capacity | CONFORMANT | EXACT |
-| Policy Envelope | Deterministic spend gates (allowlist, per-tx caps, daily windows); denials are audited records that consume nothing | CONFORMANT | SEMANTIC |
-| Workflow Authorization | Propose → accept → execute pacts with validity windows — stale evidence cannot authorize new state | CONFORMANT | EXACT |
-| Mandate Allocation | Binds capital to upstream mandates; evaluation ids burn on ineligible attempts too (auditable) | CONFORMANT | EXACT |
-| Dynamic Authority Allocation (DAA) | Authority awarded as bounded capacity with lifecycle: award ≠ usage; expiry never resets on activity | CONFORMANT | EXACT |
-| Dynamic Authorization Lanes (DAL) | Replay-proof execution nonces consumed atomically — time-boxed keys are also single-use per action | CONFORMANT | EXACT |
-| Financial Contract | Obligation/cash-flow lifecycle: ACTIVE → MATURED/DEFAULTED/CLOSED; creditor-gated default | SPECIFIED* | converged 9/9 via independent lane |
-| Gaia | Dispute/exception plane: cases open → classify → resolve; remedies are compensating entries — history annotated, never rewritten | CONFORMANT | EXACT |
-| Claim Verification | LLM interpretation of mandate clauses under semantic consensus across validators | CONFORMANT | SEMANTIC |
+An Intelligent Account adds a GenLayer adjudication interface to an account.
 
-*\*Financial Contract converged via independent lane (9/9 vectors); blocked from CONFORMANT only by a scope re-qualification of its public state model.*
+It can use Intelligent Contracts to:
 
-The Programmable Payment Account (PPA) composite has full live functional verification on Testnet Bradbury: account creation, funding, policy-gated send, settlement, and exact balance reconciliation (`primitives/ppa/`, whitepaper at `primitives/ppa/WHITEPAPER.md`).
+- process agreements and evidence;
+- evaluate external context;
+- create proposals;
+- coordinate multiple observations;
+- route accepted proposals into account rules.
 
-## Composites: the Intelligent Account stack
+The account still applies authority, policy, capital, and settlement checks.
 
-Nomos composes into user-facing accounts through three layers:
+The three configurations are:
 
-1. **PPA — Programmable Payment Account** (`primitives/ppa/`). One contract that feels like a bank account with rules: send through four deterministic gates (policy → encumbrance → claim → settle), invoices that settle through payer-side gates, disputes with compensating-entry refunds, delegation that narrows and never widens.
-2. **IAS-1 — The Intelligent Account Standard** (`primitives/ppa/IAS-1.md`). The account-type specification extracted from the PPA: five modules (authority, policy, settlement, judgment interface, rectification) with one structural invariant — *judgment proposes; determinism disposes*.
-3. **Three-stage ladder** (`ias/`) — escalating autonomy over the same interface:
-   - Stage 1 Monitor: observes web data under comparative validator consensus, creates proposals
-   - Stage 2 Coordinator: correlates n-of-M signals within time windows, scores confidence
-   - Stage 3 Autonomous: routes confirmed signals into the embedded PPA gate pipeline under per-group caps, recipient allowlists, daily ceilings, and a default-off kill switch
+1. **Monitor:** observe and propose.
+2. **Coordinate:** combine observations and require a threshold.
+3. **Autonomous:** execute accepted proposals within configured limits.
 
-All stages are deployed on Testnet Bradbury. Real-model comparative consensus (GPT-OSS, Qwen, GPT-5.4, Claude Sonnet 4.6 as independent validators) is validated — see `convergence/receipts/RECEIPT-IAS-DIVERSITY-001-A.json`.
+See [`primitives/ppa/INTELLIGENT_ACCOUNT_WHITEPAPER.md`](primitives/ppa/INTELLIGENT_ACCOUNT_WHITEPAPER.md) and [`primitives/ppa/IAS-1.md`](primitives/ppa/IAS-1.md).
+
+## ERC-7710 comparison
+
+ERC-7710 delegates bounded authority with conditions such as targets, functions, amounts, and expiry.
+
+An Intelligent Account includes similar authority controls and adds an adjudication path for conditions involving language, evidence, and external context.
+
+```text
+ERC-7710:
+  agent may spend up to 50 per day until Friday
+
+Intelligent Account:
+  agent may spend up to 50 per day after an agreement is adjudicated as satisfied
+```
+
+ERC-7710 is a delegation primitive. An Intelligent Account is a broader account architecture.
+
+## Evidence levels
+
+- Primitive vectors: passing.
+- Independent convergence: 10 of 11 primitives.
+- PPA payment lifecycle: live-verified on Bradbury.
+- Real-model adjudication: validated in GenLayer Studio across GPT-OSS, Qwen, GPT-5.4, and Claude Sonnet 4.6.
+- Full uninterrupted Stage 3 autonomous loop on Bradbury: **BLOCKED**, pending a clean testnet run.
+
+The PPA invoice, dispute, and delegation paths are simulation-tested. Their separate live calls remain open work.
 
 ## Quick start
 
-Consume a primitive through its `CAPABILITY.json`:
+Inspect a public primitive contract:
 
 ```bash
-# inspect a primitive's public contract
 cat primitives/proof-of-payable/CAPABILITY.json
+```
 
-# run its canonical conformance vectors (embedded runner, plain CPython)
+Run an independent lane's canonical vector runner:
+
+```bash
 python3 convergence-lanes/pop/your_build.py \
   primitives/proof-of-payable/vectors/v0.1.json
 ```
 
-Deploy the PPA for a ready-made programmable payment account, or compose individual primitives per the canonical progression below.
-
-## Initial primitive registry
-
-1. Proof of Payable
-2. Claim Verification
-3. Policy Envelope
-4. Workflow Authorization — Path + Pact
-5. Mandate Allocation
-6. Dynamic Authority Allocation (DAA)
-7. Claim Encumbrance
-8. Capital Commitment
-9. Dynamic Authorization Lanes (DAL)
-10. Financial Contract
-11. Gaia — Exception, Reconciliation & Rectification
-
-### Allocation taxonomy
-
-```text
-Mandate Allocation
-= evaluates/ranks opportunities under a mandate
-= recommendation/evaluation only
-= creates no authority
-
-DAA — Dynamic Authority Allocation
-= creates a bounded authority grant
-= determines who receives what authority, over what resource, for what purpose, under what bounds and validity
-
-DAL — Dynamic Authorization Lanes
-= gives independently granted authorizations appropriate replay/execution domains
-```
-
-Canonical progression:
-
-```text
-Economic evidence
-      ↓
-Claim Verification
-      ↓
-Policy / Workflow Authorization
-      ↓
-Mandate Allocation?      # optional evaluation/recommendation
-      ↓
-DAA                      # bounded authority exists here
-      ↓
-Claim Encumbrance
-      ↓
-Capital Commitment
-      ↓
-DAL                      # replay/execution topology
-      ↓
-Financial Contract / execution
-```
-
-Gaia is a cross-cutting exception, reconciliation and rectification plane.
-
-The machine-readable registry lives in `nomos.manifest.json`.
-
-## What application developers should eventually consume
-
-Nomos is not complete when contracts merely exist. A released primitive should expose a usable GenLayer developer surface:
-
-```text
-primitive specification
-      ↓
-Intelligent Contract implementation
-      ↓
-canonical types / schemas
-      ↓
-SDK / client helpers
-      ↓
-example composition
-      ↓
-conformance vectors
-      ↓
-receipts / deployment references
-```
-
-A developer should be able to import or deploy a primitive, understand its guarantees, compose it with another Nomos primitive, and connect it to an application without reconstructing the protocol semantics from source code.
-
-## Authority order
-
-When sources disagree, use this order:
-
-1. `CONSTITUTION.md` — non-negotiable system law.
-2. Canonical primitive `SPEC.md` — semantic meaning and invariants.
-3. Accepted Research Foundry evidence — prior art, falsifiers, surviving research claims.
-4. Current official GenLayer documentation and implementation truth.
-5. GenLayer implementation profile.
-6. Intelligent Contract implementation code.
-7. Tests, experiments, receipts, and deployment evidence.
-8. SDK/API/interface/demo material.
-
-A lower layer may never silently redefine a higher layer.
-
-## Build lifecycle
-
-`RESEARCH → SPEC → GENLAYER CONTRACT → DIRECT TESTS → EQUIVALENCE/CONSENSUS TESTS → INTEGRATION → CONFORMANCE → ADVERSARIAL EXPERIMENT → RELEASE RECEIPT → SDK/EXAMPLES`
-
-## Primitive capsule
-
-```text
-primitives/<primitive>/
-  SPEC.md
-  INVARIANTS.md
-  THREAT_MODEL.md
-  DECISION_BOUNDARY.md
-  vectors/
-  implementations/
-    genlayer/        # mandatory product implementation
-      README.md
-      ...Intelligent Contract implementation...
-  sdk/
-  examples/
-  conformance/
-  receipts/
-```
-
-Additional environment implementations may exist under `implementations/` for interoperability or research, but GenLayer is the required product implementation.
-
-## Status language
-
-Evidence and tests use explicit states only: `PASS`, `FAIL`, `NOT_IMPLEMENTED`, `BLOCKED`.
-
-Lifecycle state is machine-readable in `nomos.manifest.json`.
-
-## Governance
-
-Read, in order:
-
-- `CONSTITUTION.md`
-- `AGENTS.md`
-- `GOVERNANCE.md`
-- `environments/genlayer/PROFILE.md`
-- `conformance/README.md`
-- `experiments/README.md`
-
-Run governance checks with:
+Run repository checks:
 
 ```bash
 python tools/nomos_lint.py
+python tools/nomos_converge.py check
 ```
+
+## Repository structure
+
+```text
+primitives/       specifications, implementations, vectors, receipts
+ias/              Intelligent Account stages
+contracts/        relative links to contract implementations
+convergence/      deployment, verification, and convergence evidence
+convergence-lanes independent rebuilds used for certification
+examples/         example compositions
+docs/              fact-checks and truth freezes
+tools/             linting, vector, convergence, and deployment tools
+```
+
+## Current limits
+
+- Financial Contract is not yet CONFORMANT.
+- Some primitive live write-call coverage is incomplete.
+- Full Stage 3 live autonomous execution is not yet proven.
+- External web sources can be stale, unavailable, rate-limited, or manipulated.
+- Validator consensus is not the same as truth.
+- PPA and IAS-1 are reference implementations and specifications, not adopted external standards.
+
+## Project position
+
+GenLayer provides adjudication for decisions that require context and judgment.
+
+Nomos provides reusable financial mechanisms and account rules for applying those decisions.
+
+The governing boundary is:
+
+> **GenLayer adjudicates. Nomos controls authority and financial consequences.**
