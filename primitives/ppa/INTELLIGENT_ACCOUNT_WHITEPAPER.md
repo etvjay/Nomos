@@ -1,169 +1,204 @@
 # Intelligent Accounts
 
-## The short version
+## An account for decisions that code alone cannot resolve
 
-Agents need to use money without receiving unrestricted control of a treasury.
+### The short version
 
-An **Intelligent Account** is an account that can use GenLayer validators to observe and interpret external information, then propose an action. The account still applies ordinary financial rules before anything settles.
+Agentic commerce needs more than payments and wallets. Agents also need to handle agreements, evidence, exceptions, and disputes.
 
-The core flow is:
+A normal smart contract is good at fixed rules. It is not good at deciding whether a natural-language obligation was satisfied, whether evidence is relevant, or what a disputed real-world event means.
+
+GenLayer is designed for that missing layer. It is an adjudication network where Intelligent Contracts can process language, unstructured evidence, live web inputs, and AI reasoning. Validators independently evaluate the proposed result using an Equivalence Principle and Optimistic Democracy.
+
+Nomos uses that capability to build **Intelligent Accounts**.
+
+An Intelligent Account can participate in adjudication when an account decision requires context. It can receive a consensus-backed judgment and turn that judgment into a proposal. Its authority, policy, and settlement rules then determine what happens next.
 
 ```text
-external event
-    -> web observation and AI interpretation
-    -> validator consensus
-    -> structured proposal
-    -> account rules and authority checks
-    -> deterministic settlement
+agreement or external event
+          ↓
+Intelligent Contract adjudication
+(language, evidence, web data, AI reasoning)
+          ↓
+validator consensus
+(Optimistic Democracy + Equivalence Principle)
+          ↓
+accepted, rejected, or undetermined result
+          ↓
+Nomos account rules
+(authority, policy, encumbrance, settlement)
 ```
 
-**AI observes and proposes. Consensus validates. Account rules execute.**
-
-That is the idea. Everything else in this document supports it.
+The account is not an oracle wrapper. It is an account with an adjudication boundary.
 
 ## Why GenLayer?
 
-Deterministic execution is not the reason to use GenLayer. Ethereum and other blockchains already handle deterministic state changes well.
+Bitcoin made money trustless. Ethereum made computation trustless. GenLayer presents a third problem: **adjudication**.
 
-The difficult question is often outside the chain:
+Many commercial situations cannot be reduced to a fixed Boolean condition before the situation occurs:
 
-- Did a delivery arrive?
-- Does a public page show that a price crossed a threshold?
-- Does a document satisfy an agreed clause?
-- Has a service provided the result it promised?
+- Did a delivery satisfy the agreement?
+- Does a submitted result meet a natural-language requirement?
+- Is a dispute a delivery failure, an amount mismatch, or an unauthorized action?
+- Does evidence from several sources support a claim?
+- What should happen when two agents disagree about performance?
 
-A traditional application normally answers these questions through a trusted oracle, an operator, or a single AI system. GenLayer provides another model. A leader validator performs the observation and proposes a result. Other validators independently execute the relevant work, using their own AI models and web access. They compare the results under an Equivalence Principle. If enough validators agree, the result can be accepted by the network.
+Traditional systems send these questions to a company, an oracle, an arbitrator, or a human reviewer. A normal smart contract usually avoids them by requiring every condition to be encoded in advance.
 
-This does not make an AI answer automatically true. It reduces dependence on one oracle or one model and gives the application a declared way to handle disagreement.
+GenLayer provides a third option. The Intelligent Contract contains the decision process. Its validators independently evaluate the result. The Equivalence Principle defines what counts as agreement. Optimistic Democracy determines whether the network accepts the result.
 
-During Nomos testing, a Studio transaction reached finalized consensus across validators using GPT-OSS, Qwen, GPT-5.4, and Claude Sonnet 4.6. The receipt is recorded in:
+GenLayer still supports ordinary deterministic contract capabilities such as storage, value transfers, messages, and state changes. It is not correct to describe GenLayer as wholly nondeterministic. It combines ordinary contract execution with a protocol for adjudication when fixed code is not enough.
 
-```text
-convergence/receipts/RECEIPT-IAS-DIVERSITY-001-A.json
-```
+## What is an Intelligent Account?
 
-## How this differs from ERC-7710
+An Intelligent Account is a proposed account architecture with two connected parts:
 
-ERC-7710 is the closest existing comparison. It lets an account delegate restricted authority with conditions such as a target, amount, expiry, or spending limit.
+1. **An adjudication interface** for decisions involving language, evidence, external context, or interpretation.
+2. **A financial account core** for authority, policy, capital, settlement, and history.
 
-That is useful, and Intelligent Accounts retain the same basic ideas. The difference is what the conditions can refer to.
+The adjudication interface does not replace the financial core. It supplies a decision or proposal to it.
+
+The financial core does not pretend that every commercial question is already deterministic. It defines what the account is allowed to do after a judgment has been accepted, and what it must refuse regardless of that judgment.
+
+## The important distinction from ERC-7710
+
+ERC-7710 is a delegated-permission mechanism. It can express authority such as:
+
+> This agent may call this target, for these functions, up to this amount, until this time.
+
+That is useful and closely related to the authority layer of an Intelligent Account.
+
+The difference is the type of question the account can place around that authority.
 
 | | ERC-7710 | Intelligent Account |
 |---|---|---|
-| Main purpose | Delegate authority | Operate an account with bounded autonomy |
-| Conditions | Mainly transaction and on-chain conditions | Those conditions plus consensus-backed external observations |
-| Example | Agent may spend 50 per day until Friday | Agent may spend 50 per day after delivery is confirmed |
-| Perception | No native web or AI observation | GenLayer validators can observe and interpret external data |
-| Execution | Permission checks a delegated action | Proposal enters policy, authority, encumbrance, and settlement gates |
+| Main problem | Delegating bounded authority | Operating bounded authority in an adjudicating environment |
+| Conditions | Primarily permission and transaction conditions | Permission conditions plus contextual decisions |
+| Example | Agent may spend 50 per day until Friday | Agent may spend 50 per day if the agreement was satisfied |
+| Decision source | Wallet and permission rules | Intelligent Contract adjudication plus account rules |
+| Dispute handling | Not its primary purpose | A first-class composition with evidence and rectification |
 
-The simplest description is:
+This is not a claim that ERC-7710 cannot be combined with oracles or application logic. It can. The distinction is architectural: ERC-7710 is primarily a delegation primitive, while an Intelligent Account makes adjudication part of the account workflow.
 
-> **An Intelligent Account is an account with outcome-aware authority.**
+## What the account does
 
-ERC-7710 can be combined with oracles and application logic to approximate some of this behavior. The distinction is that observation, validator consensus, proposal handling, and bounded execution are central to the Intelligent Account design rather than external add-ons.
+Consider a service agreement between two agents.
 
-## The safety boundary
+The agreement says that payment should be released after a service produces a specified result. The result is not a single on-chain number. It is a document, a web response, a repository change, or another piece of evidence.
 
-An Intelligent Account has two different kinds of work.
+The Intelligent Account workflow is:
 
-### Intelligent work
+1. The parties define the agreement and its evidence requirements.
+2. A service submits evidence.
+3. An Intelligent Contract evaluates the evidence and the agreement.
+4. Validators independently review the result using the declared Equivalence Principle.
+5. The accepted result becomes a structured proposal or adjudication outcome.
+6. The account checks authority, policy, capital, and claim conditions.
+7. The account settles, denies, opens a dispute, or remains undetermined.
 
-The account may use AI and nondeterministic operations to:
+The important point is step 5. **An accepted judgment is not automatically a payment.** It becomes an input to the account's financial rules.
 
-- fetch external data;
-- interpret text;
-- classify an event;
-- compare observations;
-- calculate a confidence score;
-- propose an action.
+## The account boundary
 
-### Financial work
+The account may use GenLayer's adjudication capabilities for:
 
-The account uses deterministic rules to:
+- interpreting natural-language agreements;
+- evaluating unstructured evidence;
+- resolving factual questions from public sources;
+- classifying disputes;
+- proposing an action based on an accepted outcome.
 
-- identify the caller;
-- check delegation and expiry;
-- check recipient allowlists;
-- enforce per-transaction and daily limits;
-- check available capital;
-- reserve or settle a claim;
-- record a denial or payment;
-- preserve history.
+The account's financial core handles:
 
-A proposal never bypasses these checks. If the validators disagree, the proposal can remain unresolved. If the validators agree but a policy gate rejects the action, the action is denied. The model does not receive a hidden route around the account's rules.
+- ownership and delegated authority;
+- allowlists and spending limits;
+- expiry and revocation;
+- capital availability and encumbrance;
+- payment claims and settlement;
+- denials and receipts;
+- compensating entries and history.
 
-This is the design principle:
+This is the boundary:
 
-> **Judgment proposes. Deterministic gates dispose.**
+> **GenLayer adjudicates the contextual question. Nomos decides what authority and financial consequences are permitted.**
 
-## Three levels of autonomy
+## Three levels of use
 
-The same account model can be configured for different risk appetites.
+The levels are not different account species. They are different risk configurations.
 
-### Level 1: Monitor
+### Level 1: Assisted account
 
-The account observes selected sources and records proposals. A person reviews and executes any payment.
+The account can receive or produce adjudication results and prepare a proposed action. A person approves the final financial action.
 
-Use this when the priority is visibility rather than automation.
+This is the safest starting point for a new application.
 
-### Level 2: Coordinate
+### Level 2: Coordinated account
 
-The account combines multiple signals. For example, three monitors may need to agree within a time window before the account creates a stronger proposal.
+The account combines several pieces of evidence or several monitors before making a proposal. It can require a threshold, a quorum, a time window, or agreement across multiple sources.
 
-Use this when one observation is too weak but full automation is not acceptable.
+This is useful when one observation is not sufficient.
 
-### Level 3: Execute
+### Level 3: Autonomous account
 
-A confirmed proposal may trigger an action automatically. The action still requires the account's policy, authority, capital, and settlement checks. Limits include per-action caps, daily ceilings, recipient allowlists, expiry, and a kill switch that starts off.
+An accepted result can trigger execution automatically, but only within declared policy. The policy may include a recipient allowlist, amount caps, daily limits, expiry, and a kill switch.
 
-Use this only when the operator understands and accepts the configured limits.
+The third level does not give the model unrestricted authority. It gives the account a more automated route to the same financial gates.
 
-Higher levels add evidence and automation. They do not grant the AI broader authority to bypass the account.
+## What Nomos contributes
 
-## What Nomos has built
+Nomos supplies the account-side mechanisms:
 
-Nomos provides the financial mechanisms beneath the account:
-
-- policy and spending limits;
-- evidence-bearing payment claims;
+- evidence-bearing claims;
+- policy envelopes;
 - capital encumbrance;
-- scoped authority allocation;
+- capital commitment;
+- workflow authorization;
+- dynamic authority allocation;
 - replay-proof authorization lanes;
-- workflow agreements;
-- dispute and rectification cases.
+- financial obligation lifecycles;
+- Gaia dispute and rectification.
 
-The Programmable Payment Account is the concrete payment product. The Intelligent Account is the broader account architecture that adds the observation and proposal layer.
+The Programmable Payment Account is the concrete payment account built from these mechanisms. The Intelligent Account is the broader architecture that adds a GenLayer adjudication interface to the account.
 
-Ten of Nomos's eleven primitives are independently CONFORMANT. Fresh-context builders reconstructed them from specifications and canonical vectors without reading the reference implementations. The remaining financial-contract primitive has a converged independent build but remains SPECIFIED while its narrowed scope is re-qualified.
+## What exists today
 
-The PPA payment lifecycle has also been verified on GenLayer Testnet Bradbury: account creation, deposit, policy-gated send, settlement, and exact balance reconciliation.
+Nomos has ten independently CONFORMANT primitives out of eleven. Fresh-context builders reconstructed them from specifications and canonical vectors without reading the reference implementations. The remaining financial-contract primitive has an independent converged build but remains SPECIFIED while its narrowed scope is re-qualified.
 
-The three account stages are implemented in `ias/` and deployed to Bradbury. The complete uninterrupted Stage 3 loop remains open live work. The deterministic account operations are proven; the judgment step has been validated separately through Studio and simulated consensus. This distinction matters and is not hidden.
+The PPA payment lifecycle has been verified on GenLayer Testnet Bradbury: account creation, deposit, policy-gated send, settlement, and exact balance reconciliation.
 
-## First users and distribution
+The Intelligent Account stages are implemented as:
 
-The first user is the Nomos and OpenRails stack itself. OpenRails already coordinates workspaces, authority, agreements, proof, payments, and receipts. Intelligent Accounts can provide the GenLayer-native observation and bounded financial-account layer for those workflows.
+- **Stage 1:** adjudication or monitoring produces a proposal for review;
+- **Stage 2:** multiple observations are coordinated before escalation;
+- **Stage 3:** an accepted result may enter an autonomous execution path with hard policy limits.
 
-The second audience is GenLayer builders who need a payment account with rules rather than a raw wallet.
+The real-model consensus path has been validated in Studio across GPT-OSS, Qwen, GPT-5.4, and Claude Sonnet 4.6. A continuous Stage 3 live run remains open. That is an integration and testnet reliability gap, not evidence that the adjudication model itself has been proven in every production configuration.
 
-The third audience is agent-commerce systems such as Internet Court, where Nomos can provide certified mechanisms for policy, claims, delegation, disputes, and settlement.
+## First users
 
-The initial product is not a general-purpose autonomous economy. It is a narrow account that makes one useful promise:
+The first user is the OpenRails stack. OpenRails already models workspaces, parties, paths, agreements, proof, payment, receipts, and Gaia cases. Nomos can provide the certified account and adjudication mechanisms beneath those workflows.
 
-> **An agent can act financially within rules, and external intelligence cannot silently rewrite those rules.**
+The next audience is GenLayer builders who need an account that can handle agreements and evidence without handing a private key to an agent.
 
-## What this does not claim
+A later integration target is Internet Court and similar agent-commerce systems that need settlement, authority, evidence, and dispute mechanisms.
 
-- Validator consensus is not the same as truth.
-- Model diversity does not eliminate correlated source failures.
-- A policy cap chosen badly is still a bad policy cap.
-- Certification demonstrates reproducibility, not the absence of every bug.
-- The account does not make an agreement legal or a counterparty honest.
+The first product should remain narrow:
 
-## Closing
+> **An account that can participate in adjudication, while keeping its authority and financial consequences explicit.**
 
-Smart accounts made authority programmable. Intelligent Accounts add bounded perception to that authority.
+## Boundaries
 
-GenLayer supplies the consensus mechanism for nondeterministic observation. Nomos supplies the account rules and financial primitives. The account connects them without letting AI directly mutate the ledger.
+- Adjudication is not truth. Consensus can still be wrong or affected by correlated sources.
+- Web access is not guaranteed. Sources can be unavailable, stale, manipulated, or rate-limited.
+- Validator agreement is not legal enforcement.
+- A permission standard is not an account product.
+- Financial limits are only as good as the configuration that sets them.
+- Independent convergence demonstrates reproducibility, not the absence of every bug.
 
-**GenLayer provides consensual intelligence. The account provides bounded authority. Deterministic gates provide exact financial consequences.**
+## Conclusion
+
+GenLayer is not merely a place to put an AI oracle. It is a protocol for contracts that require judgment.
+
+Nomos uses that protocol to explore a new account architecture. The account can participate in contextual decisions, but it still exposes a clear financial boundary: authority is scoped, policy is visible, settlement is controlled, and disputes have a defined path.
+
+**GenLayer adjudicates. Intelligent Accounts coordinate authority and consequence. Nomos supplies the financial mechanisms that make the boundary explicit.**
