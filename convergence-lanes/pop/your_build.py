@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Proof of Payable - Nomos primitive, independent convergence-lane build.
+"""Proof of Payable — Nomos primitive, independent convergence-lane build.
 
 Capability version 0.1.0 · Convergence mode EXACT · JUDGMENT_BOUNDARY = NONE
 

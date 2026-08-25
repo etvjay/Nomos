@@ -1,4 +1,4 @@
-"""Direct tests for DAA v0.1 - authority-source gating.
+"""Direct tests for DAA v0.1 — authority-source gating.
 
 Covers sender-dependent flows the single-sender vector runner cannot express:
 only the recorded authority source may award/reject/revoke; the beneficiary

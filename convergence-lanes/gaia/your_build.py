@@ -1,11 +1,11 @@
-"""Gaia - Exception, Reconciliation & Rectification - independent build
+"""Gaia — Exception, Reconciliation & Rectification — independent build
 (convergence lane, capability v0.1.0).
 
-Convergence mode: EXACT (judgmentBearing: false - JUDGMENT_BOUNDARY = NONE)
+Convergence mode: EXACT (judgmentBearing: false — JUDGMENT_BOUNDARY = NONE)
 
 Dispute/exception plane: cases OPEN -> CLASSIFIED -> RESOLVED (terminal),
 obligations PRESCRIBED -> DISCHARGED | WAIVED. Remedies are prescribed as
-bounded compensating entries only - Gaia holds NO execution authority; any
+bounded compensating entries only — Gaia holds NO execution authority; any
 refund/retry/correction must pass ordinary Workflow Authorization downstream.
 All history is append-only: annotate, never rewrite.
 
@@ -130,7 +130,7 @@ class Gaia:
             }
             ids.append(oid)
 
-        # Append-only annotation of the case - prior fields never rewritten.
+        # Append-only annotation of the case — prior fields never rewritten.
         case["classification_id"] = classification_id
         case["obligation_ids"] = ids
         case["status"] = "CLASSIFIED"

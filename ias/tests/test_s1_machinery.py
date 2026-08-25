@@ -1,5 +1,5 @@
 """Stage 1 consensus-machinery test via gltest (leader_only sim mode) with
-module-scope LLM mock installation - the exact pattern of the passing
+module-scope LLM mock installation — the exact pattern of the passing
 encumbrance integration test.
 
 Proves: web fetch -> LLM extraction -> comparative validator -> vote ->
@@ -56,7 +56,7 @@ def test_stage1_consensus_machinery():
     assert tx_execution_succeeded(tx2)
 
     # THE TEST: full nondet flow. Mock must be installed IMMEDIATELY before
-    # check_monitor - glsim clears mocks after each executed transaction.
+    # check_monitor — glsim clears mocks after each executed transaction.
     _install_mock()
     tx3 = c.check_monitor(args=["M-MOCK"]).transact(wait_interval=15000, wait_retries=30)
 

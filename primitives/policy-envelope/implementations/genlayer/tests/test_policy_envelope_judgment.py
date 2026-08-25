@@ -105,7 +105,7 @@ def test_duplicate_interpretation_id_rejected(direct_vm, direct_deploy, direct_a
 
 
 def test_deterministic_evaluation_ignores_clause_state(direct_vm, direct_deploy, direct_alice):
-    """evaluate_request never consults interpretations - pure hard limits."""
+    """evaluate_request never consults interpretations — pure hard limits."""
     contract = _setup_envelope(direct_vm, direct_deploy, direct_alice)
     contract.attach_mandate_clause("ENV1", "MC1", "clause")
     _mock(direct_vm, "DENY")  # even a DENY interpretation does not block admission

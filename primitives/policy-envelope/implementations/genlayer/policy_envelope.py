@@ -272,7 +272,7 @@ class PolicyEnvelope(gl.Contract):
 
     def _record_denial(self, request_key, envelope_id, request_id, amount, reason_code) -> str:
         # Denied attempts are observable in the return value but do NOT reserve
-        # the request id and consume no capacity - a later valid request may
+        # the request id and consume no capacity — a later valid request may
         # reuse the id.
         record = {
             "request_key": request_key,

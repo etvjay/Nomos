@@ -113,7 +113,7 @@ def test_policy_envelope_live_interpretation():
     ).transact(wait_interval=10000, wait_retries=20)
     assert tx_execution_succeeded(tx)
     used = int(contract.used_amount(args=["ENV-LIVE"]).call())
-    assert used == 400  # DENY consumed nothing - proves the denial on-chain
+    assert used == 400  # DENY consumed nothing — proves the denial on-chain
     denied_raw = contract.get_request(args=["ENV-LIVE", "REQ-BAD"]).call()
     if denied_raw:
         assert json.loads(denied_raw)["decision"] == "DENY"

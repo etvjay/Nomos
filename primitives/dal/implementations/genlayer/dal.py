@@ -14,7 +14,7 @@ JUDGMENT_BOUNDARY = NONE. Nonce correctness and replay safety are fully
 deterministic. Revocation and expiry are explicit and testable.
 
 Article V separation: replay independence does NOT imply independence of
-balances, capacity, policy state, or other shared economic dependencies -
+balances, capacity, policy state, or other shared economic dependencies —
 DAL exposes no such state at all.
 """
 

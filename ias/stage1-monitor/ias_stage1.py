@@ -3,7 +3,7 @@
 #     { "Depends": "py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6" }
 #   ]
 # }
-"""IAS Stage 1 - Monitor Account (GenLayer Intelligent Contract).
+"""IAS Stage 1 — Monitor Account (GenLayer Intelligent Contract).
 
 The first tier of the three-stage Intelligent Account ladder.
 
@@ -76,7 +76,7 @@ class MonitorAccount(gl.Contract):
                        min_confidence: str = "medium",
                        proposal_template: str = "") -> str:
         """Register an observation. proposal_template is a JSON skeleton with
-        {value} placeholder - what the owner's PPA should do on breach."""
+        {value} placeholder — what the owner's PPA should do on breach."""
         self._assert_owner()
         if self.monitors.get(monitor_id):
             raise ValueError("IAS1: monitor id exists")
@@ -207,7 +207,7 @@ class MonitorAccount(gl.Contract):
                    "detected": _now_iso(), "status": "OPEN"}
             self.breaches[breach_id] = json.dumps(rec)
 
-            # Proposal: what should happen next - payload only. Execution
+            # Proposal: what should happen next — payload only. Execution
             # happens OUTSIDE this account, through the owner's PPA gates.
             template = m.get("proposal_template", "")
             payload = template.replace("{value}", value_str) if template else ""

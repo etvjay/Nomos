@@ -1,5 +1,5 @@
 """
-workflow-authorization - independent fresh-context build (convergence lane).
+workflow-authorization — independent fresh-context build (convergence lane).
 
 Primitive: Nomos "Workflow Authorization (Path + Pact)", capability v0.1.0,
 EXACT convergence mode, JUDGMENT_BOUNDARY = NONE.

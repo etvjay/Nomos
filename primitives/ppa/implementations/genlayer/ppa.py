@@ -3,7 +3,7 @@
 #     { "Depends": "py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6" }
 #   ]
 # }
-"""Programmable Payment Account (PPA) v0.1 - GenLayer Intelligent Contract.
+"""Programmable Payment Account (PPA) v0.1 — GenLayer Intelligent Contract.
 
 The user-facing composite over the Nomos financial primitive stack. A PPA is
 an account that holds committed capital and moves it only through
@@ -359,7 +359,7 @@ class ProgrammablePaymentAccount(gl.Contract):
     @gl.public.write
     def resolve_dispute(self, dispute_id: str, remedy: str) -> str:
         """Owner resolves: refund | waive | reject. Refund is a compensating
-        entry - historical truth is never rewritten."""
+        entry — historical truth is never rewritten."""
         self._assert_owner()
         raw = self.disputes.get(dispute_id)
         if not raw:
@@ -393,7 +393,7 @@ class ProgrammablePaymentAccount(gl.Contract):
     def delegate(self, delegation_id: str, principal: str,
                  per_tx_limit: str, daily_limit: str, expires: str) -> str:
         """Grant scoped spending authority. Delegate sends still run the FULL
-        policy gate of the sub-account used - delegation narrows, never widens."""
+        policy gate of the sub-account used — delegation narrows, never widens."""
         self._assert_owner()
         if not _valid_id(delegation_id) or self.delegations.get(delegation_id):
             raise ValueError("PPA: invalid or duplicate delegation id")
