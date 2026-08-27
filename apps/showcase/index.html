@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Nomos Showcase — GenLayer Bradbury</title>
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Nomos <span class="muted">— Bradbury 4221 · <span id="ppaAddr" class="mono"></span></span></div>
+    <div class="wallet">
+      <span id="walletAddr" class="mono muted">not connected</span>
+      <button id="connectBtn" class="btn">Connect</button>
+    </div>
+  </header>
+
+  <div class="hero">
+    <p class="kicker">Intelligent Accounts on GenLayer</p>
+    <h1>Anyone can enforce limits. The difference is who judges the condition.</h1>
+    <p class="muted">Spend gates are commodity (ERC-7710, 4337 session keys, Safe guards). The delta is <strong>natural-language adjudication inside the same account transaction</strong> — validator quorum, not one operator you trust. DENIED stays auditable. UNDETERMINED stays safe.</p>
+  </div>
+
+  <nav class="tabs">
+    <button data-tab="send" class="tab active">1 — Control: Send with Rules</button>
+    <button data-tab="watch" class="tab">2 — Delta: Adjudicate then Pay</button>
+    <button data-tab="invoice" class="tab">3 — Composition: Invoice</button>
+  </nav>
+
+  <main class="stage">
+    <!-- APP 1 -->
+    <section id="view-send" class="view active">
+      <div class="card">
+        <h2>Control — what everyone can do (live baseline)</h2>
+        <p class="muted">One <code>ops</code> treasury, one timeline. Real Bradbury tx. Watch DENIED become an asset: stored, not reverted, retryable.</p>
+
+        <div class="grid">
+          <label>Account ID <input id="sendAccount" value="ops" /></label>
+          <label>Allowlist (comma 0x...) <input id="allowlist" placeholder="0xVendorA, 0xVendorB" /></label>
+          <label>perTx <input id="perTx" type="number" value="200" /></label>
+          <label>daily <input id="dailyCap" type="number" value="500" /></label>
+        </div>
+        <div class="row">
+          <button id="btnCreateAccount" class="btn">Create / Update ops</button>
+          <button id="btnDeposit" class="btn secondary">Deposit 1000</button>
+        </div>
+        <hr />
+        <div class="grid">
+          <label>To <input id="sendTo" placeholder="0xVendorA" /></label>
+          <label>Amount <input id="sendAmount" type="number" value="150" /></label>
+        </div>
+        <div class="row">
+          <button id="btnSend" class="btn primary">Send 150 → SETTLED</button>
+          <button id="btnSendBig" class="btn secondary">Try 250 → DENIED perTx</button>
+          <button id="btnSendBad" class="btn secondary">Try 50 to outside → DENIED allowlist</button>
+        </div>
+        <div id="sendTrace" class="trace mono"></div>
+        <p class="small muted">Commodity parity: 7710/4337/Safe also cap 200/500. Our delta here is <code>DENIED</code> is stored and auditable, not a revert.</p>
+      </div>
+      <div class="log card">
+        <h3>Live hashes</h3>
+        <pre id="sendLog" class="mono small">connect wallet to start…</pre>
+      </div>
+    </section>
+
+    <!-- APP 2 -->
+    <section id="view-watch" class="view">
+      <div class="card">
+        <h2>Delta — adjudication inside the account</h2>
+        <p class="muted">Not <code>price > X</code>. <code>Does this SLA PDF + status page satisfy clause 4.2 in English?</code> Commodity: one TEE/operator judgment you trust. Here: GenLayer quorum <code>gl.nondet + Equivalence</code> → <code>accepted / rejected / undetermined</code> → only then <code>policy → encumbrance → pay</code>.</p>
+        <label>Evidence URL (SLA pdf / status page) <input id="watchUrl" value="https://example.com/sla.pdf" /></label>
+        <label>Clause / prompt <textarea id="watchCond" rows="2">Does the evidence show the vendor met clause 4.2 uptime and support response?</textarea></label>
+        <label>On accepted, pay <input id="watchAmount" type="number" value="800" /> to <input id="watchPayTo" placeholder="0xVendorA" /></label>
+        <div class="row">
+          <button id="btnWatch" class="btn">Adjudicate (sim quorum)</button>
+          <button id="btnWatchPay" class="btn primary">Adjudicate → Gated Pay</button>
+        </div>
+        <div id="watchTrace" class="trace mono"></div>
+        <p class="small muted">Safe mode: <code>UNDETERMINED → no pay, no state change.</code> — safer than single-operator false-true.</p>
+      </div>
+      <div class="log card">
+        <h3>Evidence + votes</h3>
+        <pre id="watchLog" class="mono small"></pre>
+      </div>
+    </section>
+
+    <!-- APP 3 -->
+    <section id="view-invoice" class="view">
+      <div class="card">
+        <h2>Composition — judgment-gated encumbrance</h2>
+        <p class="muted"><code>claim_verification.verify_claim → VERIFIED/CONFLICTED/INSUFFICIENT</code> → only VERIFIED unlocks <code>claim_encumbrance.reserve</code> → settle.</p>
+        <div class="grid">
+          <label>Invoice # <input id="invNumber" value="INV-42" /></label>
+          <label>Amount <input id="invAmount" type="number" value="100000" /></label>
+          <label>Obligor <input id="invObligor" value="Acme Buyer" /></label>
+          <label>Beneficiary <input id="invBenef" value="Supplier A" /></label>
+        </div>
+        <div class="row">
+          <button id="btnVerify" class="btn">Verify claim</button>
+          <button id="btnReserve" class="btn secondary">Reserve (if VERIFIED)</button>
+          <button id="btnInvSettle" class="btn primary">Settle</button>
+        </div>
+        <div id="invoiceTrace" class="trace mono"></div>
+      </div>
+      <div class="log card">
+        <h3>Decision</h3>
+        <pre id="invoiceLog" class="mono small">verified-receivable gate: needs VERIFIED before encumbrance…</pre>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot muted small">
+    PPA <span class="mono" id="ppaAddr2"></span> · <a href="/docs/COMPETITIVE_TRUTH_FREEZE.md">competitive freeze</a> · <a href="/docs/SHOWCASE_SPEC.md">spec</a> · <a href="https://github.com/etvjay/Nomos">receipts</a>
+  </footer>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
