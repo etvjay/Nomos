@@ -66,26 +66,31 @@
     <!-- APP 2 -->
     <section id="view-watch" class="view">
       <div class="card">
-        <h2>Delta — one contract reads the outside world + pays through its own gates</h2>
-        <p class="muted">Same contract holds <code>ops</code> treasury AND two monitors. No external oracle. Keeper is liveness only — <code>tick()</code> is permissionless, judgment + money stay gated onchain.</p>
+        <h2>Delta — two accounts, each reads the outside world</h2>
+        <p class="muted">Split as requested: <code>sda_price (coingecko)</code> and <code>sda_sla (status page)</code>. Each is one treasury + one monitor + <code>tick()</code>. ~8.7KB each, comfortably under ~18KB deploy limit.</p>
         <div class="grid">
-          <label>Monitor A — Price <input id="monAUrl" value="https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd" /></label>
-          <label>Clause <input id="monAClause" value="ETH price in USD is above 5000" /></label>
-          <label>Monitor B — SLA <input id="monBUrl" value="https://status.example.com" /></label>
-          <label>Clause <input id="monBClause" value="SLA uptime at least 99.9% and clause 4.2 satisfied" /></label>
-        </div>
-        <div class="row">
-          <button id="btnTickPrice" class="btn">Tick eth-price (keeper)</button>
-          <button id="btnTickSla" class="btn">Tick sla-42 (keeper)</button>
-          <button id="btnTickBoth" class="btn primary">Tick both → gated pay</button>
+          <div class="card sub">
+            <h3>Price account</h3>
+            <p class="mono small">sda_price.py · tick_price()</p>
+            <label>URL <input id="monAUrl" value="https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd" /></label>
+            <label>Clause <input id="monAClause" value="ETH price in USD is above 5000" /></label>
+            <div class="row"><button id="btnTickPrice" class="btn">Tick price → 150 to ops</button></div>
+          </div>
+          <div class="card sub">
+            <h3>SLA account</h3>
+            <p class="mono small">sda_sla.py · tick_sla()</p>
+            <label>URL <input id="monBUrl" value="https://status.example.com" /></label>
+            <label>Clause <input id="monBClause" value="SLA uptime at least 99.9% and clause 4.2 satisfied" /></label>
+            <div class="row"><button id="btnTickSla" class="btn">Tick SLA → 150 to ops</button></div>
+          </div>
         </div>
         <div id="watchTrace" class="trace mono"></div>
-        <pre id="watchLog" class="mono small">GLSim 3/3 PASS: eth 5123 → SETTLED 150, eth 4900 → REJECTED no pay, sla 99.95% → SETTLED. See apps/showcase/tests/test_sda_price_sla.py. Bradbury deploy pending (rpc InvalidEncoding, all contracts blocked — retry queued).</pre>
-        <p class="small muted">One tx does <code>web.render(url) → LLM judge clause → quorum (Equivalence) → accepted/rejected/undetermined → only then allowlist/perTx/daily/balance → SETTLED or safe no-pay. Price + SLA coexist via <code>set_monitor</code> in same account.</p>
+        <pre id="watchLog" class="mono small">GLSim split 3/3 PASS (test_sda_split.py): price 5123→SETTLED / 4900→REJECTED, sla 99.95%→SETTLED / 98.1%→REJECTED, low confidence → no pay. Combined 13.6KB version kept as legacy.</pre>
+        <p class="small muted">Each <code>tick</code> does <code>web.render → LLM judge → quorum → then allowlist/perTx/daily → SETTLED or safe no-pay</code>. Keeper is liveness only.</p>
       </div>
       <div class="log card">
-        <h3>Evidence + votes (mocked GLSim / live Bradbury hash when promoted)</h3>
-        <pre id="watchLog2" class="mono small"></pre>
+        <h3>Live hashes (price · sla)</h3>
+        <pre id="watchLog2" class="mono small">deploy both as: python tools/deploy_testnet.py sda_price.py && python tools/deploy_testnet.py sda_sla.py — pending gate (today InvalidEncoding on all deploys, retry queued)</pre>
       </div>
     </section>
 
