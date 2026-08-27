@@ -29,7 +29,8 @@ def main():
 
     account = create_account(private_key)
     print(f"deployer: {account.address}")
-    client = create_client(endpoint=rpc, account=account)
+    from genlayer_py.chains.testnet_bradbury import testnet_bradbury
+    client = create_client(chain=testnet_bradbury, endpoint=rpc, account=account)
 
     print(f"deploying {sys.argv[1]} ...")
     result = client.deploy_contract(code=code)

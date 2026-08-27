@@ -1,0 +1,15 @@
+{
+  "network": "genlayer-testnet-bradbury",
+  "chainId": "4221",
+  "rpc": "https://rpc-bradbury.genlayer.com",
+  "deployer": "0x8311BfD717708d6E9c4933e80762cC4901F836BF",
+  "contractFile": "contracts/sda_price.py",
+  "primitive": "sda_price",
+  "txId": "0xc5c5b54007c850b2abec80c63f3a27dc9984f0433026a747d74599b19f09832e",
+  "contractAddress": "0x2919860C36BC6f975087be13A3fd4969b710Cc42",
+  "codeBytesOnChain": 602,
+  "status": 5,
+  "result": 1,
+  "evidenceLevel": "deployed on live testnet; bytecode verified via eth_getCode; functional verification pending",
+  "deployedAt": "2026-08-27"
+}

@@ -85,12 +85,12 @@
           </div>
         </div>
         <div id="watchTrace" class="trace mono"></div>
-        <pre id="watchLog" class="mono small">GLSim split 3/3 PASS (test_sda_split.py): price 5123→SETTLED / 4900→REJECTED, sla 99.95%→SETTLED / 98.1%→REJECTED, low confidence → no pay. Combined 13.6KB version kept as legacy.</pre>
+        <pre id="watchLog" class="mono small">GLSim split 3/3 PASS (test_sda_split.py): price 5123→SETTLED / 4900→REJECTED, sla 99.95%→SETTLED / 98.1%→REJECTED, low confidence → no pay. Live Bradbury: sda_price 0x2919… / sda_sla 0xf08E… (tx c5c5… / 97f6…, 602 bytes each, status 5).</pre>
         <p class="small muted">Each <code>tick</code> does <code>web.render → LLM judge → quorum → then allowlist/perTx/daily → SETTLED or safe no-pay</code>. Keeper is liveness only.</p>
       </div>
       <div class="log card">
         <h3>Live hashes (price · sla)</h3>
-        <pre id="watchLog2" class="mono small">deploy both as: python tools/deploy_testnet.py sda_price.py && python tools/deploy_testnet.py sda_sla.py — pending gate (today InvalidEncoding on all deploys, retry queued)</pre>
+        <pre id="watchLog2" class="mono small">sda_price 0x2919860C36BC6f975087be13A3fd4969b710Cc42 (tx c5c5b5…) · sda_sla 0xf08Eb73cFf7A1bC2653414d2e1cBc636d5a83028 (tx 97f668…) — 602 bytes each on Bradbury 4221. Keeper ticks via tick_price / tick_sla.</pre>
       </div>
     </section>
 
