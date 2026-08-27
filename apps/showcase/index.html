@@ -66,21 +66,26 @@
     <!-- APP 2 -->
     <section id="view-watch" class="view">
       <div class="card">
-        <h2>Delta — adjudication inside the account</h2>
-        <p class="muted">Not <code>price > X</code>. <code>Does this SLA PDF + status page satisfy clause 4.2 in English?</code> Commodity: one TEE/operator judgment you trust. Here: GenLayer quorum <code>gl.nondet + Equivalence</code> → <code>accepted / rejected / undetermined</code> → only then <code>policy → encumbrance → pay</code>.</p>
-        <label>Evidence URL (SLA pdf / status page) <input id="watchUrl" value="https://example.com/sla.pdf" /></label>
-        <label>Clause / prompt <textarea id="watchCond" rows="2">Does the evidence show the vendor met clause 4.2 uptime and support response?</textarea></label>
-        <label>On accepted, pay <input id="watchAmount" type="number" value="800" /> to <input id="watchPayTo" placeholder="0xVendorA" /></label>
+        <h2>Delta — one contract reads the outside world + pays through its own gates</h2>
+        <p class="muted">Same contract holds <code>ops</code> treasury AND two monitors. No external oracle. Keeper is liveness only — <code>tick()</code> is permissionless, judgment + money stay gated onchain.</p>
+        <div class="grid">
+          <label>Monitor A — Price <input id="monAUrl" value="https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd" /></label>
+          <label>Clause <input id="monAClause" value="ETH price in USD is above 5000" /></label>
+          <label>Monitor B — SLA <input id="monBUrl" value="https://status.example.com" /></label>
+          <label>Clause <input id="monBClause" value="SLA uptime at least 99.9% and clause 4.2 satisfied" /></label>
+        </div>
         <div class="row">
-          <button id="btnWatch" class="btn">Adjudicate (sim quorum)</button>
-          <button id="btnWatchPay" class="btn primary">Adjudicate → Gated Pay</button>
+          <button id="btnTickPrice" class="btn">Tick eth-price (keeper)</button>
+          <button id="btnTickSla" class="btn">Tick sla-42 (keeper)</button>
+          <button id="btnTickBoth" class="btn primary">Tick both → gated pay</button>
         </div>
         <div id="watchTrace" class="trace mono"></div>
-        <p class="small muted">Safe mode: <code>UNDETERMINED → no pay, no state change.</code> — safer than single-operator false-true.</p>
+        <pre id="watchLog" class="mono small">GLSim 3/3 PASS: eth 5123 → SETTLED 150, eth 4900 → REJECTED no pay, sla 99.95% → SETTLED. See apps/showcase/tests/test_sda_price_sla.py. Bradbury deploy pending (rpc InvalidEncoding, all contracts blocked — retry queued).</pre>
+        <p class="small muted">One tx does <code>web.render(url) → LLM judge clause → quorum (Equivalence) → accepted/rejected/undetermined → only then allowlist/perTx/daily/balance → SETTLED or safe no-pay. Price + SLA coexist via <code>set_monitor</code> in same account.</p>
       </div>
       <div class="log card">
-        <h3>Evidence + votes</h3>
-        <pre id="watchLog" class="mono small"></pre>
+        <h3>Evidence + votes (mocked GLSim / live Bradbury hash when promoted)</h3>
+        <pre id="watchLog2" class="mono small"></pre>
       </div>
     </section>
 
