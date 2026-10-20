@@ -1,0 +1,218 @@
+{
+  "primitive": "ppa-custody",
+  "capabilityVersion": "0.1.0",
+  "network": "testnet-bradbury",
+  "chainId": 4221,
+  "rpc": "https://rpc-bradbury.genlayer.com",
+  "scope": "NTEST-only custody mechanics; no USDC/stablecoin/bridge/production custody",
+  "assets": {
+    "NTEST": {
+      "address": "0xF93Cb0e3666145aB57197aE350B1a0271d978609",
+      "decimals": 18,
+      "mint": "owner-only test fixture"
+    },
+    "vault": {
+      "address": "0xAA967ab46129935EF17F07a2D95Aa2cC97A9C38D",
+      "owner": "0x8311BfD717708d6E9c4933e80762cC4901F836BF"
+    },
+    "authorizer": {
+      "address": "0x69beC2d7635b387Bc1208ce76952ee1dD0Fb85DA",
+      "deployTxId": "0x5a5701306f0dfe9724d0268aff612660101e29d35555eeb4f8a9150f88224cf7",
+      "initializeTxId": "0x51383d4ff259d1d5c566f43f3bddd0f5b373a774322ec4ea0872a504bedacd21",
+      "setVaultAuthorizerTx": "0x4df8d352099e3f8c9e595a7b3c4a2e04295f23c2ac405e6fdf8c985eaf7e512f"
+    }
+  },
+  "bindings": {
+    "core": "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE",
+    "adapter": "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+    "currency": "NTEST",
+    "maxTtlSeconds": 7200
+  },
+  "account": {
+    "accountId": "CUSTODY-NTEST-20261020A",
+    "dailyLimitBaseUnits": "1000000000000000000000",
+    "perTxLimitBaseUnits": "500000000000000000000",
+    "policyVersion": "TECH-V1",
+    "createTxId": "0x344fc4a33063fb1bd33fa5d1ff72e8631861d4c698d8c2738e898fcbe594a9a6"
+  },
+  "coreCycle": {
+    "decisionId": "DEC-CUSTODY-20261020A",
+    "proposalId": "PROP-CUSTODY-20261020A",
+    "paymentId": "PAY-CUSTODY-20261020A",
+    "recipient": "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6",
+    "amountBaseUnits": "100000000000000000000",
+    "receiptSubmitEvmTx": "0x649f65f8ae21ffedbaf5ca2a815af5a7967662950810aa5299410e8913591d59",
+    "admitEvmTx": "0x14252047363ddbf0fad4288e44fa20e4e82aa17c6c58a43d9a69d3ba5efc24ec",
+    "dispatchEvmTx": "0x57522463bf32afffb427e7fb68a21dc0b65750794ac222b0f4284e8e3313702b",
+    "consequence": {
+      "status": "EXECUTED",
+      "reason_code": "EXECUTED",
+      "payment_status": "SETTLED",
+      "adapter_caller": "29c88a9dbe42fa74341f7932003b6601b1d317c5",
+      "requested_amount": "100000000000000000000",
+      "requested_recipient": "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+    }
+  },
+  "authorizations": [
+    {
+      "authorizer": "0x7351A1a0DFCdc98330b3c52339f55B815080de78",
+      "txId": "0xb31f5a1e36d119712f8f647b5d9b219ac27352ad14c9ff5366a711f3222ccc51",
+      "requestedTtlSeconds": 900,
+      "emittedExpiresAt": 1792476655,
+      "executedAt": 1792477686,
+      "result": "vault refused VAULT_INVALID_EXPIRY because finality execution exceeded the short TTL; no intent, no balance change",
+      "negativeCase": "expired-before-finality"
+    },
+    {
+      "authorizer": "0x69beC2d7635b387Bc1208ce76952ee1dD0Fb85DA",
+      "txId": "0x38859836c18c93f396acc5112f04d4728fd339c788bf1a0edb9290a496edb2ba",
+      "requestedTtlSeconds": 7200,
+      "emittedExpiresAt": 1792485051,
+      "authorizerRecord": {
+        "status": "AUTHORIZED",
+        "execution": "PENDING_FINALITY",
+        "token": "f93cb0e3666145ab57197ae350b1a0271d978609",
+        "recipient": "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6",
+        "amount": "100000000000000000000"
+      },
+      "vaultIntent": {
+        "status": "AUTHORIZED",
+        "reason": "",
+        "token": "0xF93Cb0e3666145aB57197aE350B1a0271d978609",
+        "recipient": "0x9F6aa7364D20CF25F054Ea83f3CB950317fD34b6",
+        "amount": "100000000000000000000",
+        "authorizedAt": 1792479664,
+        "expiresAt": 1792485051,
+        "messageExecutionTx": "0x9b78d499a22ec36f219d1edd7cea588237498afceb59f77ce088c9fab6fcb9f7",
+        "messageExecutionBlock": 25572060
+      }
+    }
+  ],
+  "preState": {
+    "vaultNtest": "500000000000000000000",
+    "recipientNtest": "0",
+    "vaultAuthorizer": "0x69beC2d7635b387Bc1208ce76952ee1dD0Fb85DA",
+    "vaultPaused": false
+  },
+  "postState": {
+    "vaultNtest": "400000000000000000000",
+    "recipientNtest": "100000000000000000000",
+    "intentStatus": "SETTLED",
+    "settler": "0xD99D69De692d455b059Be9a2912ff7E148118034"
+  },
+  "negativeCases": [
+    {
+      "case": "wrong-currency-core-consequence",
+      "proposalId": "PROP-SPLIT-2283426",
+      "result": "REJECTED_CURRENCY_MISMATCH",
+      "surfaces": "USDC",
+      "evidence": "preview_authorization(); no message emitted"
+    },
+    {
+      "case": "expired-before-finality",
+      "authorizer": "0x7351A1a0DFCdc98330b3c52339f55B815080de78",
+      "result": "vault VAULT_INVALID_EXPIRY",
+      "balanceChange": "none",
+      "detail": "TTL 900s expired before finality execution at +1086s"
+    },
+    {
+      "case": "unauthorized-direct-authorize",
+      "caller": "0xD99D69De692d455b059Be9a2912ff7E148118034",
+      "result": "revert VAULT_CALLER_NOT_AUTHORIZER",
+      "balanceChange": "none"
+    },
+    {
+      "case": "settle-paused",
+      "tx": "0x35ba29ca6b7791eab0c0b3fc0be527c460f04b2da49c24b00189bfac99b70026",
+      "result": "VAULT_PAUSED",
+      "intentStatus": "AUTHORIZED",
+      "balanceChange": "none"
+    },
+    {
+      "case": "settle-wrong-token",
+      "tx": "0x56ec131ef41f4f732822d4562dff68e3bd6acb72666e593e959e5b285990fb0b",
+      "result": "VAULT_TOKEN_MISMATCH",
+      "intentStatus": "AUTHORIZED",
+      "balanceChange": "none"
+    },
+    {
+      "case": "settle-wrong-recipient",
+      "tx": "0x4862ff63ea85c9ea8963b589e4bc91149eb4806c50b2d87263ea091d7d1faee6",
+      "result": "VAULT_RECIPIENT_MISMATCH",
+      "intentStatus": "AUTHORIZED",
+      "balanceChange": "none"
+    },
+    {
+      "case": "settle-wrong-amount",
+      "tx": "0x95119d32e2aebaf61e06df0b4ac5e12c96eae939e61b6e23441b5b4d3691cbd9",
+      "result": "VAULT_AMOUNT_MISMATCH",
+      "intentStatus": "AUTHORIZED",
+      "balanceChange": "none"
+    },
+    {
+      "case": "settle-replay",
+      "tx": "0x7b253f2caaeeb49344ffcb7d0b284bf15890708bc26c438452e8cc5413dddc86",
+      "result": "VAULT_INTENT_ALREADY_SETTLED",
+      "balanceChange": "none"
+    },
+    {
+      "case": "authorizer-paused",
+      "txId": "0x871a1085a0263e8619ae5df59d776d87954eb3cd16ec006dd97e863ec43b192f",
+      "record": {
+        "proposalId": "PROP-CUSTODY-NOPE",
+        "status": "REJECTED",
+        "reason_code": "REJECTED_AUTHORIZER_PAUSED",
+        "recorded_at": "2026-10-20T07:09:39Z"
+      }
+    },
+    {
+      "case": "authorizer-replay",
+      "txId": "0x2db7396cd2ab29b28a9a8ec49c8f947779ba0efec79dc3282976ab13e42af9dc",
+      "result": "REJECTED_REPLAY (returned, not persisted)",
+      "note": "no new authorization message; propA record unchanged with attempts=1"
+    },
+    {
+      "case": "insufficient-custody",
+      "result": "NOT_EXECUTED_LIVE",
+      "evidence": "Foundry testTransferFailureRecordedNoConsumption / VAULT_INSUFFICIENT_CUSTODY"
+    }
+  ],
+  "limitations": [
+    "Authorizer AUTHORIZED means the authorization message was emitted with execution=PENDING_FINALITY; the vault record is authoritative.",
+    "Vault-side refusals (pause, token, expiry, duplicate) are recorded on the vault and are not observable in the authorizer record in v0.1.",
+    "The authorization message executes only at GenLayer finality; TTL must exceed the appeal window plus execution delay.",
+    "Amounts are base units; no decimals scaling."
+  ],
+  "status": "PASS",
+  "generatedAt": "2026-10-20T06:35:00Z",
+  "settlement": {
+    "settlerEOA": "0xD99D69De692d455b059Be9a2912ff7E148118034",
+    "settleTx": "0x3696f4692aadc82fabee0f0422008c73123bf11086b09e6cdb94fbae1dff6d7b",
+    "intent": {
+      "exists": true,
+      "status": "SETTLED",
+      "reasonCode": "",
+      "token": "0xF93Cb0e3666145aB57197aE350B1a0271d978609",
+      "recipient": "0x9F6aa7364D20CF25F054Ea83f3CB950317fD34b6",
+      "amount": "100000000000000000000",
+      "authorizedAt": 1792479664,
+      "expiresAt": 1792485051,
+      "settledAt": 1792480022,
+      "attempts": 5,
+      "settler": "0xD99D69De692d455b059Be9a2912ff7E148118034",
+      "custodyBefore": "500000000000000000000",
+      "custodyAfter": "400000000000000000000",
+      "recipientBefore": "0",
+      "recipientAfter": "100000000000000000000"
+    },
+    "settledEvent": {
+      "tx": "0x3696f4692aadc82fabee0f0422008c73123bf11086b09e6cdb94fbae1dff6d7b",
+      "custodyBefore": "500000000000000000000",
+      "custodyAfter": "400000000000000000000",
+      "recipientBefore": "0",
+      "recipientAfter": "100000000000000000000",
+      "settler": "0xD99D69De692d455b059Be9a2912ff7E148118034"
+    }
+  },
+  "resultLanguage": "PASS (slice); primitives not in composition remain IMPLEMENTING"
+}

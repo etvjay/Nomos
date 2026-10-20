@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "1.0.0",
+  "receiptId": "RECEIPT-PPA-CUSTODY-2026-10-20",
+  "workId": "WORK-PPA-CUSTODY-2026-10-20",
+  "primitiveId": "ppa-custody",
+  "baseCommit": "57b72fec6cbb705855fa8cc628423f78a26bc201",
+  "resultCommit": "UNCOMMITTED_AT_TIME_OF_RECORD",
+  "authorityFingerprint": "sha256:d8197b4cc9a05313bb8ea2577f15c0e77081e3fcb5f5273b64ae85731831bf6e",
+  "capabilityVersion": "0.1.0",
+  "convergenceMode": "EXACT",
+  "commands": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "python tools/nomos_converge.py fingerprint ppa-custody",
+    "python -m pytest primitives/ppa-custody/implementations/genlayer/tests/ -q",
+    "python tools/nomos_run_vectors.py primitives/ppa-custody/implementations/genlayer/ppa_custody_authorizer.py --vectors primitives/ppa-custody/vectors/v0.1.json",
+    "forge test --root primitives/ppa-custody/implementations/evm -vv",
+    "genvm-lint check primitives/ppa-custody/implementations/genlayer/ppa_custody_authorizer.py"
+  ],
+  "gates": [
+    {
+      "id": "nomos-lint",
+      "state": "PASS",
+      "evidence": "NOMOS-LINT PASS: constitutional, capability, convergence and GenLayer contracts are consistent"
+    },
+    {
+      "id": "nomos-converge-check",
+      "state": "PASS",
+      "evidence": "NOMOS-CONVERGE PASS: portable capability and convergence contracts are internally consistent"
+    },
+    {
+      "id": "authority-fingerprint",
+      "state": "PASS",
+      "evidence": "sha256:d8197b4cc9a05313bb8ea2577f15c0e77081e3fcb5f5273b64ae85731831bf6e"
+    },
+    {
+      "id": "glsim-tests",
+      "state": "PASS",
+      "evidence": "pytest glsim suite: 8 passed"
+    },
+    {
+      "id": "canonical-vectors",
+      "state": "PASS",
+      "evidence": "nomos_run_vectors: 4/4 vectors passed for ppa-custody (init-config-001, missing-core-fails-closed-002, paused-refuses-authorization-003, invalid-ttl-004)"
+    },
+    {
+      "id": "foundry-tests",
+      "state": "PASS",
+      "evidence": "forge test: 21 passed, 0 failed (16 vault, 5 token)"
+    },
+    {
+      "id": "genvm-lint",
+      "state": "PASS",
+      "evidence": "genvm-lint check ppa_custody_authorizer.py: no errors"
+    },
+    {
+      "id": "live-positive-settlement",
+      "state": "PASS",
+      "evidence": "convergence/deployment/ppa-custody-live-2026-10-20.json: settle tx 0x3696f4692aadc82fabee0f0422008c73123bf11086b09e6cdb94fbae1dff6d7b; vault NTEST 500e18->400e18, recipient 0->100e18; intent SETTLED"
+    },
+    {
+      "id": "live-negative-cases",
+      "state": "PASS",
+      "evidence": "convergence/deployment/ppa-custody-live-2026-10-20.json negativeCases: wrong-currency, expired-before-finality, unauthorized-authorize, paused-settle, wrong-token, wrong-recipient, wrong-amount, settle-replay, authorizer-paused, authorizer-replay; no balance mutation"
+    },
+    {
+      "id": "live-insufficient-custody",
+      "state": "NOT_IMPLEMENTED",
+      "evidence": "live case not executed; covered by Foundry testTransferFailureRecordedNoConsumption"
+    }
+  ],
+  "runtimeVersions": {
+    "network": "GenLayer Bradbury Phase 1 (chainId 4221)",
+    "forge": "1.7.1",
+    "solc": "0.8.24",
+    "python": "3.12",
+    "genvmLint": "PASS"
+  },
+  "knownGaps": [
+    "The authorizer record stays AUTHORIZED/execution=PENDING_FINALITY after finality; the vault record is authoritative.",
+    "Vault-side refusals (pause/token/expiry/duplicate) are not observable in the authorizer record in v0.1.",
+    "Insufficient-custody is Foundry-only, not executed live.",
+    "TTL must exceed the ~30-33 minute Bradbury Phase 1 finality delay.",
+    "Amounts are token base units; no decimals scaling.",
+    "Not part of the released PPA composition; USDC, bridge, Phase 2, and production custody are out of scope."
+  ],
+  "notes": "Live custody-mechanics slice, NTEST-only. This receipt records observed evidence; status PASS applies to the slice, not to production custody."
+}

@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "0.1.0",
+  "primitive": "ppa-custody",
+  "version": "v0.1",
+  "mode": "EXACT",
+  "sender": "0x2bd806c97f0e00af1a1fc3328fa763a9269723c8",
+  "note": "Direct-mode canonical vectors for the deterministic authorizer surface. The Core-bound success path and the EVM vault are covered by the glsim suite, Foundry suite, and the live Phase 1 run. The direct VM has no real PPA Core and no EthCall/EthSend, so missing dependencies must fail closed.",
+  "vectors": [
+    {
+      "id": "ppa-custody/init-config-001",
+      "description": "initialize stores the immutable addresses and the NTEST asset",
+      "actions": [
+        {"op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8", "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE", "0x29c88A9DBE42fa74341f7932003B6601b1D317C5", "0x1111111111111111111111111111111111111111", "0x2222222222222222222222222222222222222222", "NTEST", "3600"], "expect": "ok"},
+        {"op": "get_config", "args": [], "expect": {"owner": "2bd806c97f0e00af1a1fc3328fa763a9269723c8", "core": "3ea36798cdb4f84befdb29fbb06aef8a1ea09ebe", "adapter": "29c88a9dbe42fa74341f7932003b6601b1d317c5", "vault": "1111111111111111111111111111111111111111", "currency": "NTEST", "token": "2222222222222222222222222222222222222222", "max_ttl": "3600", "paused": false}},
+        {"op": "get_asset", "args": ["NTEST"], "expect": {"currency": "NTEST", "token": "2222222222222222222222222222222222222222"}}
+      ]
+    },
+    {
+      "id": "ppa-custody/missing-core-fails-closed-002",
+      "description": "a missing/fake Core cannot produce an authorization",
+      "actions": [
+        {"op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8", "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE", "0x29c88A9DBE42fa74341f7932003B6601b1D317C5", "0x1111111111111111111111111111111111111111", "0x2222222222222222222222222222222222222222", "NTEST", "3600"], "expect": "ok"},
+        {"op": "preview_authorization", "args": ["PROP-MISSING"], "expect": {"status": "UNDETERMINED", "reason_code": "UNDETERMINED_DEPENDENCY"}},
+        {"op": "authorize_settlement", "args": ["PROP-MISSING", "60"], "expect": {"status": "UNDETERMINED", "reason_code": "UNDETERMINED_DEPENDENCY"}},
+        {"op": "get_authorization", "args": ["PROP-MISSING"], "expect": {"status": "UNDETERMINED", "reason_code": "UNDETERMINED_DEPENDENCY", "attempts": 1}}
+      ]
+    },
+    {
+      "id": "ppa-custody/paused-refuses-authorization-003",
+      "description": "authorizer pause is checked before Core/EVM work and persisted",
+      "actions": [
+        {"op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8", "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE", "0x29c88A9DBE42fa74341f7932003B6601b1D317C5", "0x1111111111111111111111111111111111111111", "0x2222222222222222222222222222222222222222", "NTEST", "3600"], "expect": "ok"},
+        {"op": "pause", "args": [], "expect": {"status": "PAUSED", "paused": true}},
+        {"op": "authorize_settlement", "args": ["PROP-PAUSED", "60"], "expect": {"status": "REJECTED", "reason_code": "REJECTED_AUTHORIZER_PAUSED"}},
+        {"op": "get_authorization", "args": ["PROP-PAUSED"], "expect": {"status": "REJECTED", "reason_code": "REJECTED_AUTHORIZER_PAUSED"}},
+        {"op": "unpause", "args": [], "expect": {"status": "UNPAUSED", "paused": false}},
+        {"op": "get_config", "args": [], "expect": {"paused": false}}
+      ]
+    },
+    {
+      "id": "ppa-custody/invalid-ttl-004",
+      "description": "TTL is positive and bounded",
+      "actions": [
+        {"op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8", "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE", "0x29c88A9DBE42fa74341f7932003B6601b1D317C5", "0x1111111111111111111111111111111111111111", "0x2222222222222222222222222222222222222222", "NTEST", "3600"], "expect": "ok"},
+        {"op": "authorize_settlement", "args": ["PROP-TTL", "0"], "expect": {"status": "REJECTED", "reason_code": "REJECTED_INVALID_TTL"}},
+        {"op": "authorize_settlement", "args": ["PROP-TTL", "604801"], "expect": {"status": "REJECTED", "reason_code": "REJECTED_INVALID_TTL"}},
+        {"op": "set_max_ttl", "args": ["7200"], "expect": {"status": "TTL_UPDATED", "max_ttl": "7200"}},
+        {"op": "get_config", "args": [], "expect": {"max_ttl": "7200"}}
+      ]
+    }
+  ]
+}

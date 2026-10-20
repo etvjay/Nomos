@@ -1,0 +1,149 @@
+{
+  "primitiveId": "ppa-custody",
+  "name": "PPA Custody Adapter",
+  "capabilityVersion": "0.1.0",
+  "status": "IMPLEMENTING",
+  "convergenceMode": "EXACT",
+  "judgmentBearing": false,
+  "scope": "Testnet-only custody mechanics for an NTEST-style ERC-20. A deterministic GenLayer authorizer reads a live PPA Core EXECUTED consequence, binds payment/account/currency/recipient/amount, and authorizes an exact-intent EVM custody settlement. Not part of the released PPA composition.",
+  "publicMethods": {
+    "genlayerWrites": [
+      "initialize(owner, core_address, adapter_address, vault_address, token_address, currency, max_ttl_seconds)",
+      "register_asset(currency, token_address)",
+      "set_max_ttl(ttl_seconds)",
+      "set_paused(paused)",
+      "pause()",
+      "unpause()",
+      "authorize_settlement(proposal_id, ttl_seconds)"
+    ],
+    "genlayerViews": [
+      "preview_authorization(proposal_id)",
+      "get_authorization(proposal_id)",
+      "get_asset(currency)",
+      "get_config()"
+    ],
+    "evmVaultWrites": [
+      "authorize(proposal_id, token, recipient, amount, expires_at)",
+      "settle(proposal_id, token, recipient, amount)",
+      "deposit(token, amount)",
+      "withdraw(token, to, amount)",
+      "setAuthorizer(new_authorizer)",
+      "setPaused(paused)",
+      "allowToken(token, allowed)",
+      "transferOwnership(new_owner)"
+    ],
+    "evmVaultViews": [
+      "getSettlement(proposal_id)",
+      "custodyBalance(token)",
+      "owner()",
+      "authorizer()",
+      "paused()",
+      "allowedTokens(token)"
+    ]
+  },
+  "canonicalInput": {
+    "proposal_id": "non-empty string <= 128 chars",
+    "ttl_seconds": "positive decimal string, <= configured max_ttl and <= 604800",
+    "core_binding": "consequence.proposal_id, payment_id, decision_id, adapter_caller, requested_recipient, requested_amount, created_at",
+    "amount_convention": "The PPA amount string is interpreted as the custody token's base-unit amount in v0.1. Assets with human decimal units require a later decimals-aware capability version."
+  },
+  "canonicalOutput": {
+    "AUTHORIZED": "authorization message emitted to the vault via EthSend; vault intent exists only after finality",
+    "REJECTED": "Core/config/state/vault refusal persisted with a stable reason_code",
+    "UNDETERMINED": "unavailable Core/dependency, never an authorization",
+    "NONE": "no record for the proposal"
+  },
+  "statusVocabulary": [
+    "AUTHORIZED",
+    "REJECTED",
+    "UNDETERMINED",
+    "NONE"
+  ],
+  "reasonCodes": [
+    "REJECTED_NO_CONSEQUENCE",
+    "REJECTED_CORE_UNAVAILABLE",
+    "REJECTED_CONSEQUENCE_NOT_EXECUTED",
+    "REJECTED_PAYMENT_NOT_SETTLED",
+    "REJECTED_WRONG_ADAPTER",
+    "REJECTED_PAYMENT_BINDING",
+    "REJECTED_ACCOUNT_NOT_ACTIVE",
+    "REJECTED_CURRENCY_MISMATCH",
+    "REJECTED_POLICY_VERSION",
+    "REJECTED_UNKNOWN_ASSET",
+    "REJECTED_AMOUNT",
+    "REJECTED_RECIPIENT",
+    "REJECTED_INVALID_PROPOSAL_ID",
+    "REJECTED_INVALID_TTL",
+    "REJECTED_AUTHORIZER_PAUSED",
+    "REJECTED_REPLAY",
+    "REJECTED_EVM_AUTHORIZE_FAILED",
+    "UNDETERMINED_DEPENDENCY"
+  ],
+  "stateOwnership": {
+    "owns": [
+      "asset registry (currency -> token)",
+      "authorization/refusal records",
+      "owner, Core, adapter, vault, max TTL, pause configuration"
+    ],
+    "doesNotOwn": [
+      "PPA balances, payments, policies, consequences",
+      "NTEST balances or custody (vault)",
+      "receipt/adjudication truth (adapter/producer)",
+      "vault authorizer setting (vault owner)"
+    ]
+  },
+  "negativeBoundary": {
+    "judgmentBoundary": "NONE",
+    "noLlm": true,
+    "noWeb": true,
+    "noNondet": true,
+    "noCoreMutation": true,
+    "noArbitraryEvmCall": "Only the configured vault's authorize is sent; only its paused/allowedTokens views are read.",
+    "notInReleasedComposition": true
+  },
+  "implementation": {
+    "environment": "genlayer",
+    "path": "primitives/ppa-custody/implementations/genlayer/ppa_custody_authorizer.py",
+    "evm": [
+      "primitives/ppa-custody/implementations/evm/src/NomosTestAsset.sol",
+      "primitives/ppa-custody/implementations/evm/src/NomosCustodyVault.sol"
+    ],
+    "symlink": "contracts/ppa_custody_authorizer.py"
+  },
+  "vectors": [
+    "primitives/ppa-custody/vectors/v0.1.json"
+  ],
+  "reproduce": [
+    "python -m pytest primitives/ppa-custody/implementations/genlayer/tests/ -q",
+    "python tools/nomos_run_vectors.py primitives/ppa-custody/implementations/genlayer/ppa_custody_authorizer.py --vectors primitives/ppa-custody/vectors/v0.1.json",
+    "genvm-lint check primitives/ppa-custody/implementations/genlayer/ppa_custody_authorizer.py",
+    "forge test --root primitives/ppa-custody/implementations/evm -vv"
+  ],
+  "dependencies": [
+    "ppa-core (live EXECUTED consequence/payment/account)",
+    "ppa-receipt-adapter (approved adapter caller)",
+    "NomosCustodyVault (configured immutable address)",
+    "py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6"
+  ],
+  "composition": {
+    "partOfReleasedPPA": false,
+    "label": "testnet custody extension",
+    "note": "The existing ppa composedUnits are unchanged. This capability must not be read as a released PPA component."
+  },
+  "unsupported": [
+    "USDC and other stablecoins",
+    "CGT",
+    "bridges",
+    "Phase 2",
+    "frontend/API capability",
+    "production custody",
+    "partial settlement",
+    "fee-on-transfer, rebasing, or non-standard tokens",
+    "decimals-aware amount conversion (base-unit convention only in v0.1)",
+    "migration of existing PPA composition claims"
+  ],
+  "evidence": {
+    "local": "PASS: 8 glsim tests, 4/4 canonical vectors, 21 Foundry tests, genvm-lint validation",
+    "live": "PASS: live Phase 1 custody slice on Bradbury (chain 4221). Evidence: convergence/deployment/ppa-custody-live-2026-10-20.json (authorizer 0x69beC2d7635b387Bc1208ce76952ee1dD0Fb85DA, vault 0xAA967ab46129935EF17F07a2D95Aa2cC97A9C38D, settle tx 0x3696f469..., vault NTEST 500->400e18, recipient 0->100e18; negatives: wrong-currency, expired-before-finality, unauthorized-authorize, paused-settle, wrong-token/recipient/amount, settle-replay, authorizer-paused, authorizer-replay). Insufficient-custody is Foundry-only."
+  }
+}

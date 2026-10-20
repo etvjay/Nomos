@@ -1,0 +1,190 @@
+{
+  "schemaVersion": "1.0.0",
+  "workId": "WORK-PPA-CUSTODY-2026-10-20",
+  "baseCommit": "57b72fec6cbb705855fa8cc628423f78a26bc201",
+  "lane": "primitive",
+  "targets": [
+    "ppa-custody"
+  ],
+  "allowedPaths": [
+    "primitives/ppa-custody/**",
+    "contracts/ppa_custody_authorizer.py",
+    "tools/nomos_lint.py",
+    "nomos.manifest.json",
+    "convergence/work/WORK-PPA-CUSTODY-2026-10-20.json",
+    "convergence/receipts/*PPA-CUSTODY*",
+    "convergence/deployment/*ppa-custody*",
+    "convergence/deployment/*ppa_custody*",
+    "convergence/reports/*CUSTODY*"
+  ],
+  "changeClass": "MINOR",
+  "authorityFingerprint": "sha256:d8197b4cc9a05313bb8ea2577f15c0e77081e3fcb5f5273b64ae85731831bf6e",
+  "authorityFingerprintNote": "Computed from primitives/ppa-custody/{SPEC.md,INVARIANTS.md,THREAT_MODEL.md,DECISION_BOUNDARY.md,CAPABILITY.json,vectors/**} after the authority files were finalized and the live evidence was recorded. The PPA Core and PPA Receipt/Proposal Adapter fingerprints are separate dependencies and are never combined with this one. Recompute with: python tools/nomos_converge.py fingerprint ppa-custody",
+  "capabilityVersion": "0.1.0",
+  "publicInterfaceMutationAllowed": false,
+  "status": {
+    "state": "AUTHORIZED",
+    "authorizedAt": "2026-10-20",
+    "rule": "Build the custody-mechanics slice only. Core and Adapter are dependencies and must not be edited. Any need to change their public surface stops this work and requires a new Work Contract."
+  },
+  "network": {
+    "name": "GenLayer Bradbury Phase 1",
+    "rpc": "https://rpc-bradbury.genlayer.com",
+    "chainId": 4221,
+    "genesisHash": "0xef97917ce9bd9fa7d12ad6a8d81ea26c80ac1d727acc37cbb9799ae199788dc5",
+    "whyPhase1": "The live PPA stack is deployed only on this chain. Current Phase 2 (rpc.testnet-chain.genlayer.com, genesis 0x17d89764d4f4f963158fc4c5e8f2cb670c2837740b35f37081c12860c3df97e4) has no PPA code. Phase 2 migration is explicitly out of scope."
+  },
+  "liveDependencies": {
+    "core": "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE",
+    "receiptAdapter": "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+    "producer": "0xb52d7F87ED15FD8146b3820387Ab2E05de884790",
+    "coreAuthorityFingerprint": "sha256:4543a62c7afc4778a3b9d89be69e16a1b37fb7a5ccc3902e7d9711d0ee7a3a8e",
+    "adapterAuthorityFingerprint": "sha256:5dda0fa0d72356dd2a0b4582fd31d344328112290d402589c09ba86db2ed6964",
+    "callerIdentityEvidence": "convergence/reports/CALLER-IDENTITY-SPIKE.json",
+    "deploymentEvidence": "convergence/deployment/ppa-split-live-2026-10-18.json"
+  },
+  "testAsset": {
+    "name": "Nomos Test Asset",
+    "symbol": "NTEST",
+    "decimals": 18,
+    "network": "GenLayer Bradbury Phase 1",
+    "classification": "TESTNET_TEST_ASSET_ONLY",
+    "minting": "Owner-controlled fixture mint. The owner is the existing deployer account. No public faucet, no sale, no economic claim.",
+    "forbiddenDescriptions": [
+      "USDC",
+      "stablecoin",
+      "production collateral",
+      "externally backed asset",
+      "official GenLayer asset"
+    ]
+  },
+  "architecture": {
+    "PPACustodyAuthorizer": "GenLayer contract. Reads PPA Core get_consequence/get_payment/get_account, revalidates EXECUTED status and payment binding, maps the account currency to an allowlisted NTEST address, and calls the EVM vault authorize() as the only authorized caller. It has no balance authority and cannot alter Core state.",
+    "NomosCustodyVault": "EVM contract. Holds NTEST, accepts intents only from the authorizer, stores the exact proposal-bound token/recipient/amount/expiry, rejects replay/expiry/pause/mismatch/insufficient-balance, records refusals, and exposes before/after balances.",
+    "NomosTestAsset": "EVM ERC-20 used only as a custody-mechanics fixture. Owner-controlled mint. Separate deployment and fingerprint from the vault and authorizer.",
+    "settlementExecution": "The vault settle() function is permissionless execution of an already-authorized immutable intent. It cannot change token, recipient, or amount. Authorization is the Core-bound gate; execution is deterministic. This separation is what allows negative-case transactions to be observed live without giving an EOA authorization authority."
+  },
+  "custodyGates": [
+    "authorize() caller must equal the configured PPACustodyAuthorizer EVM address",
+    "consequence/proposal ID must be present and unique",
+    "token must be allowlisted in the vault and mapped by the authorizer asset registry",
+    "recipient must equal the Core consequence requested_recipient and the settled payment to address",
+    "amount must equal the Core consequence requested_amount and the settled payment amount",
+    "Core consequence must be EXECUTED with reason_code EXECUTED",
+    "Core payment must be SETTLED and bound to the same proposal/payment/recipient/amount",
+    "Core account must be ACTIVE and its currency must map to the token",
+    "expiry must be in the future at authorize time and at settle time",
+    "settlement cannot be replayed",
+    "custody must be unpaused",
+    "custody token balance must cover the exact amount",
+    "custody token balance before/after and recipient balance before/after are recorded",
+    "every refusal leaves token balances unchanged"
+  ],
+  "requiredNegativeCases": [
+    "unauthorized caller (EOA calls vault authorize directly)",
+    "wrong token",
+    "wrong recipient",
+    "amount mismatch",
+    "replayed consequence/proposal",
+    "expired intent/authorization TTL",
+    "paused custody",
+    "insufficient custody balance"
+  ],
+  "evidenceClassification": {
+    "nftCustodyMechanics": "TESTNET_OBSERVED only after independent cast/JSON-RPC readback",
+    "externalUsdcCustody": "NOT_ESTABLISHED",
+    "realEconomicValue": "NOT_PROVEN",
+    "bridgeSettlement": "NOT_IMPLEMENTED",
+    "productionCustody": "NOT_CLAIMED"
+  },
+  "acceptanceGates": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "python tools/nomos_converge.py fingerprint ppa-custody",
+    "python -m pytest primitives/ppa-custody/implementations/genlayer/tests/ -q",
+    "python tools/nomos_run_vectors.py primitives/ppa-custody/implementations/genlayer/ppa_custody_authorizer.py --vectors primitives/ppa-custody/vectors/v0.1.json",
+    "forge test --root primitives/ppa-custody/implementations/evm -vv",
+    "genvm-lint check primitives/ppa-custody/implementations/genlayer/ppa_custody_authorizer.py",
+    "eth_estimateGas the exact NTEST, vault, and authorizer deploy encodings before any deployment; record each estimate",
+    "live Phase 1: token code readback and NTEST metadata readback",
+    "live Phase 1: vault and authorizer code readback",
+    "live Phase 1: authorized consequence settles exactly the requested NTEST amount",
+    "live Phase 1: all negative-case transactions and readbacks are recorded with no balance mutation",
+    "live Phase 1: independent readback of the exact settlement/refusal record",
+    "no private key printed or committed"
+  ],
+  "gasPolicy": {
+    "rule": "Estimate before deploy. If an estimate does not fit the observed Bradbury ceiling, stop with DEPLOY_BLOCKED_GAS. Do not walk gas limits and do not strip annotations or safety gates.",
+    "observedAcceptCeiling": 20861997,
+    "evidence": "convergence/reports/BRADBURY-GAS-CEILING.json"
+  },
+  "deploymentPolicy": {
+    "sequence": [
+      "deploy NomosTestAsset",
+      "deploy NomosCustodyVault with a temporary authorizer (deployer), NTEST allowlisted",
+      "deploy PPACustodyAuthorizer with Core, vault, NTEST, currency NTEST",
+      "call vault.setAuthorizer(authorizer address)",
+      "mint NTEST fixture funds, approve and deposit into custody",
+      "create the PPA account and execute the bounded proposals",
+      "authorize and settle; run the negative cases"
+    ],
+    "separateFingerprints": [
+      "NTEST source fingerprint",
+      "vault source fingerprint",
+      "authorizer source fingerprint"
+    ],
+    "noPhase2": true,
+    "noBridge": true,
+    "noUsdc": true
+  },
+  "forbidden": [
+    "Do not modify PPA Core or the Receipt/Proposal Adapter.",
+    "Do not put custody logic in PPA Core.",
+    "Do not trust a caller-supplied Core or PPA field as provenance.",
+    "Do not give the authorizer or the vault any Core balance authority.",
+    "Do not call NTEST USDC or imply official support, external backing, or real value.",
+    "Do not use CGT.",
+    "Do not implement LayerZero/Hyperlane, a frontend, USDC, or Phase 2 migration.",
+    "Do not push to GitHub or alter main.",
+    "Do not print or commit private keys.",
+    "Do not claim production custody or bridge settlement."
+  ],
+  "dependencies": [
+    "WORK-PPA-SPLIT-V03-2026-10-17 \u2014 PPA Core/Adapter authority",
+    "WORK-PPA-PRODUCER-2026-10-18 \u2014 live producer and receipt path",
+    "convergence/reports/CALLER-IDENTITY-SPIKE.json \u2014 caller semantics",
+    "convergence/deployment/ppa-split-live-2026-10-18.json \u2014 live PPA state",
+    "Foundry 1.7.1 (forge/cast/anvil), web3.py 7.16.0, eth-account 0.14.0, gltest direct, GenVM linter"
+  ],
+  "notes": "The custody slice is deliberately non-atomic: Core records the consequence and decrements its internal ledger before the EVM custody settlement. A custody refusal does not and must not roll back Core. The live evidence records that gap explicitly. The authorizer is a read-only consumer of Core consequences; it is not registered as a Core adapter.",
+  "result": {
+    "state": "PASS",
+    "resultCommit": "UNCOMMITTED_AT_TIME_OF_RECORD",
+    "liveDeploymentEvidence": "convergence/deployment/ppa-custody-live-2026-10-20.json",
+    "deployments": {
+      "nTEST": "0xF93Cb0e3666145aB57197aE350B1a0271d978609",
+      "vault": "0xAA967ab46129935EF17F07a2D95Aa2cC97A9C38D",
+      "authorizer": "0x69beC2d7635b387Bc1208ce76952ee1dD0Fb85DA"
+    },
+    "liveSettlementTx": "0x3696f4692aadc82fabee0f0422008c73123bf11086b09e6cdb94fbae1dff6d7b",
+    "scheduledMessageExecutionTx": "0x9b78d499a22ec36f219d1edd7cea588237498afceb59f77ce088c9fab6fcb9f7",
+    "gates": {
+      "nomos_lint": "PASS",
+      "nomos_converge_check": "PASS",
+      "glsim_tests": "PASS 8/8",
+      "canonical_vectors": "PASS 4/4",
+      "foundry_tests": "PASS 21/21",
+      "genvm_lint": "PASS",
+      "live_positive_settlement": "PASS",
+      "live_negative_cases": "PASS for executed cases; insufficient-custody is Foundry-only"
+    },
+    "knownGaps": [
+      "The authorizer record stays AUTHORIZED/execution=PENDING_FINALITY after finality; the vault record is authoritative.",
+      "Vault-side refusals (pause/token/expiry/duplicate) are not observable in the authorizer record in v0.1.",
+      "Insufficient-custody was covered by Foundry testTransferFailureRecordedNoConsumption, not executed live.",
+      "Finality delay is ~30-33 minutes on Bradbury Phase 1; TTL must cover the appeal window.",
+      "Amounts are token base units; no decimals scaling."
+    ],
+    "security": "No private key is present in any artifact. A tracked key was exposed once in a shell transcript during development; rotation is recommended."
+  }
+}

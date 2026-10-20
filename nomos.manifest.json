@@ -214,6 +214,19 @@
       "role": "deployable component",
       "capabilityVersion": "0.1.0",
       "convergenceMode": "EXACT"
+    },
+    {
+      "id": "ppa-custody",
+      "name": "PPA Custody Adapter",
+      "status": "IMPLEMENTING",
+      "qualification": "QUALIFIED_EXTENSION",
+      "judgmentBearing": false,
+      "genlayerRequired": true,
+      "canonicalPath": "primitives/ppa-custody",
+      "capabilityVersion": "0.1.0",
+      "convergenceMode": "EXACT",
+      "deployable": true,
+      "role": "testnet custody extension; not part of the released PPA composition"
     }
   ]
 }
