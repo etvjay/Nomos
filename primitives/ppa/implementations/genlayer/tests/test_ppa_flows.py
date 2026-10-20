@@ -12,8 +12,20 @@ Requires glsim on :4000 and the contracts/ppa.py symlink.
 """
 import json
 
+import pytest
 from gltest import get_contract_factory, get_accounts
 from gltest.assertions import tx_execution_succeeded
+
+# invoice / dispute / delegate were moved out of the core contract so the
+# single-file deploy fits under the ~16.77M Bradbury gas ceiling. They are
+# declared unsupported in CAPABILITY.json ("gas-modularized") and are enforced
+# absent by test_ppa_capability_parity.py::test_gas_modularized_methods_absent_from_core.
+# The assertions below are preserved verbatim as the specification those methods
+# must satisfy when they are re-introduced as modular extensions.
+MODULARIZED_OUT = pytest.mark.skip(
+    reason="invoice/dispute/delegate are gas-modularized out of the v0.2 core; "
+           "see CAPABILITY.json unsupported[] and the v0.2 extraction work"
+)
 
 OWNER = get_accounts()[0].address
 RECIPIENT = "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
@@ -101,6 +113,7 @@ def test_insufficient_commitment_denied():
     assert pay["reason"] == "INSUFFICIENT_COMMITMENT"
 
 
+@MODULARIZED_OUT
 def test_invoice_flow():
     factory = get_contract_factory(contract_file_path="ppa.py")
     c = factory.deploy()
@@ -122,6 +135,7 @@ def test_invoice_flow():
     assert c.get_account(args=["ACC1"]).call()["balance"] == "1750"
 
 
+@MODULARIZED_OUT
 def test_dispute_refund_restores_balance():
     factory = get_contract_factory(contract_file_path="ppa.py")
     c = factory.deploy()

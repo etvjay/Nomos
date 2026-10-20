@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1.0.0",
+  "workId": "WORK-PPA-PRODUCER-2026-10-18",
+  "baseCommit": "1416a50eaae455039165d09a79ce6320e4d85e80",
+  "lane": "primitive",
+  "targets": ["ppa-adjudication-producer"],
+  "allowedPaths": [
+    "primitives/ppa-adjudication-producer/**",
+    "convergence/work/WORK-PPA-PRODUCER-2026-10-18.json",
+    "convergence/deployment/ppa-producer-live-2026-10-18.json"
+  ],
+  "changeClass": "MINOR",
+  "authorityFingerprint": "sha256:f94d50e9d1e2d48f9cf543d501ef2ed45b082c7802943f10a8ff9bce1bcd5e12",
+  "status": "implemented",
+  "localProof": {
+    "directProducerSuite": "17 passed",
+    "adapterBindingSuite": "6 passed",
+    "coreGateSuite": "5 passed",
+    "glsimChainProof": "1 passed (3 contracts, cross-contract emit, Adapter observed sender = producer contract; ACCEPTED->BOUND->ACTIONABLE->ADMITTED->DISPATCHED->EXECUTED, balance 800; REJECTED/UNDETERMINED non-actionable; owner-EOA spoof UNREGISTERED; exactly one settlement)",
+    "genvmLint": "passed",
+    "nomosLint": "PASS",
+    "leaderOnlyCaveat": "GLSim runs leader_only; validator_fn comparative path is proven live on Bradbury (see liveProof)"
+  },
+  "liveProof": {
+    "record": "convergence/deployment/ppa-producer-live-2026-10-18.json",
+    "status": "TESTNET_OBSERVED",
+    "network": "testnet-bradbury (chain 4221)",
+    "producer": "0xb52d7F87ED15FD8146b3820387Ab2E05de884790",
+    "boundTo": {"adapter": "0x29c88A9DBE42fa74341f7932003B6601b1D317C5", "core": "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE"},
+    "acceptedChain": "https://httpbin.org/html real web fetch (3595 bytes) -> 5-validator consensus ACCEPTED on judgment triple (4 AGREE) -> producer ACCEPTED receipt, evidence_hash sha256:5b17fbcd... (content+time bound, len 71) -> Adapter BOUND/ACTIONABLE with sender == producer CONTRACT (not owner EOA) -> proposal ADMITTED -> dispatch -> Core consequence EXECUTED, payment SETTLED, account 900 -> 800, exactly one settlement",
+    "rejectedLive": "example.com clause judged REJECTED with accepted quorum twice; Adapter readback BOUND + NON_ACTIONABLE",
+    "undeterminedLive": "unreachable host -> evidence_unavailable -> UNDETERMINED; Adapter BOUND NON_ACTIONABLE fail_reason REJECTED_UNDETERMINED; admit refused (no proposal created)",
+    "replayLive": "re-adjudicating a settled decision id returned the original receipt untouched (quorum-consensus)",
+    "failClosedObservations": "one early attempt ended UNDETERMINED after 8 rounds / 34 committed / 0 revealed votes; one ended VALIDATORS_TIMEOUT (4/5). Both wrote no state and were recorded, not claimed — the zero-votes-or-failed-equivalence rule held live on every occurrence",
+    "fingerprint": "sha256:f94d50e9d1e2d48f9cf543d501ef2ed45b082c7802943f10a8ff9bce1bcd5e12 (sha256 of deployed source; the Adapter adjudicator registration carries the same value)",
+    "onchainFeasibilityProven": ["hashlib.sha256 in GenVM", "gl.nondet.web.render + exec_prompt comparative consensus", "cross-contract async emit producer -> adapter -> core", "17KB contract deploy via consensus (gas ~13.3M)"]
+  },
+  "capabilityVersion": "0.1.0",
+  "publicInterfaceMutationAllowed": false,
+  "dependencies": [
+    "ppa-receipt-adapter (registered adjudicator authority, no back-edits)",
+    "ppa-core (independent gating, no back-edits)"
+  ],
+  "acceptanceGates": [
+    "python tools/nomos_lint.py",
+    "genvm-lint check primitives/ppa-adjudication-producer/implementations/genlayer/ppa_adjudication_producer.py",
+    "pytest primitives/ppa-adjudication-producer/implementations/genlayer/tests/ -v",
+    "live Bradbury: producer-deployed receipt observed by Adapter as sender=producer contract (origin_status BOUND), not owner EOA",
+    "live Bradbury: ACCEPTED path settles via Core; REJECTED/UNDETERMINED paths remain non-actionable; balance invariants recorded"
+  ],
+  "notes": "Producer boundary per DaoTian handoff: external web retrieval + gl.vm.run_nondet comparative judgment + ACCEPTED/REJECTED/UNDETERMINED canonicalization + non-placeholder evidence hash + authenticated emit to Adapter submit_decision_receipt. No balances, no capital authority, no Core reference, no settlement path. Authority separation = account owner EOA registers the producer CONTRACT as the Adapter adjudicator; receipts originate from a contract sender with its own source fingerprint."
+}

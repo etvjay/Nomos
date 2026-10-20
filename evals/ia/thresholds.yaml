@@ -1,0 +1,18 @@
+green: 0
+red: 1
+# IA: deterministic gates = 0 fails or red (like PPA)
+# judgment items = LLM-as-judge score, calibrated
+# thresholds:
+#  - deterministic (weight critical): 0 fails = green, ≥1 = red
+#  - judgment (weight major): avg score ≥4.0 and min ≥3.0 = green, else yellow/red
+judgment:
+  avg_min: 4.0
+  min_min: 3.0
+  calibration_required: true  # 30 human-rated examples, corr ≥0.7
+weights:
+  critical: block   # deterministic money/policy gate
+  major: warn       # judgment quality
+pin:
+  corpus_hash_required: true
+  prompt_version_required: true
+  tolerance_required: true  # e.g. price ±0.5%

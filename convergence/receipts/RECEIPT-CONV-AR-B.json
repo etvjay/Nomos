@@ -1,0 +1,13 @@
+{
+  "receipt_id": "RECEIPT-CONV-AR-B",
+  "primitive": "adjudicated-receipt",
+  "date": "2026-10-11",
+  "convergence_mode": "SEMANTIC",
+  "lane": "convergence-lanes/adjudicated-receipt/your_build.py",
+  "builder": "fresh-context subagent (spec+capability+vectors only; reference implementation not accessed)",
+  "vectors_total": 5,
+  "vectors_passed": 5,
+  "verdict": "CONVERGED",
+  "scope": "deterministic envelope (registration identity, binding, cancellation terminal rule, unknown-receipt guards); quorum verdict paths are judgment-surface tested direct + GLSim",
+  "report": "convergence-lanes/adjudicated-receipt/BUILD_REPORT.md"
+}

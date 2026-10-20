@@ -1,0 +1,160 @@
+{
+  "contract": "0x6D999C4c3A4f25897b67190FF644E5a76817aabf",
+  "network": "testnet-bradbury",
+  "chain_id": 4221,
+  "deployer": "0x8311BfD717708d6E9c4933e80762cC4901F836BF",
+  "steps": [
+    {
+      "method": "initialize",
+      "evm_tx": "0x8fa9ee256fff7b5055a7723fc15aa1ad77d4e5c308b31586a356098330ba0b09",
+      "evm_status": 1,
+      "gas_used": 843297,
+      "block": 25380163,
+      "logs": 4,
+      "consensus_tx": "0x9d0cdb6a3525f61adc2cadd9189eb5b5897a1593d80ab5fe524e3c188da8060b"
+    },
+    {
+      "method": "create_account",
+      "evm_tx": "0x7c8e0fb6c81708a8c19b0e386140cb301a00e43c076c4692a06b2750da022dcb",
+      "evm_status": 1,
+      "gas_used": 952721,
+      "block": 25380173,
+      "logs": 4
+    },
+    {
+      "method": "deposit",
+      "evm_tx": "0xae901c2857f55b846a6a5be4249b8df08cf74586ffaebde569b3252473049563",
+      "evm_status": 1,
+      "gas_used": 800331,
+      "block": 25380183,
+      "logs": 4
+    },
+    {
+      "method": "send",
+      "evm_tx": "0x782f99ff16473bcab8a3ce9cb19625d8d993f14e921253c7290f813683161ddf",
+      "evm_status": 1,
+      "gas_used": 841425,
+      "block": 25380191,
+      "logs": 4
+    },
+    {
+      "method": "register_attestation",
+      "evm_tx": "0x1d7bf51a040e51741c3f4fc9ace59329bbe0c527687fe2c5c8c57c325c16dffa",
+      "evm_status": 1,
+      "gas_used": 998846,
+      "block": 25380200,
+      "logs": 4
+    },
+    {
+      "method": "send",
+      "evm_tx": "0x1efaa5cf6463d4fdadae5725fa6ffab4722d615ff02b60068284bd11a772a551",
+      "evm_status": 1,
+      "gas_used": 838547,
+      "block": 25380208,
+      "logs": 4
+    },
+    {
+      "method": "revoke_attestation",
+      "evm_tx": "0xa584f11bf97c7da9c7b44aa0d7ecab18d72753c3b53a3ef6e1e2924eee0e3970",
+      "evm_status": 1,
+      "gas_used": 792857,
+      "block": 25380215,
+      "logs": 4
+    },
+    {
+      "method": "send",
+      "evm_tx": "0xa5ca8ff1f2c3eb11daf8d7ba1713f9902505c5e2a75e5863a539640b8fb2dc13",
+      "evm_status": 1,
+      "gas_used": 838583,
+      "block": 25380224,
+      "logs": 4
+    }
+  ],
+  "reads": {
+    "account": {
+      "account_id": "LIVE-ATT-ACC-2",
+      "balance": "900",
+      "committed": "0",
+      "created": "2026-10-17T10:36:35Z",
+      "daily_spent": "100",
+      "daily_window_start": "2026-10-17T10:36:35Z",
+      "rules": {
+        "attestation_issuers": [
+          "0x1111111111111111111111111111111111111111"
+        ],
+        "attestation_policy_version": "TECH-V1",
+        "currency": "USDC",
+        "daily_limit": "1000",
+        "per_tx_limit": "500",
+        "require_attestation": true
+      },
+      "status": "ACTIVE"
+    },
+    "payment_missing": {
+      "account_id": "LIVE-ATT-ACC-2",
+      "created": "2026-10-17T10:36:46Z",
+      "payment_id": "LIVE-MISS-233385",
+      "reason": "ATTESTATION_MISSING",
+      "status": "DENIED"
+    },
+    "payment_ok": {
+      "account_id": "LIVE-ATT-ACC-2",
+      "actor": "owner",
+      "amount": "100",
+      "created": "2026-10-17T10:36:56Z",
+      "evidence_hash": "",
+      "memo": "valid-att",
+      "payment_id": "LIVE-OK-233385",
+      "status": "SETTLED",
+      "to": "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+    },
+    "payment_rev": {
+      "account_id": "LIVE-ATT-ACC-2",
+      "created": "2026-10-17T10:37:07Z",
+      "payment_id": "LIVE-REV-233385",
+      "reason": "ATTESTATION_REVOKED",
+      "status": "DENIED"
+    },
+    "attestation": {
+      "attestation_id": "LIVE-ATT-233385",
+      "created": "2026-10-17T10:36:51Z",
+      "evidence_hash": "sha256:ppa-live-att-6d99",
+      "expires_at": "2099-01-01T00:00:00+00:00",
+      "issued_at": "2020-01-01T00:00:00+00:00",
+      "issuer": "1111111111111111111111111111111111111111",
+      "policy_version": "TECH-V1",
+      "revoked": "2026-10-17T10:37:02Z",
+      "status": "REVOKED",
+      "subject": "9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+    }
+  },
+  "status": "TESTNET_OBSERVED",
+  "eth_getCode_bytes": 300,
+  "ids": {
+    "account": "LIVE-ATT-ACC-2",
+    "payments": [
+      "LIVE-MISS-233385",
+      "LIVE-OK-233385",
+      "LIVE-REV-233385"
+    ],
+    "attestation": "LIVE-ATT-233385"
+  },
+  "checks": {
+    "missing_denied": true,
+    "ok_settled": true,
+    "rev_denied": true,
+    "balance_900": true,
+    "att_revoked": true
+  },
+  "limitations": [
+    "Internal ledger only; no external token custody",
+    "Technical attestation enforcement only; not legal KYC/AML",
+    "Deterministic writes; consensus accepted (status 5 observed on sample tx)"
+  ],
+  "read_method": "gen_call type=read with serialize([calldata,0x00]); SDK read_contract broken on dict result",
+  "verdict": {
+    "missing": "DENIED/ATTESTATION_MISSING balance unchanged path",
+    "valid": "SETTLED amount 100 balance 1000->900",
+    "revoked": "DENIED/ATTESTATION_REVOKED"
+  }
+}

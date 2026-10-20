@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "1.0.0",
+  "workId": "WORK-VECTOR-RUNNER-HARDEN-2026-10-17",
+  "baseCommit": "1416a50eaae455039165d09a79ce6320e4d85e80",
+  "lane": "tooling",
+  "targets": [
+    "vector-runner"
+  ],
+  "allowedPaths": [
+    "tools/nomos_run_vectors.py",
+    "tests/tools/**",
+    "primitives/ppa/vectors/**",
+    "primitives/claim-verification/vectors/**",
+    "convergence/work/WORK-VECTOR-RUNNER-HARDEN-2026-10-17.json",
+    "convergence/reports/**"
+  ],
+  "changeClass": "PATCH",
+  "authorityFingerprint": "not-applicable: shared tooling, not a primitive capability",
+  "capabilityVersion": "not-applicable",
+  "publicInterfaceMutationAllowed": false,
+  "problemStatement": "tools/nomos_run_vectors.py iterates vector['actions']. A vector that declares no 'actions' key is iterated zero times, produces zero failures, and is reported PASS. The runner can therefore certify a vector it never executed. Proven by construction: a vector whose 'steps' key held an impossible assertion reported PASS, while the identical assertion under 'actions' reported FAIL.",
+  "whyThisIsIntegrityNotCleanup": "A conformance runner that cannot distinguish 'implemented and passing' from 'not executed' invalidates the evidence layer of every primitive that relies on it. AGENTS.md requires that claims be backed by identified evidence and forbids claiming support without executable evidence. Until this is fixed, no green vector result is distinguishable from an unexecuted one.",
+  "scopeRationale": "Deliberately narrow: the runner, its tests, and only the two affected vector schemas. Does NOT touch any primitive implementation, capability contract, or the PPA v0.3 lane.",
+  "affectedEvidence": [
+    {
+      "path": "primitives/ppa/vectors/v0.2-spine.json",
+      "vectors": 2,
+      "declaredKey": "steps",
+      "declaredAsEvidence": true,
+      "impact": "PPA v0.2 spine reported 2/2 PASS while executing zero assertions. Superseded by v0.3-origin.json and additionally unable to pass under v0.3 origin binding, since its receipts are owner-supplied from the unregistered placeholder 0xabc000000000000000000000000000000000001."
+    },
+    {
+      "path": "primitives/claim-verification/vectors/v0.1.json",
+      "vectors": 4,
+      "declaredKey": "claim/evidence/expected",
+      "declaredAsEvidence": false,
+      "impact": "A different schema entirely, not executable by this runner. Claim Verification's CAPABILITY reproduce list does NOT invoke nomos_run_vectors.py; its declared evidence is pytest plus genvm-lint, which are unaffected. Its CONFORMANT status therefore does not rest on these vectors. The hazard is that a reader could run this runner against them and obtain a false green."
+    }
+  ],
+  "unaffectedEvidenceVerified": "All 12 other primitives that declare nomos_run_vectors.py in reproduce use the 'actions' key and therefore executed their assertions. Re-verified repository-wide during this work; see convergence/reports/VECTOR-RUNNER-HARDEN-REPORT.md.",
+  "acceptanceGates": [
+    "A vector declaring no executable sequence FAILS with a schema error naming the vector id and the keys it did declare",
+    "A vector declaring an empty 'actions' list FAILS (regression: empty executable sequence -> FAIL)",
+    "A vector using 'steps' is explicitly rejected with a clear schema error naming 'steps' and stating the supported key is 'actions'",
+    "A vector with an impossible assertion cannot pass: proven by a negative-control corpus containing a deliberately false expectation",
+    "Existing valid 'actions' vectors retain behaviour: every repository corpus is re-run and its pass/fail counts are compared against the pre-change baseline",
+    "New regression tests live in tests/tools/ and pass",
+    "Repository-wide sweep executed and recorded in convergence/reports/VECTOR-RUNNER-HARDEN-REPORT.md",
+    "Previously green-but-unexecuted evidence reclassified in that report"
+  ],
+  "constraints": [
+    "Do not widen the PPA v0.3 origin Work Contract. This work touches tools/ only, plus the two affected vector schemas.",
+    "Do not change any primitive implementation, CAPABILITY.json, or capability version.",
+    "Do not delete a vector corpus to make the sweep green. Reclassification must be explicit and recorded.",
+    "The runner must never report PASS for a vector it did not execute."
+  ],
+  "sequencing": "Completes before WORK-PPA-V03 modular split. Then: reclassify affected evidence, split PPA core from receipt adapter, deploy origin-bound v0.3, build the adjudication producer, prove live producer -> receipt -> settlement.",
+  "dependencies": [
+    "WORK-PPA-V03-ORIGIN-2026-10-17 remains DEPLOY_BLOCKED_GAS. That classification is unaffected and correct.",
+    "The adjudication producer remains blocked until an origin-bound adapter is deployed."
+  ],
+  "statusVocabularyDuringThisWork": {
+    "claimVerification": "EVIDENCE_REVIEW_REQUIRED for its vectors corpus only; its declared pytest/genvm-lint evidence is unaffected and its CONFORMANT status stands",
+    "ppaV02SpineVectors": "NOT_INDEPENDENTLY_TRUSTED and superseded"
+  },
+  "result": {
+    "status": "PASS",
+    "runnerChange": "tools/nomos_run_vectors.py: added _schema_failures(); a vector must declare a non-empty 'actions' list of actions each carrying 'op', otherwise it FAILs with a schema error",
+    "tests": "tests/tools/test_nomos_run_vectors_schema.py \u2014 12 passed",
+    "sweep": "154 vectors across 15 corpora re-run; 148 executable and passing, 6 not executable and now honestly FAILing",
+    "report": "convergence/reports/VECTOR-RUNNER-HARDEN-REPORT.json",
+    "previouslyValidEvidenceInvalidated": "none \u2014 all 12 primitives declaring vector evidence use 'actions' and still pass (141 vectors)",
+    "reclassified": [
+      "primitives/claim-verification/vectors/v0.1.json (4) \u2014 EVIDENCE_REVIEW_REQUIRED; not declared evidence; CONFORMANT status unaffected",
+      "primitives/ppa/vectors/v0.2-spine.json (2) \u2014 NOT_INDEPENDENTLY_TRUSTED and superseded by v0.3-origin.json"
+    ]
+  }
+}

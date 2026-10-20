@@ -1,0 +1,276 @@
+{
+  "schemaVersion": "1.0.0",
+  "workId": "WORK-PPA-SPLIT-V03-2026-10-17",
+  "baseCommit": "1416a50eaae455039165d09a79ce6320e4d85e80",
+  "lane": "primitive",
+  "targets": [
+    "ppa-core",
+    "ppa-receipt-adapter"
+  ],
+  "allowedPaths": [
+    "primitives/ppa-core/**",
+    "primitives/ppa-receipt-adapter/**",
+    "primitives/ppa/vectors/v0.4-split/**",
+    "tests/split/**",
+    "tools/nomos_lint.py",
+    "nomos.manifest.json",
+    "convergence/work/WORK-PPA-SPLIT-V03-2026-10-17.json",
+    "convergence/receipts/*PPA*",
+    "convergence/deployment/*ppa*"
+  ],
+  "changeClass": "BREAKING",
+  "capabilityVersion": "0.4.0",
+  "publicInterfaceMutationAllowed": true,
+  "status": {
+    "state": "FROZEN",
+    "frozenAt": "2026-10-17",
+    "rule": "Acceptance gates are frozen. Implementation may proceed. Deployment remains blocked until every deployment gate below is green."
+  },
+  "verifiedBoundaryModel": {
+    "evidence": "convergence/reports/CALLER-IDENTITY-SPIKE.json",
+    "finding": "Core OBSERVES THE ADAPTER. The original EOA identity is consumed at the adapter hop.",
+    "proven": [
+      "direct EOA -> Core: Core observes the EOA",
+      "Adapter -> Core via gl.get_contract_at + emit(on='accepted'): Core observes the ADAPTER",
+      "Adapter forwarding a spoofed JSON declared_source: Core still observes the ADAPTER, proving a JSON source field carries no provenance",
+      "unregistered adapter rejected by Core on sender address",
+      "adapter attempting to widen amount rejected by Core on a Core-side cap"
+    ],
+    "consequence": "No signed receipt or proof-carrying mechanism is required. Core authenticates the Adapter from gl.message.sender_address; the Adapter authenticates the adjudicator from the sender it observes.",
+    "notYetProvenLive": "The spike ran on GLSim localnet. Bradbury caller semantics are re-proved as a gate below. Local spike semantics must NOT be promoted to live evidence."
+  },
+  "architecture": {
+    "Adjudicator": "actual caller -> Adapter. Separate future contract; NOT built in this work.",
+    "Adapter": "actual caller -> Core via emit(on='accepted'). Owns registry, origin binding, receipts, proposals. NO balance authority.",
+    "Core": "final deterministic consequence boundary. Owns ledger, policy, attestation, capital, send gates, settlement. Balance mutates ONLY here."
+  },
+  "adapterMandatoryGates": [
+    "adjudicator registry (source_contract, authority_fingerprint, policy_version, status, created_at, expires_at)",
+    "source origin bound to the actual gl.message.sender_address of the caller, never to a JSON field",
+    "authority fingerprint / code identity check",
+    "ACTIVE / REVOKED / expiry handling",
+    "decision_id replay protection (consumed on first submission, actionable or not)",
+    "proposal construction and proposal_id replay protection",
+    "no balance authority of any kind",
+    "cannot bypass Core: every disposition must go through Core"
+  ],
+  "coreMandatoryGates": [
+    "adapter registry; the actual caller must be a registered, non-revoked, unexpired adapter",
+    "refusal returned as an OBSERVABLE STATUS, never as an unexplained revert",
+    "independent revalidation at execution time of: policy, recipient, amount, attestation, capital, replay, expiry, account status",
+    "balance mutation only after every Core gate passes",
+    "re-reads Core state at execution time and does NOT trust Adapter-supplied state or Adapter-supplied assertions about policy/limits"
+  ],
+  "asynchronousBoundary": {
+    "model": "Adapter accepts -> emit(on='accepted') -> Core executes in a LATER transaction",
+    "atomicity": "NON-ATOMIC. The boundary must be treated as non-atomic throughout.",
+    "consequence": "Core must not trust Adapter state at execution time. Everything is re-read and revalidated by Core.",
+    "appealHazard": "An Adapter transaction appealed after emit() does NOT automatically cancel Core execution; the emitted call still runs. Core-side validation is therefore the only mitigation and remains mandatory.",
+    "refusalSemantics": "Core must not raise to signal refusal on an emitted call. Proven in the spike: a rejecting raise produced an absent artifact indistinguishable from 'the emit never landed'; the identical logic changed to return a verdict produced a readable verdict. Refusal is a returned status.",
+    "readVisibility": "Reads after an emit must poll; the emitted transaction is not immediately visible."
+  },
+  "refusalVocabulary": [
+    "REJECTED_CALLER_NOT_REGISTERED_ADAPTER",
+    "REJECTED_ADAPTER_REVOKED",
+    "REJECTED_SOURCE_NOT_REGISTERED",
+    "REJECTED_SOURCE_FINGERPRINT_MISMATCH",
+    "REJECTED_PROPOSAL_REPLAY",
+    "REJECTED_POLICY",
+    "REJECTED_AMOUNT",
+    "REJECTED_RECIPIENT",
+    "REJECTED_CAPITAL",
+    "REJECTED_ATTESTATION",
+    "REJECTED_EXPIRED",
+    "REJECTED_UNDETERMINED"
+  ],
+  "refusalAuditRequirement": "Every refusal must be stored or returned in an auditable result. A refusal that leaves no observable artifact is a contract violation.",
+  "gasBudget": {
+    "observedAcceptCeiling": 16773925,
+    "deployableSourceCeilingApprox": 20541,
+    "measuredSizing": {
+      "note": "Measured from the current v0.3 monolith by attributing methods to each side. Both fit with large margin, which is why the monolith failed: it was ONE contract of 22725 chars, not because the total work was too large.",
+      "coreApproxChars": 11188,
+      "coreApproxEstimate": 9671396,
+      "adapterApproxChars": 10536,
+      "adapterApproxEstimate": 9176312,
+      "monolithActualChars": 22725,
+      "monolithActualEstimate": 18719528
+    },
+    "requirement": "eth_estimateGas each contract via the SDK _prepare_transaction path (read-only) before any deploy. Validated estimator: policy_envelope.py returned 10366627 vs recorded 103366651.",
+    "onBlock": "Classify DEPLOY_BLOCKED_GAS per contract. Do not walk caps, do not strip public annotations."
+  },
+  "requiredProofSequence": {
+    "local": [
+      "registered adjudicator -> Adapter -> Core -> accepted proposal -> settlement",
+      "unregistered adjudicator rejected",
+      "revoked adjudicator rejected",
+      "fingerprint mismatch rejected",
+      "unregistered adapter rejected by Core",
+      "adapter widens amount -> Core rejects independently",
+      "adapter changes recipient -> Core rejects independently",
+      "replayed decision rejected",
+      "replayed proposal rejected",
+      "policy changed after Adapter acceptance -> Core revalidates and rejects",
+      "capital removed before Core execution -> Core revalidates and rejects",
+      "appeal / asynchronous execution path exercised"
+    ],
+    "localTestLocation": "tests/split/ \u2014 a FRESH cross-contract integration test. Cross-contract safety must NOT be inferred from direct unit tests.",
+    "bradbury": [
+      "independently re-prove the caller boundary: Adapter -> Core sees the Adapter, not the original EOA",
+      "deploy the pair, then prove: real adjudicator -> registered adapter -> registered Core -> receipt -> proposal -> gated settlement",
+      "record validator votes, equivalence result, and a non-placeholder evidence hash"
+    ]
+  },
+  "evidenceRecording": {
+    "rule": "Core and Adapter are separate authorities and must never be combined into one fingerprint.",
+    "record": [
+      "core source hash",
+      "adapter source hash",
+      "core capability fingerprint",
+      "adapter capability fingerprint",
+      "core gas estimate",
+      "adapter gas estimate",
+      "cross-contract test result"
+    ]
+  },
+  "deploymentPolicy": {
+    "historicalUnchanged": [
+      "v0.2 spine (0xa4fbEc963Bc105bc950648D092d11bAE7eF191fb): DISPOSITION_PATH_OBSERVED / PRODUCER_NOT_CONNECTED / ORIGIN_AUTHENTICATION_NOT_IMPLEMENTED / BOUND_TO_SUPERSEDED_AUTHORITY",
+      "v0.3 monolith: DEPLOY_BLOCKED_GAS"
+    ],
+    "currentState": "v0.3 split is an implementation target, not a deployment",
+    "rule": "Do not deploy partial v0.3 semantics. Deploy only when Core fits, Adapter fits, cross-contract origin binding passes locally, all hardened vectors execute, and all PPA tests pass.",
+    "sequence": "deploy Adapter and Core as a coordinated pair, then run ONE live bound-receipt flow"
+  },
+  "scopeExclusions": [
+    "real web/LLM adjudication producer",
+    "external token custody",
+    "LayerZero / Hyperlane bridges",
+    "frontend",
+    "restoration of invoice / dispute / delegation to any contract",
+    "deployment of the adjudicator producer"
+  ],
+  "lintInteraction": {
+    "problem": "tools/nomos_lint.py holds a hardcoded EXPECTED_PRIMITIVES allowlist and errors on entries outside it: 'unreviewed primitive registry entries present'. Registering ppa-core and ppa-receipt-adapter in nomos.manifest.json would fail NOMOS-LINT.",
+    "resolution": "Registering two registry primitives requires updating EXPECTED_PRIMITIVES. This is registry maintenance, and is admitted into allowedPaths explicitly and narrowly rather than silently.",
+    "permittedEditScope": {
+      "sets": [
+        "EXPECTED_PRIMITIVES",
+        "JUDGMENT_EXPECTED",
+        "DETERMINISTIC_EXPECTED"
+      ],
+      "otherLintBehaviourChanges": "none",
+      "confirmed": "This narrow registry update remains in scope."
+    },
+    "bothNewPrimitivesAreDeterministic": true
+  },
+  "acceptanceGates": [
+    "acceptance gates frozen before any production code is written",
+    "separate CAPABILITY.json for Core and for Adapter",
+    "separate authority fingerprints; never combined",
+    "nomos_lint PASS with both new primitives registered",
+    "nomos_converge check PASS",
+    "cross-contract integration test in tests/split/ PASS: registered adjudicator -> Adapter -> Core -> settlement",
+    "every negative case in requiredProofSequence.local PASS with an auditable refusal status",
+    "Core revalidation tests PASS: policy changed after acceptance, capital removed before execution",
+    "hardened vector runner executes all new vector corpora; no vacuous passes",
+    "all existing PPA vectors still execute and pass under the split",
+    "genvm-lint: GenVM Depends header intact on both contracts",
+    "genvm-lint: public method annotations retained on both contracts",
+    "eth_estimateGas recorded per contract, each at or below the accept ceiling",
+    "DEPLOY BLOCKED if either contract exceeds the ceiling"
+  ],
+  "forbidden": [
+    "Do not deploy anything before these acceptance gates are frozen and green.",
+    "Do not promote the local spike's caller semantics to live evidence.",
+    "Do not let a JSON source_contract field establish origin anywhere.",
+    "Do not give the Adapter any balance authority.",
+    "Do not have Core trust Adapter-supplied policy or limit assertions.",
+    "Do not raise to signal refusal on an emitted call.",
+    "Do not combine Core and Adapter into one authority fingerprint.",
+    "Do not restore invoice/dispute/delegation in this work.",
+    "Do not build the adjudicator producer in this work.",
+    "Do not deploy partial v0.3 semantics.",
+    "Do not walk gas caps or strip public annotations to fit.",
+    "Do not modify tools/nomos_lint.py outside the three registry sets."
+  ],
+  "dependencies": [
+    "WORK-VECTOR-RUNNER-HARDEN-2026-10-17 \u2014 PASS; new corpora must use the actions key",
+    "WORK-PRESSURE-MODULARIZED-SPEC-2026-10-17 \u2014 PASS; delegation/invoice/dispute remain modularized out",
+    "WORK-PPA-V03-ORIGIN-2026-10-17 \u2014 DEPLOY_BLOCKED_GAS, superseded by this split",
+    "convergence/reports/CALLER-IDENTITY-SPIKE.json \u2014 the verified boundary model"
+  ],
+  "registryTreatment": {
+    "hierarchy": [
+      "PPA (canonical composition product)",
+      "  |- PPA Core (ppa-core)",
+      "  \\- PPA Receipt / Proposal Adapter (ppa-receipt-adapter)"
+    ],
+    "rationale": "The two new entries are correct because they are independently deployed, independently versioned, independently tested, and independently fingerprinted.",
+    "ppa": {
+      "role": "canonical composition product",
+      "status": "IMPLEMENTING",
+      "deployable": false,
+      "capability": "composition contract"
+    },
+    "ppa-core": {
+      "role": "deployable financial consequence component",
+      "capability": "independent",
+      "fingerprint": "independent"
+    },
+    "ppa-receipt-adapter": {
+      "role": "deployable adjudication/proposal boundary component",
+      "capability": "independent",
+      "fingerprint": "independent"
+    },
+    "ppaComposedUnits": [
+      "ppa-core",
+      "ppa-receipt-adapter"
+    ],
+    "mustNot": [
+      "Do not describe ppa-core or ppa-receipt-adapter as replacements for the PPA product.",
+      "Do not retire PPA.",
+      "Do not create a combined fingerprint for Core and Adapter.",
+      "The current historical PPA authority remains historical; the split gets new capability versions and new receipts."
+    ]
+  },
+  "coreRefusalPersistence": {
+    "decision": "Core stores AND returns refusal outcomes. Return-only is insufficient.",
+    "why": "The asynchronous boundary means the Adapter emits, Core executes later, and the Adapter may never observe the return value.",
+    "minimumRefusalRecord": [
+      "proposal_id",
+      "decision_id",
+      "payment_id",
+      "adapter_caller",
+      "reason_code",
+      "requested_amount",
+      "requested_recipient",
+      "policy_version",
+      "created_at",
+      "status = REJECTED"
+    ],
+    "noFullPayloads": "Core must NOT persist full receipt or evidence payloads. Identifiers and hashes only, for privacy and storage discipline.",
+    "oneAuditableOutcomePerAttempt": [
+      "EXECUTED",
+      "DENIED",
+      "REJECTED"
+    ],
+    "storageGrowthRule": {
+      "keyedBy": "proposal_id",
+      "oneTerminalOutcomePerProposal": true,
+      "overwriteAllowed": false,
+      "boundedFieldSizes": true,
+      "duplicateReplay": false,
+      "note": "The Adapter retains richer receipt/proposal history. Core needs only the minimum consequence audit record."
+    },
+    "contractViolation": "A refusal that leaves no artifact is a contract violation."
+  },
+  "deploymentGates": [
+    "core local cross-contract tests pass",
+    "adapter local cross-contract tests pass",
+    "all 12 refusal cases pass",
+    "policy/capital mutation cases pass",
+    "both gas estimates clear",
+    "Bradbury caller-boundary re-proof passes"
+  ]
+}

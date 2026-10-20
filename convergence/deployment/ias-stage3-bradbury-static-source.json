@@ -1,0 +1,24 @@
+{
+  "artifact": "ias-stage3-bradbury-static-source",
+  "status": "BLOCKED",
+  "recorded_at": "2026-08-31T00:54:43Z",
+  "network": "testnet-bradbury",
+  "chain_id": 4221,
+  "contract": "0xC73398D61c93EaD1c95C6162c2ba6E37d4F6Ec14",
+  "deployment_result": "0xf2dafda01abeadafba92261d94c439e0670e57d15ca568d52c1429331758938f",
+  "source": "https://raw.githubusercontent.com/genlayer-foundation/genlayer-js/main/package.json",
+  "experiment": "Replace GitHub API observation source with static raw source; use explicit EVM gas headroom.",
+  "observations": [
+    {"method": "create_account", "tx": "0x73dc1174285682eeee06d52856c4f7c7ac8a6d1759a6ff270eefe65a443b3c1e", "result": 1, "validator_votes": [1, 1, 1, 1, 1]},
+    {"method": "deposit", "tx": "0x366d760ddeb1f095e7744980235afe4b0d4717faca8878a71a0972d9f30c0cbb", "result": 1, "validator_votes": [1, 1, 1, 1, 1]},
+    {"method": "create_monitor", "tx": "0x0aad0d2f293fc2dccf369877226c78225a3df71d8b416033e0f904f8293ab731", "observed_status": 4, "execution_result": 1, "validator_votes": [1, 1, 0, 1, 1], "equivalence_result": 0},
+    {"method": "create_signal_group", "tx": "0x97cbc93e2fdc5ee2656d7fb022a975e26baf43e2308b7cc539679b953eb3d47b", "observed_status": 14, "execution_result": 0, "validator_votes": [0, 0, 0, 0, 0], "equivalence_result": 0},
+    {"method": "set_execution_policy", "tx": "0x1c47e3fbf9f398bcb868c468d90b8db9f1fa1da31398c467193be8a25c8569d0", "result": 1, "validator_votes": [1, 1, 1, 1, 1]},
+    {"method": "register_attestation", "tx": "0x1bdfb7e7d010cf486e0ee9941a16ffb3d83b660e46f2510b4848927bc4794092", "observed_status": 4, "execution_result": 1, "validator_votes": [0, 0, 0, 0, 0], "equivalence_result": 0},
+    {"method": "set_kill_switch", "tx": "0xdccfa91ff8bfda7eaa33f384b0edcc32e025c59e1bc0bddce50b56093c434a3a", "observed_status": 14, "execution_result": 0, "validator_votes": [0, 0, 0, 0, 0], "equivalence_result": 0},
+    {"method": "check_monitor", "tx": "0x96db78bd8200ae024525bfe28d1bada61d2d9e3e6359e39faa70aff26b84c057", "observed_status": 4, "execution_result": 1, "validator_votes": [0, 0, 0, 0, 0], "equivalence_result": 0}
+  ],
+  "state_readback": {"monitor_last_status": "", "monitor_last_value": "", "payment_created": false, "proposal_created": false, "balance_before_observation": "100"},
+  "conclusion": "Changing the external source did not produce an admissible persisted observation. Bradbury live external observation remains blocked/undetermined.",
+  "limitations": ["No autonomous settlement claim is made.", "Internal accounting only; no external token custody.", "Raw adapter required because installed SDK status/read decoding is incompatible with current Bradbury responses.", "Agent Tank excluded."]
+}

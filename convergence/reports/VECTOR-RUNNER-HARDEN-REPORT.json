@@ -1,0 +1,171 @@
+{
+  "report": "VECTOR-RUNNER-HARDEN-REPORT",
+  "workContract": "WORK-VECTOR-RUNNER-HARDEN-2026-10-17",
+  "recorded_at": "2026-10-17",
+  "defect": {
+    "summary": "tools/nomos_run_vectors.py iterated vector['actions']. A vector declaring any other shape iterated zero times, produced zero failures, and was reported PASS.",
+    "rootCause": "_run_vector used vector.get('actions', []) with no validation that the vector actually declared an executable sequence.",
+    "proof": "A vector whose 'steps' key contained an impossible assertion reported PASS. The identical assertion under 'actions' reported FAIL with the real outcome.",
+    "significance": "An unexecuted vector was indistinguishable from a passing one, so no green vector result could be trusted. This is an evidence-integrity defect, not a lint issue."
+  },
+  "fix": {
+    "location": "tools/nomos_run_vectors.py (_schema_failures)",
+    "behaviour": [
+      "vector with no 'actions' key -> FAIL, error names the vector id and the keys it did declare",
+      "empty 'actions' list -> FAIL (empty executable sequence cannot be reported PASS)",
+      "'actions' not a list -> FAIL",
+      "action missing 'op' -> FAIL",
+      "'steps' -> explicitly rejected, error states the supported key is 'actions'",
+      "non-dict vector -> FAIL"
+    ],
+    "invariant": "the runner never reports PASS for a vector it did not execute"
+  },
+  "tests": {
+    "path": "tests/tools/test_nomos_run_vectors_schema.py",
+    "result": "12 passed",
+    "covers": [
+      "empty actions -> FAIL",
+      "missing actions key -> FAIL",
+      "steps explicitly rejected",
+      "impossible assertion cannot pass vacuously",
+      "impossible assertion under actions IS caught",
+      "actions not a list -> FAIL",
+      "action missing op -> FAIL",
+      "valid vectors retain behaviour",
+      "repository corpora unchanged (v0.1 15/15, v0.3-origin 9/9)",
+      "repo-wide corpus shape audit"
+    ]
+  },
+  "sweep": {
+    "note": "every corpus in primitives/*/vectors/ re-run after hardening",
+    "corpora": [
+      {
+        "corpus": "primitives/adjudicated-receipt/vectors/v0.2.json",
+        "vectors": 5,
+        "executable": 5,
+        "notExecutable": 0
+      },
+      {
+        "corpus": "primitives/capital-commitment/vectors/v0.1.json",
+        "vectors": 16,
+        "executable": 16,
+        "notExecutable": 0
+      },
+      {
+        "corpus": "primitives/claim-encumbrance/vectors/v0.1.json",
+        "vectors": 16,
+        "executable": 16,
+        "notExecutable": 0
+      },
+      {
+        "corpus": "primitives/claim-verification/vectors/v0.1.json",
+        "vectors": 4,
+        "executable": 0,
+        "notExecutable": 4
+      },
+      {
+        "corpus": "primitives/daa/vectors/v0.1.json",
+        "vectors": 11,
+        "executable": 11,
+        "notExecutable": 0
+      },
+      {
+        "corpus": "primitives/dal/vectors/v0.1.json",
+        "vectors": 10,
+        "executable": 10,
+        "notExecutable": 0
+      },
+      {
+        "corpus": "primitives/financial-contract/vectors/v0.1.json",
+        "vectors": 9,
+        "executable": 9,
+        "notExecutable": 0
+      },
+      {
+        "corpus": "primitives/gaia/vectors/v0.1.json",
+        "vectors": 9,
+        "executable": 9,
+        "notExecutable": 0
+      },
+      {
+        "corpus": "primitives/mandate-allocation/vectors/v0.1.json",
+        "vectors": 9,
+        "executable": 9,
+        "notExecutable": 0
+      },
+      {
+        "corpus": "primitives/policy-envelope/vectors/v0.1.json",
+        "vectors": 12,
+        "executable": 12,
+        "notExecutable": 0
+      },
+      {
+        "corpus": "primitives/ppa/vectors/v0.1.json",
+        "vectors": 15,
+        "executable": 15,
+        "notExecutable": 0
+      },
+      {
+        "corpus": "primitives/ppa/vectors/v0.2-spine.json",
+        "vectors": 2,
+        "executable": 0,
+        "notExecutable": 2
+      },
+      {
+        "corpus": "primitives/ppa/vectors/v0.3-origin.json",
+        "vectors": 9,
+        "executable": 9,
+        "notExecutable": 0
+      },
+      {
+        "corpus": "primitives/proof-of-payable/vectors/v0.1.json",
+        "vectors": 17,
+        "executable": 17,
+        "notExecutable": 0
+      },
+      {
+        "corpus": "primitives/workflow-authorization/vectors/v0.1.json",
+        "vectors": 10,
+        "executable": 10,
+        "notExecutable": 0
+      }
+    ],
+    "totals": {
+      "vectors": 154,
+      "executable": 148,
+      "notExecutable": 6
+    }
+  },
+  "reclassification": [
+    {
+      "evidence": "primitives/claim-verification/vectors/v0.1.json",
+      "vectors": 4,
+      "previous": "reported PASS (vacuous)",
+      "now": "reports FAIL with an explicit schema error",
+      "declaredAsEvidence": false,
+      "assessment": "Claim Verification's CAPABILITY reproduce list does NOT invoke nomos_run_vectors.py; its declared evidence is pytest plus genvm-lint, both unaffected. Its CONFORMANT status does NOT rest on these vectors and stands.",
+      "newStatus": "EVIDENCE_REVIEW_REQUIRED for this corpus only; the corpus is not executable by this runner and must not be cited as vector evidence.",
+      "hazardClosed": "a reader can no longer obtain a false green by pointing this runner at it"
+    },
+    {
+      "evidence": "primitives/ppa/vectors/v0.2-spine.json",
+      "vectors": 2,
+      "previous": "reported PASS (vacuous)",
+      "now": "reports FAIL with an explicit 'steps' rejection",
+      "declaredAsEvidence": true,
+      "assessment": "Superseded by v0.3-origin.json. Additionally these vectors encode v0.2 behaviour in which the owner supplied receipts from the unregistered placeholder 0xabc000000000000000000000000000000000001, so they cannot pass under v0.3 origin binding even after migration.",
+      "newStatus": "NOT_INDEPENDENTLY_TRUSTED and superseded; not migrated, because migrating them would encode a behaviour v0.3 deliberately removed",
+      "supersededBy": "primitives/ppa/vectors/v0.3-origin.json"
+    }
+  ],
+  "verifiedUnaffected": {
+    "primitives": 12,
+    "vectors": 141,
+    "note": "All 12 primitives that declare nomos_run_vectors.py in their CAPABILITY reproduce list use the 'actions' key and executed their assertions. All still pass after hardening: adjudicated-receipt 5/5, capital-commitment 16/16, claim-encumbrance 16/16, daa 11/11, dal 10/10, financial-contract 9/9, gaia 9/9, mandate-allocation 9/9, policy-envelope 12/12, ppa v0.1 15/15, ppa v0.3-origin 9/9, proof-of-payable 17/17, workflow-authorization 10/10.",
+    "conclusion": "No previously-valid vector evidence was invalidated by this fix."
+  },
+  "residual": [
+    "The runner still cannot execute SEMANTIC/judgment-bearing corpora that use a claim/evidence/expected schema. Claim Verification needs its own harness or a migration to 'actions'. Tracked, not fixed here.",
+    "ppa v0.2-spine remains in the active vectors directory and will FAIL if explicitly run. That is intentional: it must not report green. Removing it is a separate decision about historical artifacts."
+  ]
+}

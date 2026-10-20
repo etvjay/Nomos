@@ -1,0 +1,413 @@
+{
+  "schemaVersion": "1.0.0",
+  "primitiveId": "ppa",
+  "name": "Programmable Payment Account",
+  "capabilityVersion": "0.4.0",
+  "status": "IMPLEMENTING",
+  "convergenceMode": "EXACT",
+  "judgmentBearing": false,
+  "implementation": {
+    "environment": "genlayer",
+    "path": "primitives/ppa/implementations/genlayer/ppa.py",
+    "contract": "ProgrammablePaymentAccount"
+  },
+  "publicMethods": [
+    {
+      "name": "initialize",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "output": "status-string"
+    },
+    {
+      "name": "create_account",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "account_id",
+          "type": "string"
+        },
+        {
+          "name": "rules_json",
+          "type": "json-string"
+        }
+      ],
+      "output": "status-string"
+    },
+    {
+      "name": "update_rules",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "account_id",
+          "type": "string"
+        },
+        {
+          "name": "rules_json",
+          "type": "json-string"
+        }
+      ],
+      "output": "status-string"
+    },
+    {
+      "name": "get_account",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "account_id",
+          "type": "string"
+        }
+      ],
+      "output": "account-json-or-error"
+    },
+    {
+      "name": "deposit",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "account_id",
+          "type": "string"
+        },
+        {
+          "name": "amount",
+          "type": "uint-string"
+        }
+      ],
+      "output": "status-string"
+    },
+    {
+      "name": "withdraw",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "account_id",
+          "type": "string"
+        },
+        {
+          "name": "amount",
+          "type": "uint-string"
+        }
+      ],
+      "output": "status-string"
+    },
+    {
+      "name": "send",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "account_id",
+          "type": "string"
+        },
+        {
+          "name": "payment_id",
+          "type": "string"
+        },
+        {
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint-string"
+        },
+        {
+          "name": "evidence_hash",
+          "type": "string"
+        },
+        {
+          "name": "memo",
+          "type": "string"
+        }
+      ],
+      "output": "decision-object"
+    },
+    {
+      "name": "get_payment",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "payment_id",
+          "type": "string"
+        }
+      ],
+      "output": "payment-json-or-error"
+    },
+    {
+      "name": "register_attestation",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "attestation_id",
+          "type": "string"
+        },
+        {
+          "name": "attestation_json",
+          "type": "fixed-schema-json-string"
+        }
+      ],
+      "output": "status-string"
+    },
+    {
+      "name": "revoke_attestation",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "attestation_id",
+          "type": "string"
+        }
+      ],
+      "output": "status-string"
+    },
+    {
+      "name": "get_attestation",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "attestation_id",
+          "type": "string"
+        }
+      ],
+      "output": "attestation-json-or-error"
+    },
+    {
+      "name": "submit_decision_receipt",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "receipt_json",
+          "type": "json-string"
+        }
+      ],
+      "output": "decision-receipt-result"
+    },
+    {
+      "name": "get_receipt",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "decision_id",
+          "type": "string"
+        }
+      ],
+      "output": "receipt-json-or-error"
+    },
+    {
+      "name": "admit_proposal",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "proposal_json",
+          "type": "json-string"
+        }
+      ],
+      "output": "proposal-admit-result"
+    },
+    {
+      "name": "get_proposal",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "proposal_id",
+          "type": "string"
+        }
+      ],
+      "output": "proposal-json-or-error"
+    },
+    {
+      "name": "execute_proposal",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "proposal_id",
+          "type": "string"
+        }
+      ],
+      "output": "proposal-execution-result"
+    },
+    {
+      "name": "register_adjudicator",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "adjudicator_json",
+          "type": "json-string"
+        }
+      ],
+      "output": "adjudicator-registration-result"
+    },
+    {
+      "name": "revoke_adjudicator",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "source_contract",
+          "type": "address"
+        }
+      ],
+      "output": "adjudicator-revocation-result"
+    },
+    {
+      "name": "get_adjudicator",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "source_contract",
+          "type": "address"
+        }
+      ],
+      "output": "adjudicator-record"
+    }
+  ],
+  "canonicalDecision": {
+    "decision": [
+      "SETTLED",
+      "DENIED"
+    ],
+    "reasonCode": [
+      "POLICY_DENYLIST",
+      "POLICY_PER_TX_LIMIT",
+      "DELEGATE_PER_TX_LIMIT",
+      "POLICY_DAILY_LIMIT",
+      "DELEGATE_DAILY_LIMIT",
+      "ATTESTATION_MISSING",
+      "ATTESTATION_SUBJECT_MISMATCH",
+      "ATTESTATION_REVOKED",
+      "ATTESTATION_INVALID_STATUS",
+      "ATTESTATION_ISSUER_UNAUTHORIZED",
+      "ATTESTATION_INVALID",
+      "ATTESTATION_EXPIRED",
+      "ATTESTATION_POLICY_MISMATCH",
+      "INSUFFICIENT_COMMITMENT",
+      "RECEIPT_SOURCE_UNREGISTERED",
+      "RECEIPT_SOURCE_REVOKED",
+      "RECEIPT_SOURCE_EXPIRED",
+      "RECEIPT_SOURCE_MISMATCH",
+      "RECEIPT_AUTHORITY_MISMATCH",
+      "RECEIPT_EXPIRED"
+    ],
+    "equivalenceFields": [
+      "status",
+      "reason"
+    ],
+    "deniedPaymentDoesNotConsumeId": true,
+    "receiptOrigin": {
+      "binding": "origin is gl.message.sender_address compared against the owner-registered adjudicator; a JSON source_contract field is never sufficient",
+      "isCorrectnessOracle": false,
+      "note": "Origin binding establishes attribution/integrity only. A registered but compromised adjudicator can still emit ACCEPTED for a false conclusion and PPA will honour it. See DECISION_BOUNDARY.md.",
+      "registryFields": [
+        "source_contract",
+        "authority_fingerprint",
+        "policy_version",
+        "status",
+        "created_at",
+        "expires_at"
+      ],
+      "statusVocabulary": [
+        "ACTIVE",
+        "REVOKED"
+      ],
+      "receiptSchemaAddition": "authority_fingerprint"
+    }
+  },
+  "attestation": {
+    "fixedFields": [
+      "subject",
+      "issuer",
+      "status",
+      "issued_at",
+      "expires_at",
+      "evidence_hash",
+      "policy_version"
+    ],
+    "statusVocabulary": [
+      "VALID",
+      "REVOKED"
+    ],
+    "unknownFieldsRejected": true,
+    "piiProhibited": true,
+    "gate": "fail-closed; runs only when rules.require_attestation is truthy",
+    "binding": "subject=recipient, issuer in rules.attestation_issuers, policy_version == rules.attestation_policy_version",
+    "notLegalCompliance": "technical compliance evidence only; NOT KYC/AML or legal authorization"
+  },
+  "stateOwnership": {
+    "owns": [
+      "sub-account ledger (balance/committed/daily windows)",
+      "payment records and canonical denial reasons",
+      "owner-registered technical compliance attestations",
+      "adjudication receipts and admitted proposals",
+      "adjudicator registry (source_contract, authority_fingerprint, policy_version, status, validity window)"
+    ],
+    "doesNotOwn": [
+      "external token custody (v0.1 credits on authority check)",
+      "substantive web/LLM observation (supplied via receipts)",
+      "invoice/dispute/delegate extensions (modular, not in core deploy)",
+      "legal KYC/AML status",
+      "adjudication itself (web retrieval, reasoning, validator equivalence) \u2014 belongs to a separate producer contract"
+    ]
+  },
+  "limits": {
+    "duplicateAccountId": "rejected",
+    "duplicatePaymentId": "rejected unless prior record is DENIED",
+    "duplicateDelegationId": "rejected",
+    "duplicateAttestationId": "rejected",
+    "attestationIdMaxChars": 64,
+    "evidenceHashMaxChars": 128,
+    "policyVersionMaxChars": 64,
+    "delegationNarrowsNeverWidens": true
+  },
+  "vectors": [
+    "primitives/ppa/vectors/v0.1.json",
+    "primitives/ppa/vectors/v0.2-spine.json",
+    "primitives/ppa/vectors/v0.3-origin.json"
+  ],
+  "reproduce": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "python tools/nomos_run_vectors.py primitives/ppa/implementations/genlayer/ppa.py --vectors primitives/ppa/vectors/v0.1.json",
+    "python -m pytest primitives/ppa/implementations/genlayer/tests/ -v (requires glsim on :4000)",
+    "python tools/nomos_run_vectors.py primitives/ppa/implementations/genlayer/ppa.py --vectors primitives/ppa/vectors/v0.3-origin.json",
+    "python -m pytest primitives/ppa/implementations/genlayer/tests/test_ppa_receipt_origin.py -q"
+  ],
+  "composition": {
+    "composes": [
+      "ppa-core",
+      "ppa-receipt-adapter"
+    ],
+    "note": "PPA is the product-level composition. It is NOT itself deployable. The deployable units carry their own independent capability contracts, versions, tests and authority fingerprints.",
+    "unitBoundary": "At PPA Core the caller is the Adapter; at the Adapter the caller is the adjudicator. Evidence: convergence/reports/CALLER-IDENTITY-SPIKE.json"
+  },
+  "unsupported": [
+    "legal KYC/AML or regulatory compliance",
+    "invoice/dispute/delegate in core deploy (gas-modularized)",
+    "external token settlement on deposit",
+    "in-contract nondet web fetch in this slice (receipt intake spine first)",
+    "receipt origin authentication prior to v0.3 (v0.2 accepted owner-supplied receipt JSON from any unregistered source)"
+  ],
+  "notes": {
+    "v0.2_spine": "submit_decision_receipt -> admit_proposal -> execute_proposal through deterministic send gates",
+    "modularization": "invoice/dispute/delegate extracted from deployable core under Bradbury gas ceiling; remain SPECIFIED extensions",
+    "judgment": "receipts carry ACCEPTED/REJECTED/UNDETERMINED; only ACCEPTED+ACTIONABLE may admit proposals; gates still dispose money"
+  },
+  "supersededVectors": [
+    {
+      "path": "primitives/ppa/vectors/v0.2-spine.json",
+      "reason": "historical. Its receipts were owner-supplied from unregistered source 0xabc000000000000000000000000000000000001 and no longer pass under v0.3 origin binding. Superseded by v0.3-origin.json.",
+      "additionalFinding": "The v0.2-spine corpus used a 'steps' key while tools/nomos_run_vectors.py reads 'actions'. Its reported 2/2 pass executed zero assertions. See WORK-PPA-V03-ORIGIN-2026-10-17 toolingFindings."
+    }
+  ],
+  "role": "canonical composition product",
+  "deployable": false,
+  "composedUnits": [
+    "ppa-core",
+    "ppa-receipt-adapter"
+  ],
+  "deploymentBoundary": {
+    "v0_2_spine": "0xa4fbEc963Bc105bc950648D092d11bAE7eF191fb \u2014 DISPOSITION_PATH_OBSERVED / PRODUCER_NOT_CONNECTED / ORIGIN_AUTHENTICATION_NOT_IMPLEMENTED / BOUND_TO_SUPERSEDED_AUTHORITY",
+    "v0_3_monolith": "DEPLOY_BLOCKED_GAS \u2014 single-file estimate 18719528 against the 16773925 accept ceiling",
+    "monolithImplementation": "primitives/ppa/implementations/genlayer/ppa.py is retained as historical evidence of the v0.3 monolith and is superseded by the split units. It is not a deployment target."
+  }
+}

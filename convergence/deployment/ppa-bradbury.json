@@ -1,20 +1,27 @@
 {
-  "network": "genlayer-testnet-bradbury",
+  "network": "testnet-bradbury",
   "chainId": "4221",
   "rpc": "https://rpc-bradbury.genlayer.com",
-  "deployer": "0x8311bfd717708d6e9c4933e80762cc4901f836bf",
-  "contractFile": "contracts/ppa.py",
-  "primitive": "ppa",
-  "evmTxHash": "0x0359eb263c384e7c6e9ce83e9f8762455f72d4d48159718f311324f63822187b",
-  "contractAddress": "0xa0a78b312edae2b95ae73d1706295ed7966b45da",
-  "codeBytesOnChain": 300,
-  "evidenceLevel": "deployed on live testnet; bytecode verified via eth_getCode; functional write-call evidence pending",
-  "deployedAt": "2026-08-23",
-  "note": "v0.1.1 redeploy with robust ISO timestamp parsing (Z-suffix fix found via Bradbury-only revert)",
-  "functionalVerification": {
-    "method": "live write+read calls (full lifecycle)",
-    "result": "PASS",
-    "detail": "Full payment lifecycle on Testnet Bradbury against the fixed v0.1.1 deployment: initialize ok; create_account LIFE-ACC -> ACTIVE; deposit 3000 landed; send 1200 -> payment LIFE-945168 SETTLED; final balance read-back 1800 = exact expected delta (3000 - 1200). Intermediate deposit read raced consensus and is superseded by the exact final-state proof.",
-    "verifiedAt": "2026-08-23"
-  }
+  "deployer": "0x8311BfD717708d6E9c4933e80762cC4901F836BF",
+  "contractFile": "ppa.py",
+  "contractAddress": "0xa4fbEc963Bc105bc950648D092d11bAE7eF191fb",
+  "evmTxHash": "0xe485330103cdeec862b24024bf9cb6a38be2fe8d39fef90d3cf55b697dc17ec9",
+  "consensusTxId": "0x80d2c147a0eeec8dd72b87f421f7b336572a45a53e3c5ce1a6830434dbf51943",
+  "result": "0x80d2c147a0eeec8dd72b87f421f7b336572a45a53e3c5ce1a6830434dbf51943",
+  "source_chars": 19823,
+  "estimate_gas": 16470433,
+  "submit_gas": 16773925,
+  "gas_used": 15251472,
+  "block": 25381104,
+  "eth_getCode_bytes": 300,
+  "variant": "v0.2 core+spine (receipt/proposal); invoice/dispute/delegate modularized out",
+  "authority_fingerprint": "sha256:6fe203461ec80c54c46b8939d3564b0637963675e17e3ee8c1cf39d9a2ffdebd",
+  "implementation_sha256": "sha256:1947916df93a9185337c34c0a724b581a0f6c90ddfecd3154d8cf60af8fed2e7",
+  "explorer": "https://explorer-bradbury.genlayer.com/address/0xa4fbEc963Bc105bc950648D092d11bAE7eF191fb",
+  "status": "DEPLOYED",
+  "prior_contracts": [
+    "0xB61670E0C8a44d8434815F397a8E80FD0f55B7c6",
+    "0x126fFE048b821116810B538Adfb1Ce600189e0F9",
+    "0x6D999C4c3A4f25897b67190FF644E5a76817aabf"
+  ]
 }

@@ -1,0 +1,155 @@
+{
+  "contract": "0xa4fbEc963Bc105bc950648D092d11bAE7eF191fb",
+  "run": "234446",
+  "steps": [
+    {
+      "method": "initialize",
+      "evm_tx": "0x0d53529332c2c2b1523ccc04a6bc0ee29b5692bc939fe95c518934018dfcbe04",
+      "gas_used": 843297,
+      "block": 25381146,
+      "consensus_tx": "0x39ac22df6f836a27acd8b78d3306946baf41557eedc9eb80861be3d32da57fa1",
+      "consensus_status": "5"
+    },
+    {
+      "method": "create_account",
+      "evm_tx": "0x4581fe91d48677b18c34a74ff92713b97845e3df5cb7cfef9f34833e3e2453fc",
+      "gas_used": 866334,
+      "block": 25381175,
+      "consensus_tx": "0xbc4de0198191e5e7a0316c5cb8f3b23af7ab08ce940663d91563310e4dd870fb",
+      "consensus_status": "5",
+      "consensus_err": "'14'"
+    },
+    {
+      "method": "deposit",
+      "evm_tx": "0x09fa2e9fdab9dc142a48d61f36bf5a9afbb8a3329f29afe8978981c0bd0814f2",
+      "gas_used": 828070,
+      "block": 25381198,
+      "consensus_tx": "0x7c30383f3064d6529668eaca0f2e301f3100486bc306304b46976ad3d66e0d87",
+      "consensus_status": "5"
+    },
+    {
+      "method": "submit_decision_receipt",
+      "evm_tx": "0x584e16c746e58d0fc531c953e72d80299b17cf0533083a01eb5dd5389d2485ed",
+      "gas_used": 1079517,
+      "block": 25381223,
+      "consensus_tx": "0xbf9bac496b535d6062736df9d0b6a394530d773151628bb8e72d61753b73dc28",
+      "consensus_status": "5",
+      "consensus_err": "'14'"
+    },
+    {
+      "method": "submit_decision_receipt",
+      "evm_tx": "0xf7197331d53bb26a57f6c31b2f0bde640cb73d8c59ad40af6fcdb104ce687cc9",
+      "gas_used": 1071971,
+      "block": 25381252,
+      "consensus_tx": "0x0f17337de71c594f6161db5ae2cdfeaa6324cc39f219f56de0acaed35489919b",
+      "consensus_status": "5",
+      "consensus_err": "'14'"
+    },
+    {
+      "method": "admit_proposal",
+      "evm_tx": "0xadd33f452e6afedd3b094d784503264ba1af845d9f68d0ea2927bbb892156395",
+      "gas_used": 957894,
+      "block": 25381276,
+      "consensus_tx": "0x960b3358cbb0f80e4c73db7407774e1a273a70766861d56fec333ac6545075c3",
+      "consensus_status": "5"
+    },
+    {
+      "method": "execute_proposal",
+      "evm_tx": "0x649f9151ab2e6e821ed43dbb17e5c3aedb8b7b0e17367fed49f13196978ba8a4",
+      "gas_used": 820488,
+      "block": 25381299,
+      "consensus_tx": "0xf2bc015f445ef274f863bfb971cbf8bd856bb871fc66b5205a40905397ceb3a8",
+      "consensus_status": "5"
+    }
+  ],
+  "reads": {
+    "account": {
+      "account_id": "SPINE-ACC-234446",
+      "balance": "900",
+      "committed": "0",
+      "created": "2026-10-17T10:54:28Z",
+      "daily_spent": "100",
+      "daily_window_start": "2026-10-17T10:54:28Z",
+      "rules": {
+        "currency": "USDC",
+        "daily_limit": "1000",
+        "per_tx_limit": "500"
+      },
+      "status": "ACTIVE"
+    },
+    "receipt_rejected": {
+      "actionability": "NON_ACTIONABLE",
+      "created_at": "2020-01-01T00:00:00+00:00",
+      "decision_id": "DEC-R-234446",
+      "decision_status": "REJECTED",
+      "equivalence_mode": "comparative",
+      "evidence_hash": "sha256:e-bad",
+      "expires_at": "2099-01-01T00:00:00+00:00",
+      "fail_reason": "NOT_ACCEPTED",
+      "policy_version": "TECH-V1",
+      "question_hash": "sha256:q-bad",
+      "recorded": "2026-10-17T10:55:06Z",
+      "source_contract": "0xabc000000000000000000000000000000000001"
+    },
+    "receipt_accepted": {
+      "actionability": "ACTIONABLE",
+      "created_at": "2020-01-01T00:00:00+00:00",
+      "decision_id": "DEC-234446",
+      "decision_status": "ACCEPTED",
+      "equivalence_mode": "comparative",
+      "evidence_hash": "sha256:e-spine",
+      "expires_at": "2099-01-01T00:00:00+00:00",
+      "policy_version": "TECH-V1",
+      "question_hash": "sha256:q-spine",
+      "recorded": "2026-10-17T10:55:23Z",
+      "source_contract": "0xabc000000000000000000000000000000000001"
+    },
+    "proposal": {
+      "account_id": "SPINE-ACC-234446",
+      "amount": "100",
+      "created": "2026-10-17T10:55:40Z",
+      "decision_id": "DEC-234446",
+      "evidence_hash": "sha256:e-spine",
+      "executed": "2026-10-17T10:55:57Z",
+      "payment_id": "PAY-234446",
+      "policy_version": "TECH-V1",
+      "proposal_id": "PROP-234446",
+      "status": "EXECUTED",
+      "to": "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+    },
+    "payment": {
+      "account_id": "SPINE-ACC-234446",
+      "actor": "owner",
+      "amount": "100",
+      "created": "2026-10-17T10:55:57Z",
+      "decision_id": "DEC-234446",
+      "evidence_hash": "sha256:e-spine",
+      "memo": "proposal:PROP-234446",
+      "payment_id": "PAY-234446",
+      "proposal_id": "PROP-234446",
+      "status": "SETTLED",
+      "to": "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+    }
+  },
+  "status": "TESTNET_OBSERVED",
+  "checks": {
+    "rejected_non_actionable": true,
+    "accepted_actionable": true,
+    "proposal_executed": true,
+    "payment_settled": true,
+    "payment_bound": true,
+    "balance_900": true
+  },
+  "ids": {
+    "account": "SPINE-ACC-234446",
+    "decision": "DEC-234446",
+    "decision_rejected": "DEC-R-234446",
+    "proposal": "PROP-234446",
+    "payment": "PAY-234446"
+  },
+  "limitations": [
+    "Internal ledger only",
+    "Receipt intake spine; nondet web observation producer not in this deploy",
+    "Invoice/dispute/delegate modularized out of core under gas ceiling"
+  ]
+}

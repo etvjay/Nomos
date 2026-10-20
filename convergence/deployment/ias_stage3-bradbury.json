@@ -1,0 +1,8 @@
+{
+  "network": "testnet-bradbury",
+  "chainId": "4221",
+  "rpc": "https://rpc-bradbury.genlayer.com",
+  "deployer": "0x8311BfD717708d6E9c4933e80762cC4901F836BF",
+  "contractFile": "ias_stage3.py",
+  "result": "0xf2dafda01abeadafba92261d94c439e0670e57d15ca568d52c1429331758938f"
+}

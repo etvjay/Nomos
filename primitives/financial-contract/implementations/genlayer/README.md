@@ -52,6 +52,7 @@ rejection, post-default payment denial).
 
 ## What remains unsupported
 
-Interest accrual, contingent clauses, covenants, restructuring, in-contract
-interpretation of external events (compose claim-verification), deployment
-receipts, and independent-partner convergence evidence.
+Interest accrual, contingent clauses, covenants, restructuring, and
+in-contract interpretation of external events (compose claim-verification).
+Convergence evidence: `convergence-lanes/financial-contract/your_build.py`
+9/9 + `convergence/receipts/RECEIPT-CONV-FC-B.json`.

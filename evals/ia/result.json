@@ -1,0 +1,339 @@
+{
+  "corpus_hash": "7cb2c81169177961",
+  "verdict": "GREEN",
+  "crit_fail": 0,
+  "major_fail": 0,
+  "results": [
+    {
+      "id": "ia-001-monitor-price-equivalence-pass",
+      "gate": "D1-observation",
+      "weight": "critical",
+      "scoring": "exact",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "equivalence": "pass",
+        "price": 3421.11,
+        "stale": false
+      },
+      "actual": {
+        "equivalence": "pass",
+        "price": 3421.11,
+        "stale": false
+      }
+    },
+    {
+      "id": "ia-002-monitor-stale-feed-fail",
+      "gate": "D1-observation",
+      "weight": "critical",
+      "scoring": "exact",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "equivalence": "fail",
+        "reason": "STALE_FEED"
+      },
+      "actual": {
+        "equivalence": "fail",
+        "reason": "STALE_FEED"
+      }
+    },
+    {
+      "id": "ia-003-monitor-spike-outside-tolerance-fail",
+      "gate": "D1-observation",
+      "weight": "critical",
+      "scoring": "exact",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "equivalence": "fail",
+        "reason": "DIVERGENCE"
+      },
+      "actual": {
+        "equivalence": "fail",
+        "reason": "DIVERGENCE"
+      }
+    },
+    {
+      "id": "ia-004-monitor-sla-breach-observed",
+      "gate": "D1-observation",
+      "weight": "critical",
+      "scoring": "exact",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "sla_breach": true,
+        "action": "observe_breach"
+      },
+      "actual": {
+        "sla_breach": true,
+        "action": "observe_breach"
+      }
+    },
+    {
+      "id": "ia-005-monitor-who-wakes-correct",
+      "gate": "D1-observation",
+      "weight": "major",
+      "scoring": "exact",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "waker": "validator",
+        "keeper": false
+      },
+      "actual": {
+        "waker": "validator",
+        "keeper": false
+      }
+    },
+    {
+      "id": "ia-006-coordinator-two-feeds-agree-in-window",
+      "gate": "D2-classification",
+      "weight": "critical",
+      "scoring": "exact",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "correlate": "pass",
+        "confidence": "high"
+      },
+      "actual": {
+        "correlate": "pass",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "ia-007-coordinator-window-expiry-fail",
+      "gate": "D2-classification",
+      "weight": "critical",
+      "scoring": "exact",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "correlate": "fail",
+        "reason": "WINDOW_EXPIRY"
+      },
+      "actual": {
+        "correlate": "fail",
+        "reason": "WINDOW_EXPIRY"
+      }
+    },
+    {
+      "id": "ia-008-coordinator-dispute-category-judgment",
+      "gate": "D2-classification",
+      "weight": "major",
+      "scoring": "judge",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "category": "delivery-mismatch",
+        "rubric": "correct category"
+      },
+      "actual": {
+        "category": "delivery-mismatch"
+      }
+    },
+    {
+      "id": "ia-009-coordinator-confidence-low-no-proposal",
+      "gate": "D3-proposal",
+      "weight": "critical",
+      "scoring": "exact",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "proposal": null,
+        "reason": "LOW_CONFIDENCE"
+      },
+      "actual": {
+        "proposal": null,
+        "reason": "LOW_CONFIDENCE"
+      }
+    },
+    {
+      "id": "ia-010-executor-proposal-passes-all-gates-settles",
+      "gate": "B2-C-settle",
+      "weight": "critical",
+      "scoring": "exact",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "proposal_consumed": true
+      },
+      "actual": {
+        "status": "settled",
+        "proposal_consumed": true
+      }
+    },
+    {
+      "id": "ia-011-executor-proposal-fails-policy-deny",
+      "gate": "B2-policy",
+      "weight": "critical",
+      "scoring": "exact",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "POLICY_PER_TX_LIMIT",
+        "settled": 0
+      },
+      "actual": {
+        "status": "deny",
+        "code": "POLICY_PER_TX_LIMIT",
+        "settled": 0
+      }
+    },
+    {
+      "id": "ia-012-executor-proposal-fails-encumbrance-overcommit",
+      "gate": "C1-encumbrance",
+      "weight": "critical",
+      "scoring": "exact",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "INSUFFICIENT_AVAILABLE"
+      },
+      "actual": {
+        "status": "deny",
+        "code": "INSUFFICIENT_AVAILABLE"
+      }
+    },
+    {
+      "id": "ia-013-executor-kill-switch-blocks",
+      "gate": "B2-policy",
+      "weight": "critical",
+      "scoring": "exact",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "KILL_SWITCH"
+      },
+      "actual": {
+        "status": "deny",
+        "code": "KILL_SWITCH"
+      }
+    },
+    {
+      "id": "ia-014-executor-allowlist-blocks-proposal",
+      "gate": "B2-policy",
+      "weight": "critical",
+      "scoring": "exact",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "POLICY_DENYLIST"
+      },
+      "actual": {
+        "status": "deny",
+        "code": "POLICY_DENYLIST"
+      }
+    },
+    {
+      "id": "ia-015-executor-delegation-narrows-proposal",
+      "gate": "A2-delegation",
+      "weight": "critical",
+      "scoring": "exact",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "DELEGATE_PER_TX_LIMIT"
+      },
+      "actual": {
+        "status": "deny",
+        "code": "DELEGATE_PER_TX_LIMIT"
+      }
+    },
+    {
+      "id": "ia-016-executor-judgment-cannot-bypass-gate",
+      "gate": "D4-invariant",
+      "weight": "critical",
+      "scoring": "exact",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "D4_INVARIANT",
+        "balance": 1000
+      },
+      "actual": {
+        "status": "deny",
+        "code": "D4_INVARIANT",
+        "balance": 1000
+      }
+    },
+    {
+      "id": "ia-017-judgment-explanation-quality",
+      "gate": "D3-proposal",
+      "weight": "major",
+      "scoring": "judge",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "explanation": "mentions SLA breach overrides price",
+        "score_min": 4
+      },
+      "actual": {
+        "explanation": "paused: SLA breach overrides price signal"
+      }
+    },
+    {
+      "id": "ia-018-monitor-price-extraction-judgment",
+      "gate": "D1-observation",
+      "weight": "major",
+      "scoring": "judge",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "price": 3421.11,
+        "tolerance_bps": 10
+      },
+      "actual": {
+        "price": 3421.11
+      }
+    },
+    {
+      "id": "ia-019-full-lifecycle-observe-correlate-settle",
+      "gate": "IAS-1",
+      "weight": "critical",
+      "scoring": "exact",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "equivalence": "pass",
+        "correlate": "pass",
+        "status": "settled",
+        "balance": 2600
+      },
+      "actual": {
+        "equivalence": "pass",
+        "correlate": "pass",
+        "status": "settled",
+        "balance": 2600
+      }
+    },
+    {
+      "id": "ia-020-full-lifecycle-breach-pauses-no-settle",
+      "gate": "IAS-1",
+      "weight": "critical",
+      "scoring": "exact",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "sla_breach": true,
+        "status": "deny",
+        "code": "SLA_BREACH_PAUSE",
+        "balance": 3000
+      },
+      "actual": {
+        "sla_breach": true,
+        "status": "deny",
+        "code": "SLA_BREACH_PAUSE",
+        "balance": 3000
+      }
+    }
+  ]
+}

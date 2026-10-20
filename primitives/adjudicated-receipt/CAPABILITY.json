@@ -1,0 +1,307 @@
+{
+  "schemaVersion": "1.0.0",
+  "primitiveId": "adjudicated-receipt",
+  "name": "Adjudicated Receipt",
+  "capabilityVersion": "0.2.0",
+  "status": "CONFORMANT",
+  "convergenceMode": "SEMANTIC",
+  "judgmentBearing": true,
+  "implementation": {
+    "environment": "genlayer",
+    "path": "primitives/adjudicated-receipt/implementations/genlayer/adjudicated_receipt.py",
+    "contract": "AdjudicatedReceipt"
+  },
+  "publicMethods": [
+    {
+      "name": "initialize",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "0x-address-string"
+        }
+      ],
+      "output": "\"initialized\""
+    },
+    {
+      "name": "register_release",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "invoice_id",
+          "type": "string(1..64)"
+        },
+        {
+          "name": "object_ref",
+          "type": "string"
+        },
+        {
+          "name": "surrender_value",
+          "type": "positive-uint-string"
+        },
+        {
+          "name": "surrender_asset",
+          "type": "string"
+        },
+        {
+          "name": "evidence_pointer",
+          "type": "https-url-string"
+        },
+        {
+          "name": "adjudication_clause",
+          "type": "string"
+        },
+        {
+          "name": "valid_for_seconds",
+          "type": "positive-uint-string"
+        },
+        {
+          "name": "challenge_window",
+          "type": "positive-uint-string"
+        },
+        {
+          "name": "policy_version",
+          "type": "string"
+        },
+        {
+          "name": "expected_source_id",
+          "type": "string"
+        }
+      ],
+      "output": "\"release_registered\""
+    },
+    {
+      "name": "adjudicate_object",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "invoice_id",
+          "type": "string"
+        },
+        {
+          "name": "receipt_id",
+          "type": "string(1..64)"
+        }
+      ],
+      "output": "canonical-receipt-decision-object"
+    },
+    {
+      "name": "challenge_release",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "receipt_id",
+          "type": "string"
+        },
+        {
+          "name": "bond",
+          "type": "positive-uint-string"
+        },
+        {
+          "name": "counterevidence_hash",
+          "type": "string"
+        },
+        {
+          "name": "reason",
+          "type": "string"
+        }
+      ],
+      "output": "\"challenged\""
+    },
+    {
+      "name": "resolve_challenge",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "receipt_id",
+          "type": "string"
+        },
+        {
+          "name": "resolution",
+          "type": "upheld|dismissed"
+        }
+      ],
+      "output": "canonical-resolution-object"
+    },
+    {
+      "name": "finalize_release",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "receipt_id",
+          "type": "string"
+        }
+      ],
+      "output": "canonical-finalization-object (FINAL_ACCEPTED | EXPIRED)"
+    },
+    {
+      "name": "settle_release",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "receipt_id",
+          "type": "string"
+        }
+      ],
+      "output": "canonical-settlement-object"
+    },
+    {
+      "name": "cancel_release",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "invoice_id",
+          "type": "string"
+        }
+      ],
+      "output": "canonical-cancellation-object"
+    },
+    {
+      "name": "get_object",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "invoice_id",
+          "type": "string"
+        }
+      ],
+      "output": "canonical-object-json-object"
+    },
+    {
+      "name": "get_receipt",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "receipt_id",
+          "type": "string"
+        }
+      ],
+      "output": "canonical-receipt-json-object"
+    },
+    {
+      "name": "get_release",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "payment_id",
+          "type": "string"
+        }
+      ],
+      "output": "canonical-release-json-object"
+    },
+    {
+      "name": "get_challenge",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "receipt_id",
+          "type": "string"
+        }
+      ],
+      "output": "canonical-challenge-json-object"
+    }
+  ],
+  "canonicalDecision": {
+    "status": [
+      "PROVISIONAL_ACCEPTED",
+      "FINAL_ACCEPTED",
+      "REJECTED",
+      "UNDETERMINED",
+      "UNDETERMINED_DELIVERY_UNCERTAIN",
+      "CHALLENGED",
+      "EXPIRED"
+    ],
+    "reasonCode": [
+      "QUORUM_DELIVERED_HIGH_CONFIDENCE",
+      "EVIDENCE_NOT_SATISFYING",
+      "DELIVERY_UNCERTAIN",
+      "CONSENSUS_UNREACHABLE",
+      "EVIDENCE_TTL_EXPIRED"
+    ],
+    "equivalenceFields": [
+      "satisfied",
+      "verdict",
+      "confidence"
+    ],
+    "nonCanonicalFields": [
+      "reason"
+    ],
+    "verdictVocabulary": [
+      "delivered",
+      "partial",
+      "not_delivered",
+      "ambiguous"
+    ],
+    "confidenceVocabulary": [
+      "high",
+      "medium",
+      "low"
+    ],
+    "objectStatusVocabulary": [
+      "OPEN",
+      "SETTLED",
+      "CANCELLED"
+    ]
+  },
+  "stateOwnership": {
+    "owns": [
+      "registered release objects keyed by invoice_id",
+      "immutable adjudication receipts keyed by receipt_id (one-way consumed bit)",
+      "challenge records keyed by receipt_id (one-way resolution)",
+      "release records keyed by pay-<receipt_id>"
+    ],
+    "doesNotOwn": [
+      "spending policy",
+      "delegation and authority allocation",
+      "capital reservation and commitment",
+      "claim encumbrance",
+      "token movement or custody",
+      "rectification and collection"
+    ]
+  },
+  "limits": {
+    "idLength": "1..64 chars",
+    "evidencePointerScheme": "https only",
+    "receiptConsumption": "exactly-once (consumed bit is one-way)",
+    "challengeConsumption": "exactly-once per receipt (resolution is one-way)",
+    "duplicateObjectId": "rejected",
+    "duplicateReceiptId": "rejected",
+    "acceptanceBar": "satisfied=true AND verdict=delivered AND confidence=high",
+    "provisionalToFinal": "challenge_deadline passed AND unchallenged AND evidence TTL valid",
+    "settlementAuthority": "owner-held in v0.2"
+  },
+  "vectors": [
+    "primitives/adjudicated-receipt/vectors/v0.2.json"
+  ],
+  "reproduce": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "pytest primitives/adjudicated-receipt/implementations/genlayer/tests/ -v",
+    "python tools/nomos_run_vectors.py primitives/adjudicated-receipt/implementations/genlayer/adjudicated_receipt.py --vectors primitives/adjudicated-receipt/vectors/v0.2.json",
+    "genvm-lint check primitives/adjudicated-receipt/implementations/genlayer/adjudicated_receipt.py"
+  ],
+  "composition": {
+    "typicalUpstream": [
+      "proof-of-payable",
+      "claim-verification",
+      "mandate-allocation"
+    ],
+    "typicalDownstream": [
+      "policy-envelope",
+      "claim-encumbrance",
+      "capital-commitment",
+      "gaia",
+      "financial-contract"
+    ]
+  },
+  "unsupported": [
+    "token transfer or custody (settlement records a release obligation only)",
+    "cross-contract receipt consumption",
+    "per-object non-owner settler bindings",
+    "partial-release tiers (partial/low-confidence verdicts are observable non-approval)",
+    "content-hash evidence binding (v0.2 binds obligation hash + URL + terms + TTL)",
+    "bond escrow/slashing (bonds are recorded commitments only)",
+    "escalation to a review committee or arbitration forum (owner-mediated resolution only)",
+    "deployment/conformance guarantee until a release receipt exists"
+  ]
+}

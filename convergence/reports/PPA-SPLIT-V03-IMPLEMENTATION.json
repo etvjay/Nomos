@@ -1,0 +1,98 @@
+{
+  "artifact": "PPA-SPLIT-V03-IMPLEMENTATION-2026-10-17",
+  "workContract": "WORK-PPA-SPLIT-V03-2026-10-17",
+  "recorded_at": "2026-10-17",
+  "status": "IMPLEMENTED_LOCALLY \u2014 NOT DEPLOYED",
+  "deploymentGates": {
+    "coreLocalCrossContractTests": "PASS",
+    "adapterLocalCrossContractTests": "PASS",
+    "allRefusalCases": "PASS",
+    "policyCapitalMutationCases": "PASS",
+    "coreGasEstimate": "PASS",
+    "adapterGasEstimate": "PASS",
+    "bradburyCallerBoundaryReproof": "NOT RUN \u2014 required before any deploy"
+  },
+  "evidence": {
+    "neverCombined": true,
+    "ppa-core": {
+      "sourceSha256": "bc58f12d7fa8ff14c329cd0058bfd53e83658e130c3e1dc3232a6c7eaa9aefb2",
+      "capabilityFingerprint": "sha256:4543a62c7afc4778a3b9d89be69e16a1b37fb7a5ccc3902e7d9711d0ee7a3a8e",
+      "capabilityVersion": "0.1.0",
+      "chars": 19922,
+      "gasEstimate": 16552759,
+      "ceiling": 16773925,
+      "margin": 221166,
+      "marginPct": 1.32,
+      "verdict": "READY",
+      "marginWarning": "1.3% headroom is thin. Prefer additional slimming before deploy; do not walk the cap.",
+      "vectors": "6/6 PASS",
+      "tests": "included in 178 passed"
+    },
+    "ppa-receipt-adapter": {
+      "sourceSha256": "6a826de2336866a33bc9ffc85a6e81fec1c96749aa2edcd2e9af85588e153414",
+      "capabilityFingerprint": "sha256:5dda0fa0d72356dd2a0b4582fd31d344328112290d402589c09ba86db2ed6964",
+      "capabilityVersion": "0.1.0",
+      "chars": 10255,
+      "gasEstimate": 8949382,
+      "ceiling": 16773925,
+      "margin": 7824543,
+      "marginPct": 46.6,
+      "verdict": "READY",
+      "vectors": "7/7 PASS",
+      "tests": "included in 178 passed"
+    }
+  },
+  "crossContractProof": {
+    "location": "tests/split/test_ppa_split_cross_contract.py",
+    "result": "23 passed",
+    "covers": [
+      "registered adjudicator -> authenticated receipt -> proposal -> gated settlement",
+      "Core attributes the caller to the Adapter, not the original EOA",
+      "unregistered adjudicator rejected",
+      "JSON source alone is not provenance",
+      "revoked adjudicator non-actionable",
+      "fingerprint mismatch rejected",
+      "REJECTED and UNDETERMINED yield no proposal",
+      "expired receipt yields no proposal",
+      "replayed decision refused",
+      "replayed proposal refused",
+      "unregistered adapter rejected by Core",
+      "revoked adapter rejected by Core",
+      "adapter cannot widen amount",
+      "adapter cannot change recipient",
+      "allowlist enforced by Core",
+      "policy changed after Adapter acceptance -> Core rejects",
+      "capital removed before Core execution -> Core rejects",
+      "attestation gate enforced at Core",
+      "payment replay blocked at Core",
+      "refusal is persisted and returned",
+      "consequence record is write-once",
+      "Core stores no receipt payload"
+    ]
+  },
+  "designDefectFoundAndFixed": {
+    "defect": "Core.execute_proposal called send(), which opens with _resolve_actor() and raises unless the caller is the account owner. When Core is invoked by the Adapter, that reverted the entire emitted transaction, so no consequence was ever recorded.",
+    "detectedBy": "the cross-contract integration test \u2014 not by unit tests, exactly as the Work Contract required",
+    "fix": "separated identity from settlement: send() is now a thin owner-gated wrapper over _settle(); execute_proposal() revalidates every economic gate and then calls the SAME _settle(). The Adapter gains no economic gate bypass.",
+    "invariantPreserved": "both entry paths share one settlement implementation, so policy, allowlist, attestation, capital and replay gates are identical"
+  },
+  "gates": {
+    "pytest": "178 passed, 8 skipped",
+    "crossContract": "23 passed",
+    "vectors": "ppa-core 6/6, ppa-receipt-adapter 7/7, ppa v0.1 15/15, ppa v0.3-origin 9/9",
+    "nomosLint": "PASS",
+    "nomosConverge": "PASS"
+  },
+  "notDone": [
+    "no deployment",
+    "no Bradbury caller-boundary re-proof",
+    "no adjudication producer",
+    "no convergence receipts",
+    "no invoice/dispute/delegation restoration"
+  ],
+  "historicalUnchanged": {
+    "v0_2_spine": "0xa4fbEc963Bc105bc950648D092d11bAE7eF191fb \u2014 DISPOSITION_PATH_OBSERVED / BOUND_TO_SUPERSEDED_AUTHORITY",
+    "v0_3_monolith": "DEPLOY_BLOCKED_GAS \u2014 estimate 18719528 against the 16773925 ceiling"
+  },
+  "ppaRole": "PPA retained as the canonical composition product, IMPLEMENTING, deployable=false, composedUnits=[ppa-core, ppa-receipt-adapter]"
+}

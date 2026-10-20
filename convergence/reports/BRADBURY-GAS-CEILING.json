@@ -1,0 +1,139 @@
+{
+  "report": "BRADBURY-GAS-LIMIT-ACCEPTANCE-CEILING",
+  "recorded_at": "2026-10-18",
+  "method": "Zero-value self-transfer, explicit gasLimit, legacy type-0, fees above chain minimum. Discriminates on the node's REJECTION of the gasLimit field. gasUsed deliberately excluded as a ceiling signal (failed-deploy failure accounting scales with the offered limit).",
+  "probeFailureAndCorrection": {
+    "firstAttempt": "Invalid. Used gasPrice=0, so every tx rejected with 'transaction feeCap 0 below chain minimum' - a different primary reason. The resulting bracket was meaningless.",
+    "detectedBy": "an explicit low-gas CONTROL (21,000 and 1,000,000) which must be ACCEPTED for the vehicle to be valid. The control failed.",
+    "correction": "Set gasPrice = 2 x baseFeePerGas. Control then passed (both low-gas probes ACCEPTED) and the bracket became trustworthy.",
+    "lesson": "A ceiling probe without a negative control can silently measure the wrong thing."
+  },
+  "control": {
+    "passed": true,
+    "probes": [
+      {
+        "gas": 21000,
+        "result": "ACCEPTED"
+      },
+      {
+        "gas": 1000000,
+        "result": "ACCEPTED"
+      }
+    ]
+  },
+  "result": {
+    "previousAssumedCeiling": 16773925,
+    "previousAssumptionStatus": "WRONG - 16,773,925 was merely the lowest gasLimit the earlier session happened to try, never a measured network maximum",
+    "measuredHighestAccepted": 20927934,
+    "measuredLowestRejected": 20993871,
+    "bracketWidth": 65937,
+    "fuzzinessNote": "20,927,934 was ACCEPTED during the binary search and REJECTED_GAS_TOO_HIGH on boundary re-confirmation. The boundary is soft/variable around ~20.86M-20.93M, so treat ~20,861,997 as the conservative accepted ceiling.",
+    "conservativeAcceptedCeiling": 20861997,
+    "errorClass": "eth_sendRawTransaction rejected with 'gas limit too high' (JSON-RPC code -32602)"
+  },
+  "probes": [
+    {
+      "gasLimit": 18883898,
+      "classification": "ACCEPTED",
+      "txHash": "9f129b47a6f98ec7b9929fc59e48b418882bd74a40fe8b61762e3b9e89b181a6",
+      "error": null
+    },
+    {
+      "gasLimit": 19938884,
+      "classification": "ACCEPTED",
+      "txHash": "7090bff695fe020f63159d19fd40a71c3cd1c4946b0310ebaf9835c2b7a1b895",
+      "error": null
+    },
+    {
+      "gasLimit": 20466377,
+      "classification": "ACCEPTED",
+      "txHash": "f1c0a62a4402ee31fbada46c43ad7288a8730f87cd546409274303ca338531a7",
+      "error": null
+    },
+    {
+      "gasLimit": 20730124,
+      "classification": "ACCEPTED",
+      "txHash": "cd28135432f88720b0f16f978d967fbeaf23eeadf6a7e30eacd1444bf6a84184",
+      "error": null
+    },
+    {
+      "gasLimit": 20861997,
+      "classification": "ACCEPTED",
+      "txHash": "b47b9bc277acd7c855f1d4614538251571ba861857972671d9e3777a87d086cc",
+      "error": null
+    },
+    {
+      "gasLimit": 20927934,
+      "classification": "ACCEPTED",
+      "txHash": "30026d684d066a6d94c0a2201ba8d119b6b4ada463a640b0cd4f39f5d37907cf",
+      "error": null
+    }
+  ],
+  "boundaryConfirmation": [
+    {
+      "gasLimit": 20927934,
+      "classification": "REJECTED_GAS_TOO_HIGH",
+      "txHash": null,
+      "error": "eth_sendRawTransaction failed (code=-32602): [0x0c2d6fcc7d7ffad59ffa0217c661782aa17d953b2c073a21dc7816953eaf07ca]: gas limit too high"
+    },
+    {
+      "gasLimit": 20993871,
+      "classification": "REJECTED_GAS_TOO_HIGH",
+      "txHash": null,
+      "error": "eth_sendRawTransaction failed (code=-32602): [0x8efdce178412912f0908fd31c91ba69e75fb761dbbdab565a9336b040fab02b8]: gas limit too high"
+    }
+  ],
+  "supersededFirstAttempt": [
+    {
+      "gasLimit": 18883898,
+      "classification": "REJECTED_AT_SEND",
+      "txHash": null,
+      "error": "eth_sendRawTransaction failed (code=-32602): [0x735ad6fba4b141c8bdf9fe9164f2680454d30f45da61f7e4b9de9f46f8306e09]: gas limit too high",
+      "note": ""
+    },
+    {
+      "gasLimit": 17828911,
+      "classification": "REJECTED_AT_SEND",
+      "txHash": null,
+      "error": "eth_sendRawTransaction failed (code=-32602): [0x5f4cc5fe8e276413293f5f9ffe10b00b948f8164c12cb2270d6ac202ba9304fe]: gas limit too high",
+      "note": ""
+    },
+    {
+      "gasLimit": 17301418,
+      "classification": "REJECTED_AT_SEND",
+      "txHash": null,
+      "error": "eth_sendRawTransaction failed (code=-32602): [0x0e6e51dd4cd5d3fdf9c4d677db18f59f48e7bed9a6d23a2b5973f49817b98c31]: gas limit too high",
+      "note": ""
+    },
+    {
+      "gasLimit": 17037671,
+      "classification": "REJECTED_AT_SEND",
+      "txHash": null,
+      "error": "eth_sendRawTransaction failed (code=-32602): [0x208438917fb98e241a27da17c5217acd00e27e350e15f3f850592385a54aec00]: gas limit too high",
+      "note": ""
+    },
+    {
+      "gasLimit": 16905798,
+      "classification": "REJECTED_AT_SEND",
+      "txHash": null,
+      "error": "eth_sendRawTransaction failed (code=-32602): [0x3496740fcb62ddfea25af79d83ec6a196e56403e6c3494fcfc5e48e0f6cad73e]: gas limit too high",
+      "note": ""
+    }
+  ],
+  "implication": {
+    "ppaCore": {
+      "estimate": 16470225,
+      "previousMarginAgainstFalseCeiling": 303700,
+      "previousMarginPct": "1.84%",
+      "marginAgainstMeasuredCeiling": 4391772,
+      "marginPctAgainstMeasuredCeiling": 26.7,
+      "verdict": "COMFORTABLE. No structural split needed. The 10% target is met with large room."
+    },
+    "v0_3_monolithCorrection": {
+      "monolithEstimate": 18719528,
+      "fitsUnderMeasuredCeiling": true,
+      "conclusion": "The v0.3 monolith was NOT network-blocked. The earlier DEPLOY_BLOCKED_GAS verdict came from treating 16,773,925 as a ceiling when it was only a self-imposed submit value, and from walking gas downward rather than upward. The monolith would likely have deployed at ~18.7M. The split remains the better architecture, but the network-blocks-it rationale was incorrect."
+    }
+  },
+  "caveat": "Measured on the plain EVM transaction path. Core's deploy goes through the same eth_sendRawTransaction -> consensus addTransaction path with the same gas field, so the ceiling should apply, but the Core deploy is the real confirmation."
+}

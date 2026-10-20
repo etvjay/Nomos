@@ -58,6 +58,8 @@ class AutonomousAccount(gl.Contract):
     proposals: TreeMap[str, str]
     groups: TreeMap[str, str]
     correlations: TreeMap[str, str]
+    latest_correlations: TreeMap[str, str]  # group_id -> correlation_id
+    latest_execution: TreeMap[str, str]  # group_id -> autonomous outcome
 
     # --- L3 additions ---
     exec_policies: TreeMap[str, str]   # group_id -> execution policy
@@ -65,6 +67,7 @@ class AutonomousAccount(gl.Contract):
     payments: TreeMap[str, str]        # settled payments w/ correlation lineage
     daily_auto: TreeMap[str, str]      # day -> total autonomous spend
     kill_switch: TreeMap[str, str]     # "autonomous" -> "ON"/"OFF"
+    attestations: TreeMap[str, str]    # attestation_id -> fixed technical record
 
     def __init__(self) -> None:
         pass
@@ -117,7 +120,7 @@ class AutonomousAccount(gl.Contract):
         self._assert_owner()
         pol = {
             "group_id": group_id,
-            "min_confidence": float(min_confidence),
+            "min_confidence": min_confidence,
             "max_amount_per_action": max_amount_per_action,
             "max_daily_autonomous_spend": max_daily_autonomous_spend,
             "recipient_allowlist": json.loads(recipient_allowlist_json),
@@ -179,6 +182,90 @@ class AutonomousAccount(gl.Contract):
             rec["daily_window_start"] = _now_iso()
             return 0, now
         return int(rec["daily_spent"]), start
+
+    # ---------- technical attestation gate (same PPA boundary) ----------
+    ATTESTATION_FIELDS = ("subject", "issuer", "status", "issued_at",
+                          "expires_at", "evidence_hash", "policy_version")
+
+    @gl.public.write
+    def register_attestation(self, attestation_id: str,
+                             attestation_json: str) -> str:
+        self._assert_owner()
+        if not attestation_id or self.attestations.get(attestation_id):
+            raise ValueError("IAS3: invalid or duplicate attestation id")
+        data = json.loads(attestation_json)
+        if (not isinstance(data, dict)
+                or set(data.keys()) != set(self.ATTESTATION_FIELDS)):
+            raise ValueError("IAS3: attestation schema violation")
+        subject, issuer = data["subject"], data["issuer"]
+        if (not isinstance(subject, str) or not isinstance(issuer, str)
+                or len(subject.replace("0x", "")) != 40
+                or len(issuer.replace("0x", "")) != 40):
+            raise ValueError("IAS3: invalid attestation address")
+        if data["status"] not in ("VALID", "REVOKED"):
+            raise ValueError("IAS3: invalid attestation status")
+        issued, expires = _ts(data["issued_at"]), _ts(data["expires_at"])
+        if issued > expires or not data["evidence_hash"] or not data["policy_version"]:
+            raise ValueError("IAS3: invalid attestation window or binding")
+        rec = {"attestation_id": attestation_id,
+               "subject": _norm(subject), "issuer": _norm(issuer),
+               "status": data["status"], "issued_at": data["issued_at"],
+               "expires_at": data["expires_at"],
+               "evidence_hash": data["evidence_hash"],
+               "policy_version": data["policy_version"],
+               "created": _now_iso()}
+        self.attestations[attestation_id] = json.dumps(rec)
+        return "attestation_registered"
+
+    @gl.public.write
+    def revoke_attestation(self, attestation_id: str) -> str:
+        self._assert_owner()
+        raw = self.attestations.get(attestation_id)
+        if not raw:
+            raise ValueError("IAS3: attestation not found")
+        rec = json.loads(raw)
+        rec["status"] = "REVOKED"
+        rec["revoked"] = _now_iso()
+        self.attestations[attestation_id] = json.dumps(rec)
+        return "attestation_revoked"
+
+    @gl.public.view
+    def get_attestation(self, attestation_id: str) -> typing.Any:
+        raw = self.attestations.get(attestation_id)
+        if not raw:
+            raise ValueError("IAS3: attestation not found")
+        return json.loads(raw)
+
+    def _attestation_gate(self, rec: dict, to: str):
+        rules = rec["rules"]
+        if not rules.get("require_attestation"):
+            return None
+        recipient = _norm(to)
+        issuers = {_norm(str(x)) for x in rules.get("attestation_issuers", [])}
+        bound = []
+        for key in sorted(self.attestations.keys()):
+            att = json.loads(self.attestations[key])
+            if att.get("subject") == recipient:
+                bound.append(att)
+        if not bound:
+            return "ATTESTATION_MISSING"
+        now = _ts(_now_iso())
+        for att in bound:
+            if att.get("status") == "REVOKED":
+                reason = "ATTESTATION_REVOKED"
+            elif att.get("status") != "VALID":
+                reason = "ATTESTATION_INVALID_STATUS"
+            elif att.get("issuer") not in issuers:
+                reason = "ATTESTATION_ISSUER_UNAUTHORIZED"
+            elif _ts(att["issued_at"]) > now or _ts(att["expires_at"]) <= now:
+                reason = "ATTESTATION_EXPIRED"
+            elif att.get("policy_version") != rules.get("attestation_policy_version"):
+                reason = "ATTESTATION_POLICY_MISMATCH"
+            elif not att.get("evidence_hash"):
+                reason = "ATTESTATION_INVALID"
+            else:
+                return None
+        return reason
 
     # ---------- human send (same gates as PPA) ----------
     @gl.public.write
@@ -269,24 +356,43 @@ class AutonomousAccount(gl.Contract):
                 ok = str(ld.get("value")) == str(my.get("value"))
             return ok and bool(ld.get("found")) == bool(my.get("found"))
 
-        result = gl.vm.run_nondet(leader_fn, validator_fn)
+        try:
+            result = gl.vm.run_nondet(leader_fn, validator_fn)
+        except Exception as exc:
+            m["last_check"] = _now_iso()
+            m["last_value"] = ""
+            m["last_status"] = "UNDETERMINED"
+            m["last_error"] = str(exc)[:160]
+            self.monitors[monitor_id] = json.dumps(m)
+            return {"success": False, "decision_status": "UNDETERMINED",
+                    "error": "consensus_unreachable"}
         if not isinstance(result, dict):
             m["last_check"] = _now_iso()
-            m["last_status"] = "consensus_unreachable"
+            m["last_value"] = ""
+            m["last_status"] = "UNDETERMINED"
             self.monitors[monitor_id] = json.dumps(m)
-            return {"success": False, "error": "consensus_unreachable"}
+            return {"success": False, "decision_status": "UNDETERMINED",
+                    "error": "consensus_unreachable"}
         value_str = str(result.get("value", "0"))
         found = bool(result.get("found"))
 
         m["last_check"] = _now_iso()
         m["last_value"] = value_str
-        m["last_status"] = "success" if found else "extraction_failed"
+        m["last_status"] = "success" if found else "UNDETERMINED"
+        if not found:
+            self.monitors[monitor_id] = json.dumps(m)
+            return {"success": False, "monitor_id": monitor_id,
+                    "decision_status": "UNDETERMINED",
+                    "error": result.get("step", "extraction_failed")}
 
         try:
             v, t = float(value_str), float(m["threshold_value"])
         except (TypeError, ValueError):
             self.monitors[monitor_id] = json.dumps(m)
-            return {"success": False, "error": "parse_failed"}
+            m["last_status"] = "UNDETERMINED"
+            self.monitors[monitor_id] = json.dumps(m)
+            return {"success": False, "decision_status": "UNDETERMINED",
+                    "error": "parse_failed"}
 
         breach = (v > t) if m["condition"] == "above" else (v < t)
         out = {"success": True, "monitor_id": monitor_id,
@@ -300,11 +406,19 @@ class AutonomousAccount(gl.Contract):
                 "value": value_str, "detected": _now_iso(),
                 "status": "OPEN"})
             proposal_id = f"PROP-{breach_id}"
+            template = m.get("proposal_template", "")
+            payload = template.replace("{value}", value_str) if template else ""
             self.proposals[proposal_id] = json.dumps({
                 "proposal_id": proposal_id, "breach_id": breach_id,
                 "monitor_id": monitor_id,
                 "signal_group": m["signal_group"],
                 "observed_value": value_str, "status": "OBSERVED",
+                "decision_id": f"DEC-{breach_id}",
+                "decision_status": "ACCEPTED",
+                "equivalence_mode": "comparative",
+                "policy_version": "IAS-1",
+                "confidence": str(result.get("confidence", "none")),
+                "action_payload": payload,
                 "proposed_at": _now_iso()})
             out["proposal_id"] = proposal_id
 
@@ -346,29 +460,38 @@ class AutonomousAccount(gl.Contract):
         n = len(breached)
         confirmed = n >= g["n_of_m"]
         corr_id = f"CORR-{group_id}-{now}"
-        self.correlations[corr_id] = json.dumps({
-            "correlation_id": corr_id, "group_id": group_id,
-            "n_breached": n, "n_required": g["n_of_m"],
-            "verdict": "CONFIRMED" if confirmed else "INSUFFICIENT_SIGNAL",
-            "evaluated": _now_iso()})
+        rec = {"correlation_id": corr_id, "group_id": group_id,
+               "n_breached": n, "n_required": g["n_of_m"],
+               "confidence": "1.0" if confirmed else "0.0",
+               "decision_status": "ACCEPTED" if confirmed else "UNDETERMINED",
+               "verdict": "CONFIRMED" if confirmed else "INSUFFICIENT_SIGNAL",
+               "evaluated": _now_iso()}
+        self.correlations[corr_id] = json.dumps(rec)
+        self.latest_correlations[group_id] = corr_id
 
         out = {"correlation_id": corr_id, "n_breached": n,
+               "confidence": "1.0" if confirmed else "0.0",
+               "decision_status": "ACCEPTED" if confirmed else "UNDETERMINED",
                "confirmed": confirmed}
 
         if not confirmed:
+            self.latest_execution[group_id] = "NO_ACTION"
             return out
 
         # --- L3 executor: policy check, then gated auto-execution ---
         ep_raw = self.exec_policies.get(group_id)
         if not ep_raw:
             out["auto_execution"] = "NO_POLICY"
+            self.latest_execution[group_id] = out["auto_execution"]
             return out
         ep = json.loads(ep_raw)
         if not ep["enabled"] or self.kill_switch.get("autonomous") != "ON":
             out["auto_execution"] = "DISABLED"
+            self.latest_execution[group_id] = out["auto_execution"]
             return out
-        if float(out.get("confidence", 1.0)) < ep["min_confidence"]:
+        if float(out.get("confidence", "1.0")) < float(ep["min_confidence"]):
             out["auto_execution"] = "BELOW_CONFIDENCE"
+            self.latest_execution[group_id] = out["auto_execution"]
             return out
 
         # execute merged payloads deterministically
@@ -376,6 +499,9 @@ class AutonomousAccount(gl.Contract):
         for k in list(self.proposals.keys()):
             p = json.loads(self.proposals[k])
             if p.get("signal_group") != group_id or p["status"] != "OBSERVED":
+                continue
+            if (p.get("decision_status") != "ACCEPTED"
+                    or p.get("equivalence_mode") != "comparative"):
                 continue
             payload = p.get("action_payload") or ""
             if not payload:
@@ -403,8 +529,9 @@ class AutonomousAccount(gl.Contract):
                 self.proposals[k] = json.dumps(p)
                 executed.append(pl["payment_id"])
 
-        out["auto_execution"] = "EXECUTED"
+        out["auto_execution"] = "EXECUTED" if executed else "NO_ACTION"
         out["executed_payments"] = executed
+        self.latest_execution[group_id] = out["auto_execution"]
         return out
 
     def _execute_send(self, account_id: str, payment_id: str, to: str,
@@ -422,6 +549,10 @@ class AutonomousAccount(gl.Contract):
             return self._deny(payment_id, account_id, "POLICY_DENYLIST")
         if int(amount) > int(rules["per_tx_limit"]):
             return self._deny(payment_id, account_id, "POLICY_PER_TX_LIMIT")
+
+        attestation_reason = self._attestation_gate(rec, to)
+        if attestation_reason:
+            return self._deny(payment_id, account_id, attestation_reason)
 
         dl = self._delegate_limit() if actor == "delegate" else None
         if dl is not None and int(amount) > min(int(rules["per_tx_limit"]), dl[0]):
@@ -445,6 +576,7 @@ class AutonomousAccount(gl.Contract):
         pay = {"payment_id": payment_id, "account_id": account_id,
                "to": to, "amount": amount, "actor": actor,
                "correlation_id": correlation_id,
+               "decision_id": correlation_id,
                "evidence_hash": evidence_hash,
                "status": "SETTLED", "created": _now_iso()}
         self.payments[payment_id] = json.dumps(pay)
@@ -489,6 +621,23 @@ class AutonomousAccount(gl.Contract):
         if not raw:
             raise ValueError("IAS3: correlation not found")
         return json.loads(raw)
+
+    @gl.public.view
+    def get_latest_correlation(self, group_id: str) -> typing.Any:
+        correlation_id = self.latest_correlations.get(group_id)
+        if not correlation_id:
+            raise ValueError("IAS3: correlation not found")
+        raw = self.correlations.get(correlation_id)
+        if not raw:
+            raise ValueError("IAS3: correlation not found")
+        return json.loads(raw)
+
+    @gl.public.view
+    def get_latest_execution(self, group_id: str) -> str:
+        outcome = self.latest_execution.get(group_id)
+        if not outcome:
+            raise ValueError("IAS3: execution outcome not found")
+        return outcome
 
     @gl.public.view
     def get_execution_policy(self, group_id: str) -> typing.Any:

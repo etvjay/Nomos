@@ -1,0 +1,168 @@
+{
+  "schemaVersion": "1.0.0",
+  "workId": "WORK-PPA-V03-ORIGIN-2026-10-17",
+  "baseCommit": "1416a50eaae455039165d09a79ce6320e4d85e80",
+  "lane": "primitive",
+  "targets": [
+    "ppa"
+  ],
+  "allowedPaths": [
+    "primitives/ppa/**",
+    "convergence/work/WORK-PPA-V03-ORIGIN-2026-10-17.json",
+    "convergence/receipts/*PPA*V03*",
+    "convergence/deployment/*ppa*v03*",
+    "nomos.manifest.json"
+  ],
+  "changeClass": "BREAKING",
+  "authorityFingerprint": "sha256:e475827fddb68febe75b294f41a5d1b2dc84d39290b935395384b9a23ffb491a",
+  "authorityFingerprintNote": "Fingerprint of the v0.2 authority documents as of baseCommit plus the recorded receipt-origin security finding in SPEC/INVARIANTS/THREAT_MODEL/DECISION_BOUNDARY. It will move again once CAPABILITY.json is bumped to 0.3.0 and v0.3 vectors are added; re-run `nomos_converge.py fingerprint ppa` at the end of this work and bind the receipt to the final value.",
+  "supersedesAuthorityFingerprint": "sha256:6fe203461ec80c54c46b8939d3564b0637963675e17e3ee8c1cf39d9a2ffdebd",
+  "supersedesDeployment": {
+    "contract": "0xa4fbEc963Bc105bc950648D092d11bAE7eF191fb",
+    "capabilityVersion": "0.2.0",
+    "classification": "DISPOSITION_PATH_OBSERVED / PRODUCER_NOT_CONNECTED / ORIGIN_AUTHENTICATION_NOT_IMPLEMENTED",
+    "note": "v0.2 proved that a receipt-shaped input is deterministically disposed into a proposal and a gated settlement. It did NOT prove authenticated GenLayer adjudication: the settled receipt carried source_contract 0xabc000000000000000000000000000000000001, a placeholder registered nowhere. This deployment stays historical and is NOT upgraded in place."
+  },
+  "capabilityVersion": "0.3.0",
+  "publicInterfaceMutationAllowed": true,
+  "problemStatement": "v0.2 accepts any syntactically valid owner-supplied receipt JSON as origin-authenticated. `source_contract` is a self-asserted string; no registry, sender binding, or authority fingerprint exists. Proven in tests/ppa receipt origin spec: unregistered source yields ACTIONABLE receipt, admitted proposal, and settlement. Bounded today only because _resolve_actor admits the owner and the owner can already call send() directly. Becomes privilege escalation the moment custody, bridges, a frontend badge, a conformance lane, or an external counterparty trusts the receipt as authority.",
+  "rootCause": "Receipt provenance was never part of the v0.2 admission path. _validate_receipt checked shape, vocabulary, and expiry window only. An adjudicator that writes its own address into caller-supplied JSON is not a provenance mechanism; the caller can write any address.",
+  "securityModel": {
+    "principle": "judgment proposes, deterministic gates dispose",
+    "originBinding": "gl.message.sender_address compared against an owner-registered adjudicator; a JSON source_contract field is never sufficient",
+    "preferredMechanism": "the registered adjudicator contract calls submit_decision_receipt directly, so origin is the actual invoker",
+    "rejectedMechanism": "caller asserts source_contract inside receipt JSON, or an authority fingerprint supplied by the caller",
+    "residualRisk": "Origin binding establishes attributability, not correctness. A registered-but-compromised adjudicator can still emit ACCEPTED for a false conclusion. Registration pins an authority fingerprint and revocation exists for that reason."
+  },
+  "requiredRegistryState": [
+    "source_contract",
+    "authority_fingerprint",
+    "policy_version",
+    "status (ACTIVE | REVOKED)",
+    "created_at",
+    "expires_at"
+  ],
+  "requiredNewReasonCodes": [
+    "RECEIPT_SOURCE_UNREGISTERED",
+    "RECEIPT_SOURCE_REVOKED",
+    "RECEIPT_SOURCE_EXPIRED",
+    "RECEIPT_SOURCE_MISMATCH",
+    "RECEIPT_AUTHORITY_MISMATCH"
+  ],
+  "acceptanceGates": [
+    "python -m pytest primitives/ppa/implementations/genlayer/tests/ -q  # 24 existing must stay green",
+    "unregistered source -> receipt stored but NON_ACTIONABLE with RECEIPT_SOURCE_UNREGISTERED",
+    "unregistered source -> no admitted proposal, no payment, balance unchanged",
+    "registered ACTIVE source calling directly -> ACCEPTED receipt ACTIONABLE",
+    "revoked source -> NON_ACTIONABLE with RECEIPT_SOURCE_REVOKED",
+    "registered source past expires_at -> NON_ACTIONABLE with RECEIPT_SOURCE_EXPIRED",
+    "wrong caller submitting for a registered source -> NON_ACTIONABLE with RECEIPT_SOURCE_MISMATCH",
+    "authority fingerprint mismatch -> NON_ACTIONABLE with RECEIPT_AUTHORITY_MISMATCH",
+    "replayed decision_id -> refused (id consumed on first submission, actionable or not)",
+    "REJECTED and UNDETERMINED -> NON_ACTIONABLE regardless of origin",
+    "expired ACCEPTED receipt -> NON_ACTIONABLE",
+    "forged receipt -> no proposal -> no payment -> unchanged balance",
+    "python primitives/ppa/implementations/genlayer/tests/test_ppa_capability_parity.py # surface, annotation, storage, modularization guards green",
+    "mutation-prove the parity guards: they must FAIL when a public method is removed from CAPABILITY.json and when a public annotation is stripped",
+    "python tools/nomos_run_vectors.py primitives/ppa/implementations/genlayer/ppa.py --vectors primitives/ppa/vectors/v0.1.json # 15/15 unchanged",
+    "python tools/nomos_run_vectors.py primitives/ppa/implementations/genlayer/ppa.py --vectors primitives/ppa/vectors/v0.3-origin.json # new origin-binding vectors",
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "genvm-lint lint primitives/ppa/implementations/genlayer/ppa.py # GenVM Depends header must survive",
+    "independent convergence lane re-run under the v0.3 fingerprint"
+  ],
+  "gasGate": {
+    "why": "v0.3 adds registry methods, a storage field, and origin verification to a contract already near the Bradbury per-tx ceiling. Adding code may not deploy at all.",
+    "currentSourceChars": 19823,
+    "currentGasUsed": 15251472,
+    "observedAcceptCeiling": 16773925,
+    "headroomGas": 1522453,
+    "headroomApproxChars": 2129,
+    "model": "gas = 919311 + 715.0 * inputBytes (validated on 11 successful deploys, max error 0.01%, plus the v0.2 spine deploy at 0.11%)",
+    "requirement": "Before any deployment attempt, eth_estimateGas the exact deploy encoding for the v0.3 contract. If the estimate exceeds 16.7M, classify DEPLOY_BLOCKED_GAS and STOP.",
+    "onBlock": "Do not walk gas caps. Report the shortfall and open the modular-split work (registry and/or proposal adapter extracted to a second contract) as separate authority under a new Work Contract.",
+    "result": {
+      "status": "DEPLOY_BLOCKED_GAS",
+      "sourceCharsAfterImplementation": 22725,
+      "estimateGas": 18719528,
+      "observedAcceptCeiling": 16773925,
+      "submitAtPlus5Pct": 19655504,
+      "charsToRemoveForEstimateToFit": 2431,
+      "estimatorValidated": "policy_envelope.py returned 10366627 vs recorded 103366651 (24 gas in 10.3M)",
+      "evidence": "convergence/deployment/ppa-v03-origin-gas-blocked-2026-10-17.json",
+      "consequence": "Implementation is complete and locally green. Deployment is blocked. Open the modular split as a separate authority; do not re-attempt this source shape and do not walk the gas cap or remove annotations."
+    },
+    "status": "SUPERSEDED \u2014 ceiling assumption disproved; implementation retained and superseded by the split",
+    "ceilingCorrection": {
+      "assumedCeiling": 16773925,
+      "measuredCeilingConservative": 20861997,
+      "evidence": "convergence/reports/BRADBURY-GAS-CEILING.json",
+      "consequence": "DEPLOY_BLOCKED_GAS was the wrong verdict for the monolith. The split (WORK-PPA-SPLIT-V03-2026-10-17) supersedes this work on architectural grounds, not gas grounds."
+    }
+  },
+  "dependencies": [
+    "Adjudication producer contract is OUT OF SCOPE for this work. This contract only makes a receipt origin-attributable and refuses unattributable ones. The producer may not be built until this lands, because a producer whose receipts are not origin-checked is bypassable and therefore inert."
+  ],
+  "compatibilityAnalysis": {
+    "breaking": true,
+    "v0_2_behaviour": "accepted syntactically valid owner-submitted receipts from any source",
+    "v0_3_behaviour": "requires a registered, ACTIVE, unexpired adjudicator whose invoking address matches and whose authority fingerprint matches",
+    "existingReceipts": "receipts stored under v0.2 are not promoted into v0.3 evidence; v0.3 receipts carry a provenance record v0.2 receipts cannot have",
+    "deployment": "v0.3 requires a NEW deployment address. The v0.2 address 0xa4fbEc963Bc105bc950648D092d11bAE7eF191fb is historical and is not upgraded in place.",
+    "capabilityMutation": [
+      "capabilityVersion 0.2.0 -> 0.3.0 in CAPABILITY.json and nomos.manifest.json",
+      "new public registry methods added",
+      "five new canonical reason codes added to canonicalDecision.reasonCode",
+      "state ownership gains the adjudicator registry",
+      "unsupported[] gains the pre-v0.3 receipt trust limitation"
+    ]
+  },
+  "requiredArtifactUpdates": [
+    "primitives/ppa/THREAT_MODEL.md (done in this work: receipt-origin finding)",
+    "primitives/ppa/INVARIANTS.md (done in this work: receipt origin rules)",
+    "primitives/ppa/DECISION_BOUNDARY.md (done in this work: judgment proposes / gates dispose)",
+    "primitives/ppa/CAPABILITY.json",
+    "primitives/ppa/SPEC.md",
+    "primitives/ppa/implementations/genlayer/README.md",
+    "primitives/ppa/vectors/v0.3-origin.json",
+    "nomos.manifest.json",
+    "convergence/receipts/ (new receipt bound to the final v0.3 fingerprint)",
+    "convergence/deployment/ (new deployment receipt, only if the gas gate passes)"
+  ],
+  "forbidden": [
+    "Do not modify the implementation and leave CAPABILITY.json at 0.2.0.",
+    "Do not describe the v0.2 deployment as GenLayer-adjudicated settlement.",
+    "Do not weaken the existing send() gate sequence while adding origin binding.",
+    "Do not let the adjudicator hold balance authority; it proposes, PPA disposes.",
+    "Do not treat origin binding as making a verdict correct.",
+    "Do not deploy v0.3 under the v0.2 receipt or the v0.2 authority fingerprint.",
+    "Do not broaden allowedPaths without a new accepted Work Contract."
+  ],
+  "notes": "Security finding recorded first, per the decision that a v0.2 silent patch is not acceptable. The two red tests in primitives/ppa/implementations/genlayer/tests/test_ppa_receipt_origin.py are the specification for the behavioural half of this work and must be green before any deploy.",
+  "finalAuthorityFingerprint": "sha256:34c90df60eb03170b9cbbea65c5e1d9f0e17af04e83fd68db6821881b6fd9be3",
+  "finalImplementationSha256": "sha256:f1ba2058926828f50e0c0c9859f02a2593bc43b245bbae0b329e715e61d7a310",
+  "localGateResults": {
+    "pytestPrimitives": "100 passed, 2 skipped",
+    "pytestPpa": "43 passed, 2 skipped",
+    "vectorsV01": "15/15 PASS",
+    "vectorsV03Origin": "9/9 PASS, mutation-proved non-vacuous",
+    "nomosLint": "PASS",
+    "nomosConverge": "PASS",
+    "genvmLintHeader": "intact"
+  },
+  "toolingFindings": [
+    {
+      "id": "VECTOR-RUNNER-VACUOUS-PASS",
+      "severity": "high",
+      "lane": "tools/ -- OUT OF SCOPE for this Work Contract, not fixed here",
+      "finding": "tools/nomos_run_vectors.py reads vector['actions']. A vector with no 'actions' key is iterated zero times and reported PASS. Proven: a vector whose 'steps' contained an impossible assertion reported PASS, while the same assertion under 'actions' reported FAIL.",
+      "affected": [
+        "primitives/ppa/vectors/v0.2-spine.json (2 vectors, key 'steps')",
+        "primitives/claim-verification/vectors/v0.1.json (4 vectors, schema claim/evidence/expected)"
+      ],
+      "impact": "6 vectors across 2 primitives reported conformance green while executing zero assertions. claim-verification is CONFORMANT, so part of its conformance evidence is vacuous.",
+      "recommendation": "Open a separate Work Contract against tools/. Minimum fix: fail a vector that declares no executable actions, so a schema mismatch can never report PASS."
+    }
+  ],
+  "authorityFingerprintCorrection": "An earlier value recorded for this field was stale: it was computed before CAPABILITY.json was restructured to move the v0.2-spine supersession note out of the vectors array into supersededVectors. The value above is the fingerprint of the tree as it stands at completion of this work, recomputed with `nomos_converge.py fingerprint ppa`."
+}

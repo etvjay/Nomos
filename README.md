@@ -35,10 +35,11 @@ The account does not treat an accepted judgment as an automatic payment. The acc
 - [IAS-1 Standard](primitives/ppa/IAS-1.md)
 - [Fact-Check Ledger](docs/FACT_CHECK_LEDGER.md)
 - [GenLayer Truth Freeze](docs/GENLAYER_TRUTH_FREEZE.md)
+- [GenLayer Integration Boundary](ias/integration/README.md)
 
 ## Primitive status
 
-10 of 11 primitives are **CONFORMANT** through independent implementation and canonical vector convergence. One remains **SPECIFIED** pending scope re-qualification.
+13 of 13 primitives are **CONFORMANT** through independent implementation and canonical vector convergence, including the financial-obligation lifecycle, the payment account composition, and the judgment-bearing settlement lock.
 
 | Primitive | Function | Status | Mode |
 |---|---|---|---|
@@ -52,9 +53,11 @@ The account does not treat an accepted judgment as an automatic payment. The acc
 | Capital Commitment | Available and committed capital | CONFORMANT | EXACT |
 | Dynamic Authorization Lanes | Replay-proof authorization nonces | CONFORMANT | EXACT |
 | Gaia | Disputes, reconciliation, and rectification | CONFORMANT | EXACT |
-| Financial Contract | Obligation and cash-flow lifecycle | SPECIFIED* | EXACT |
+| Financial Contract | Obligation and cash-flow lifecycle | CONFORMANT | EXACT |
+| Programmable Payment Account | Payment account composition (product) | CONFORMANT | EXACT |
+| Adjudicated Receipt | Quorum-adjudicated release lock for registered objects | CONFORMANT | SEMANTIC |
 
-*Financial Contract has an independent 9/9 vector convergence result. Its public state model must be re-qualified before promotion.*
+The Programmable Payment Account is the composition product built on these primitives; it is tracked in `nomos.manifest.json` as `CONFORMANT` (`QUALIFIED_EXTENSION`) with its own vectors, independent lane, and live GLSim + Bradbury evidence.
 
 Evidence receipts are in [`convergence/receipts/`](convergence/receipts/).
 
@@ -109,6 +112,12 @@ The three configurations are:
 
 See [`primitives/ppa/INTELLIGENT_ACCOUNT_WHITEPAPER.md`](primitives/ppa/INTELLIGENT_ACCOUNT_WHITEPAPER.md) and [`primitives/ppa/IAS-1.md`](primitives/ppa/IAS-1.md).
 
+The GenLayer integration boundary is explicit: adjudication produces a
+structured receipt, only an accepted and unexpired receipt can create an
+Intelligent Account proposal, and every proposal still passes the account's
+authority, policy, capital, replay, and settlement gates. See
+[`ias/integration/README.md`](ias/integration/README.md).
+
 ## ERC-7710 comparison
 
 ERC-7710 delegates bounded authority with conditions such as targets, functions, amounts, and expiry.
@@ -127,8 +136,8 @@ ERC-7710 is a delegation primitive. An Intelligent Account is a broader account 
 
 ## Evidence levels
 
-- Primitive vectors: passing.
-- Independent convergence: 10 of 11 primitives.
+- Primitive vectors: passing — 143/143 across 13 primitives (`tools/nomos_run_vectors.py`, GenLayer direct mode).
+- Independent convergence: 13 of 13 primitives with a spec-only rebuild lane (fresh-context builds for financial-contract, ppa, adjudicated-receipt verified 2026-10-11).
 - PPA payment lifecycle: live-verified on Bradbury.
 - Real-model adjudication: validated in GenLayer Studio across GPT-OSS, Qwen, GPT-5.4, and Claude Sonnet 4.6.
 - Full uninterrupted Stage 3 autonomous loop on Bradbury: **BLOCKED**, pending a clean testnet run.

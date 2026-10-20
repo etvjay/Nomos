@@ -1,0 +1,5 @@
+data/
+reviews/
+.playwright-mcp/
+__pycache__/
+*.pyc

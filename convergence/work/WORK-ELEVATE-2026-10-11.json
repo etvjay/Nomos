@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "1.0.0",
+  "workId": "WORK-ELEVATE-2026-10-11",
+  "baseCommit": "1416a50eaae455039165d09a79ce6320e4d85e80",
+  "lane": "integration",
+  "targets": ["financial-contract", "ppa", "adjudicated-receipt"],
+  "allowedPaths": [
+    "primitives/financial-contract/**",
+    "primitives/ppa/**",
+    "primitives/adjudicated-receipt/**",
+    "convergence-lanes/ppa/**",
+    "convergence-lanes/adjudicated-receipt/**",
+    "convergence/receipts/RECEIPT-CONV-PPA-B.json",
+    "convergence/receipts/RECEIPT-CONV-AR-B.json",
+    "convergence/work/WORK-ELEVATE-2026-10-11.json",
+    "nomos.manifest.json",
+    "PRIMITIVE_QUALIFICATION.md",
+    "README.md"
+  ],
+  "changeClass": "PATCH",
+  "authorityFingerprint": "see per-primitive CONFORMANCE receipts (fingerprints recomputed after status promotions)",
+  "capabilityVersion": "unchanged (0.1.0 / 0.1.0 / 0.2.0)",
+  "publicInterfaceMutationAllowed": false,
+  "dependencies": [],
+  "acceptanceGates": [
+    "python3 tools/nomos_lint.py",
+    "python3 tools/nomos_converge.py check",
+    "143/143 canonical vectors across 13 primitives via tools/nomos_run_vectors.py",
+    "all convergence-lane runners including new ppa + adjudicated-receipt fresh-context lanes",
+    "direct suites: test_fc_authority (3), test_adjudicated_receipt (13), test_ppa_attestations (13)",
+    "GLSim: test_ppa_flows 6/6, test_ppa_attestations 13/13, AR integration 1/1, FC live transactions (in 5/5 suite)",
+    "tests/pressure 44/44",
+    "genvm-lint check on all three implementations"
+  ],
+  "notes": "Elevation window: SPECIFIED/IMPLEMENTING -> CONFORMANT for the last three primitives (FC re-qualified SCOPE_PROVISIONAL->QUALIFIED on its narrowed scope). No public-interface mutation: capability versions unchanged. AR post-window finalize on GLSim is BLOCKED by frozen genvm clock (documented in integration test + CONFORMANCE-v0.2.md); the lifecycle is proven direct-mode 13/13."
+}

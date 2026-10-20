@@ -1,0 +1,12 @@
+{
+  "receipt_id": "RECEIPT-CONV-PPA-B",
+  "primitive": "ppa",
+  "date": "2026-10-11",
+  "convergence_mode": "EXACT",
+  "lane": "convergence-lanes/ppa/your_build.py",
+  "builder": "fresh-context subagent (spec+capability+vectors only; reference implementation not accessed)",
+  "vectors_total": 15,
+  "vectors_passed": 15,
+  "verdict": "CONVERGED",
+  "report": "convergence-lanes/ppa/BUILD_REPORT.md"
+}

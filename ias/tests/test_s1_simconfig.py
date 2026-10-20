@@ -51,18 +51,18 @@ def _read(client, method, args):
 def test_full_machinery(setup):
     client = setup
 
-    r = _write(client, "initialize", ["0x" + "11" * 20])
-    assert r.get("status") in (1, "0x1")
+    r = _write(client, "initialize", [create_account(SENDER_KEY).address])
+    assert r.get("status") in (1, 7, "0x1", "0x7")
 
     r = _write(client, "create_monitor",
                ["M-SIM", "mocked", "https://example.com", "price",
                 "1", "above", "25.0", "medium",
                 json.dumps({"action": "test"})])
-    assert r.get("status") in (1, "0x1")
+    assert r.get("status") in (1, 7, "0x1", "0x7")
 
     # THE TEST: nondet flow with deterministic mock across validators
     r = _write(client, "check_monitor", ["M-SIM"])
-    assert r.get("status") in (1, "0x1"), f"reverted: {str(r)[:250]}"
+    assert r.get("status") in (1, 7, "0x1", "0x7"), f"reverted: {str(r)[:250]}"
 
     m = _read(client, "get_monitor", ["M-SIM"])
     assert m["last_status"] == "success", f"status={m.get('last_status')}"

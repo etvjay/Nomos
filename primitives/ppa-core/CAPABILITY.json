@@ -1,0 +1,276 @@
+{
+  "schemaVersion": "1.0.0",
+  "primitiveId": "ppa-core",
+  "name": "PPA Core",
+  "capabilityVersion": "0.1.0",
+  "status": "IMPLEMENTING",
+  "convergenceMode": "EXACT",
+  "judgmentBearing": false,
+  "implementation": {
+    "environment": "genlayer",
+    "path": "primitives/ppa-core/implementations/genlayer/ppa_core.py"
+  },
+  "publicMethods": [
+    {
+      "name": "initialize",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "output": "status-string"
+    },
+    {
+      "name": "register_adapter",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "adapter_address",
+          "type": "address"
+        }
+      ],
+      "output": "adapter-registration-result"
+    },
+    {
+      "name": "revoke_adapter",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "adapter_address",
+          "type": "address"
+        }
+      ],
+      "output": "adapter-revocation-result"
+    },
+    {
+      "name": "get_adapter",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "adapter_address",
+          "type": "address"
+        }
+      ],
+      "output": "adapter-record"
+    },
+    {
+      "name": "create_account",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "account_id",
+          "type": "string"
+        },
+        {
+          "name": "rules_json",
+          "type": "json-string"
+        }
+      ],
+      "output": "status-string"
+    },
+    {
+      "name": "update_rules",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "account_id",
+          "type": "string"
+        },
+        {
+          "name": "rules_json",
+          "type": "json-string"
+        }
+      ],
+      "output": "status-string"
+    },
+    {
+      "name": "get_account",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "account_id",
+          "type": "string"
+        }
+      ],
+      "output": "account-record"
+    },
+    {
+      "name": "deposit",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "account_id",
+          "type": "string"
+        },
+        {
+          "name": "amount",
+          "type": "uint-string"
+        }
+      ],
+      "output": "status-string"
+    },
+    {
+      "name": "withdraw",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "account_id",
+          "type": "string"
+        },
+        {
+          "name": "amount",
+          "type": "uint-string"
+        }
+      ],
+      "output": "status-string"
+    },
+    {
+      "name": "send",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "account_id",
+          "type": "string"
+        },
+        {
+          "name": "payment_id",
+          "type": "string"
+        },
+        {
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint-string"
+        }
+      ],
+      "output": "status-string"
+    },
+    {
+      "name": "get_payment",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "payment_id",
+          "type": "string"
+        }
+      ],
+      "output": "payment-record"
+    },
+    {
+      "name": "register_attestation",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "attestation_id",
+          "type": "string"
+        },
+        {
+          "name": "attestation_json",
+          "type": "fixed-schema-json-string"
+        }
+      ],
+      "output": "status-string"
+    },
+    {
+      "name": "revoke_attestation",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "attestation_id",
+          "type": "string"
+        }
+      ],
+      "output": "status-string"
+    },
+    {
+      "name": "get_attestation",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "attestation_id",
+          "type": "string"
+        }
+      ],
+      "output": "attestation-record"
+    },
+    {
+      "name": "execute_proposal",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "proposal_json",
+          "type": "json-string"
+        }
+      ],
+      "output": "consequence-record"
+    },
+    {
+      "name": "get_consequence",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "proposal_id",
+          "type": "string"
+        }
+      ],
+      "output": "consequence-record"
+    }
+  ],
+  "stateOwnership": {
+    "owns": [
+      "sub-account ledger (balance/committed/daily windows)",
+      "payment records and canonical denial reasons",
+      "owner-registered technical compliance attestations",
+      "adapter registry",
+      "consequence audit records (identifiers and hashes only)"
+    ],
+    "doesNotOwn": [
+      "adjudication (web retrieval, reasoning, validator equivalence)",
+      "receipt storage \u2014 held by the Adapter",
+      "external token custody",
+      "legal KYC/AML status"
+    ]
+  },
+  "canonicalDecision": {
+    "refusalVocabulary": [
+      "REJECTED_CALLER_NOT_REGISTERED_ADAPTER",
+      "REJECTED_ADAPTER_REVOKED",
+      "REJECTED_PROPOSAL_REPLAY",
+      "REJECTED_POLICY",
+      "REJECTED_AMOUNT",
+      "REJECTED_RECIPIENT",
+      "REJECTED_CAPITAL",
+      "REJECTED_ATTESTATION",
+      "REJECTED_EXPIRED"
+    ],
+    "oneAuditableOutcomePerAttempt": [
+      "EXECUTED",
+      "DENIED",
+      "REJECTED"
+    ]
+  },
+  "boundary": {
+    "callerIdentity": "Verified by convergence/reports/CALLER-IDENTITY-SPIKE.json: at the receiving contract, gl.message.sender_address is the CALLING CONTRACT. The original EOA is consumed at the previous hop.",
+    "originRule": "Origin is the actual sender address. A JSON source_contract field is never provenance.",
+    "atomicity": "NON-ATOMIC. Adapter emits; Core executes in a later transaction."
+  },
+  "unsupported": [
+    "adjudication producer",
+    "external token settlement",
+    "invoice/dispute/delegation extensions",
+    "bridges"
+  ],
+  "reproduce": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "python -m pytest tests/split/ -q (requires glsim on :4000)"
+  ],
+  "component": "PPA Core \u2014 the final deterministic consequence boundary",
+  "vectors": [
+    "primitives/ppa-core/vectors/v0.1.json"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "network": "testnet-bradbury",
+  "chainId": "4221",
+  "rpc": "https://rpc-bradbury.genlayer.com",
+  "deployer": "0x8311BfD717708d6E9c4933e80762cC4901F836BF",
+  "contractFile": "ppa.py",
+  "source_chars": 19127,
+  "authority_fingerprint": "sha256:24f00f6ecba7a3bbb0638c2eb46aee812b3a88471333b05a5099bd6e5f4e074a",
+  "variant": "docstring-slim + method-annotation-strip + blank-collapse",
+  "estimate_gas": 15951199,
+  "submit_gas": 16748758,
+  "evm_tx": "0xacdcf24f9f1fbdb940a007c93c8cc3adcf3b25bfd894bdcb7dcb4ffbf66cf179",
+  "evm_status": 1,
+  "gas_used": 14770418,
+  "consensus_tx": "0xf493a9fd2fdd5fccd272c195107738e59963020d59009fec1ee622143bb7ed73",
+  "contractAddress": "0x126fFE048b821116810B538Adfb1Ce600189e0F9",
+  "block": 25377878,
+  "explorer_contract": "https://explorer-bradbury.genlayer.com/address/0x126fFE048b821116810B538Adfb1Ce600189e0F9",
+  "status": "DEPLOYED",
+  "existing_live_ppa": "0xB61670E0C8a44d8434815F397a8E80FD0f55B7c6",
+  "eth_getCode_bytes": 300,
+  "address_extraction": "NewTransaction.recipient (not last log address)"
+}

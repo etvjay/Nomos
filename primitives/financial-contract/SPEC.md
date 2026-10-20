@@ -1,6 +1,6 @@
 # Financial Contract - Canonical Specification
 
-Status: SPECIFIED
+Status: CONFORMANT
 Version: 0.1.0
 
 ## Problem

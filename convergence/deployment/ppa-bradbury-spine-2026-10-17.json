@@ -1,0 +1,36 @@
+{
+  "network": "testnet-bradbury",
+  "chainId": "4221",
+  "rpc": "https://rpc-bradbury.genlayer.com",
+  "deployer": "0x8311BfD717708d6E9c4933e80762cC4901F836BF",
+  "contractFile": "ppa.py",
+  "contractAddress": "0xa4fbEc963Bc105bc950648D092d11bAE7eF191fb",
+  "evmTxHash": "0xe485330103cdeec862b24024bf9cb6a38be2fe8d39fef90d3cf55b697dc17ec9",
+  "consensusTxId": "0x80d2c147a0eeec8dd72b87f421f7b336572a45a53e3c5ce1a6830434dbf51943",
+  "result": "0x80d2c147a0eeec8dd72b87f421f7b336572a45a53e3c5ce1a6830434dbf51943",
+  "source_chars": 19823,
+  "estimate_gas": 16470433,
+  "submit_gas": 16773925,
+  "gas_used": 15251472,
+  "block": 25381104,
+  "eth_getCode_bytes": 300,
+  "variant": "v0.2 core+spine (receipt/proposal); invoice/dispute/delegate modularized out",
+  "authority_fingerprint": "sha256:6fe203461ec80c54c46b8939d3564b0637963675e17e3ee8c1cf39d9a2ffdebd",
+  "implementation_sha256": "sha256:1947916df93a9185337c34c0a724b581a0f6c90ddfecd3154d8cf60af8fed2e7",
+  "explorer": "https://explorer-bradbury.genlayer.com/address/0xa4fbEc963Bc105bc950648D092d11bAE7eF191fb",
+  "status": "DEPLOYED",
+  "prior_contracts": [
+    "0xB61670E0C8a44d8434815F397a8E80FD0f55B7c6",
+    "0x126fFE048b821116810B538Adfb1Ce600189e0F9",
+    "0x6D999C4c3A4f25897b67190FF644E5a76817aabf"
+  ],
+  "statusClassification": [
+    "DISPOSITION_PATH_OBSERVED",
+    "PRODUCER_NOT_CONNECTED",
+    "ORIGIN_AUTHENTICATION_NOT_IMPLEMENTED"
+  ],
+  "authorityStatus": "BOUND_TO_SUPERSEDED_AUTHORITY",
+  "supersededBy": "WORK-PPA-V03-ORIGIN-2026-10-17 (capabilityVersion 0.3.0)",
+  "mustNotBeDescribedAs": "GenLayer-adjudicated settlement",
+  "note": "Receipt origin binding landed locally in v0.3 but is DEPLOY_BLOCKED_GAS on Bradbury. This v0.2 address remains the only live PPA. Its settled receipt carried source_contract 0xabc000000000000000000000000000000000001, an unregistered placeholder, which is why it proves disposition only."
+}

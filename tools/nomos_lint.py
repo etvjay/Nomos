@@ -39,6 +39,10 @@ EXPECTED_PRIMITIVES = {
     "dal",
     "financial-contract",
     "gaia",
+    "ppa",
+    "ppa-core",
+    "ppa-receipt-adapter",
+    "adjudicated-receipt",
 }
 
 ALLOWED_STATUS = {
@@ -61,6 +65,7 @@ ALLOWED_CONVERGENCE = {"EXACT", "SEMANTIC"}
 
 JUDGMENT_EXPECTED = {
     "claim-verification",
+    "adjudicated-receipt",
 }
 
 DETERMINISTIC_EXPECTED = {
@@ -73,6 +78,9 @@ DETERMINISTIC_EXPECTED = {
     "capital-commitment",
     "dal",
     "gaia",
+    "ppa",
+    "ppa-core",
+    "ppa-receipt-adapter",
 }
 
 

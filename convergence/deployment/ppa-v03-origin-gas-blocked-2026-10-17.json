@@ -1,0 +1,58 @@
+{
+  "artifact": "ppa-v03-origin-gas-blocked-2026-10-17",
+  "status": "SUPERSEDED \u2014 NOT_NETWORK_BLOCKED",
+  "recorded_at": "2026-10-17",
+  "network": "testnet-bradbury",
+  "chain_id": 4221,
+  "rpc": "https://rpc-bradbury.genlayer.com",
+  "work_contract": "WORK-PPA-V03-ORIGIN-2026-10-17",
+  "capability_version": "0.3.0",
+  "contract_file": "primitives/ppa/implementations/genlayer/ppa.py",
+  "source_chars": 22725,
+  "gas": {
+    "estimate_gas": 18719528,
+    "observed_accept_ceiling": 16773925,
+    "submit_at_plus_5pct": 19655504,
+    "shortfall_vs_submit_buffer": 2881579,
+    "max_source_chars_for_estimate_to_fit": 20294,
+    "chars_to_remove": 2431
+  },
+  "estimator_provenance": {
+    "method": "genlayer_py.contracts.actions._prepare_transaction -- the exact function deploy_contract() calls to build and estimate, invoked read-only with no signing and no broadcast",
+    "validation": "same estimator on policy_envelope.py returned 10366627 against the recorded estimate of 103366651; error 24 gas in 10.3M (0.0002%)",
+    "note": "An earlier hand-rolled reconstruction of the deploy encoding returned ~0.94M because it used to=ADDRESS_ZERO instead of to=consensus_main_contract. That reconstruction was discarded as invalid."
+  },
+  "gas_model": {
+    "form": "gasUsed = 919311 + 715.0 * inputBytes",
+    "validated_on": "11 successful Bradbury deploys, max error 0.01%, plus the v0.2 spine deploy at 0.11%",
+    "caveat": "Validates gasUsed, not estimates. Estimates run ~6% above gasUsed. The model under-predicted this v0.3 estimate by 7.86%, outside its validated input range (max 20068 inputBytes; v0.3 is 22988). Use the real estimate, not the model, beyond that range."
+  },
+  "local_gates": {
+    "pytest_primitives": "100 passed, 2 skipped",
+    "pytest_ppa": "43 passed, 2 skipped",
+    "vectors_v0_1": "15/15 PASS",
+    "vectors_v0_3_origin": "9/9 PASS (mutation-proved non-vacuous)",
+    "nomos_lint": "PASS",
+    "nomos_converge": "PASS",
+    "genvm_lint_header": "intact"
+  },
+  "authority_fingerprint": "sha256:34c90df60eb03170b9cbbea65c5e1d9f0e17af04e83fd68db6821881b6fd9be3",
+  "implementation_sha256": "sha256:f1ba2058926828f50e0c0c9859f02a2593bc43b245bbae0b329e715e61d7a310",
+  "verdict": "v0.3 origin binding is behaviorally complete and locally green, but the single-file contract cannot be deployed to Bradbury: the estimate 18719528 exceeds the observed accept ceiling 16773925. No address claimed. No transaction broadcast.",
+  "not_done": [
+    "no deploy attempted",
+    "no gas-cap walking",
+    "no annotation removal",
+    "no live v0.3 proof"
+  ],
+  "next": "Open the modular split as a separate authority under its own Work Contract. The registry and/or the proposal adapter must move to a second contract so each deploy fits its own envelope. Do not re-attempt this source shape.",
+  "authorityFingerprintCorrection": "An earlier value recorded for this field was stale: it was computed before CAPABILITY.json was restructured to move the v0.2-spine supersession note out of the vectors array into supersededVectors. The value above is the fingerprint of the tree as it stands at completion of this work, recomputed with `nomos_converge.py fingerprint ppa`.",
+  "statusCorrection": {
+    "supersededBy": "convergence/reports/BRADBURY-GAS-CEILING.json",
+    "finding": "The assumed ceiling of 16,773,925 was never a measured network maximum; it was the lowest gasLimit the prior session happened to try. The measured acceptance ceiling is ~20,861,997 (conservative).",
+    "monolithEstimate": 18719528,
+    "fitsUnderMeasuredCeiling": true,
+    "conclusion": "The v0.3 monolith was NOT blocked by the network. The verdict came from treating a self-imposed submit value as a ceiling and from walking gas downward instead of upward. The modular split remains the correct architecture and proceeds, but the network-blocks-it rationale recorded here was incorrect.",
+    "behaviourThatWasReal": "The earlier capped submits at 15.0M-16.77M genuinely reverted because the monolith required ~18.7M; those were BELOW the requirement, not above a ceiling."
+  }
+}

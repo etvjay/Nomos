@@ -1,0 +1,579 @@
+{
+  "network": "testnet-bradbury",
+  "core": "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE",
+  "adapter": "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+  "second_adapter": "0xCC8B213fb480c547De171927cDCBeB0B40594E63",
+  "owner": "0x8311BfD717708d6E9c4933e80762cC4901F836BF",
+  "run": "2341019",
+  "prior_negative_run": "2284832",
+  "cases": [
+    {
+      "name": "control_settled_read",
+      "present": true,
+      "value": [
+        {
+          "account_id": "LIVE-SPLIT-2283426",
+          "amount": "100",
+          "created": "2026-10-18T00:32:04Z",
+          "decision_id": "DEC-SPLIT-2283426",
+          "dispatched": "2026-10-18T00:32:20Z",
+          "evidence_hash": "sha256:real-live-bound-test",
+          "expires_at": "2099-01-01T00:00:00+00:00",
+          "payment_id": "PAY-SPLIT-2283426",
+          "policy_version": "TECH-V1",
+          "proposal_id": "PROP-SPLIT-2283426",
+          "status": "DISPATCHED",
+          "to": "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+        },
+        null
+      ],
+      "read_path": "PROVEN"
+    },
+    {
+      "name": "control_absent_read",
+      "present": false,
+      "deliberate_not_found": true,
+      "not_found_hits": 6,
+      "attempts": 6,
+      "error_head": "gen_call failed (code=-32000): execution failed: &genvm.VMResult{Kind:0x2, ReturnData:[]uint8{0x2e, 0x4, 0x64, 0x61, 0x74, 0x61, 0x5c, 0x65, 0x78, 0x69, 0x74, 0x5f, 0x63, 0x6f, 0x64, 0x65, 0x20, 0x31, 0x6, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x5, 0xb, 0x66, 0x69, 0x6e, 0x67, 0x65, 0x72, 0x70, 0x72, ",
+      "ascii": [
+        "gen_call failed (code=-32000): execution failed: &genvm.VMResult{Kind:0x2, ReturnData:[]uint8{0x2e, 0x4, 0x64, 0x61, 0x74, 0x61, 0x5c, 0x65, 0x78, 0x69, 0x74, 0x5f, 0x63, 0x6f, 0x64, 0x65, 0x20, 0x31, 0x6, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x5, 0xb, 0x66, 0x69, 0x6e, 0x67, 0x65, 0x72, 0x70, 0x72, 0x69, 0x6e, 0x74, 0x16, 0x6, 0x66, 0x72, 0x61, 0x6d, 0x65, 0x73, 0x15, 0x16, 0x4, 0x66, 0x75, 0x6e, 0x63, 0xe1, 0x7, 0xb, 0x6d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x3c, 0x63, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x16, 0x4, 0x66, 0x75, 0x6e, 0x63, 0xb9, 0x7, 0xb, 0x6d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x3c, 0x63, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x10, 0x6d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x5f, 0x69, 0x6e, 0x73, 0x74, 0x61, 0x6e, 0x63, 0x65, 0x73, 0x16, 0x7, 0x63, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0xe, 0x8, 0x6d, 0x65, 0x6d, 0x6f, 0x72, 0x69, 0x65, 0x73, 0xd, 0x83, 0x2, 0xaf, 0x2b, 0xf6, 0x53, 0x5d, 0xaa, 0xff, 0xa8, 0x40, 0xb4, 0xcf, 0xbd, 0x1c, 0x7f, 0x89, 0x16, 0xc6, 0x3b, 0xad, 0x4e, 0xd1, 0xdf, 0x9f, 0xcb, 0xba, 0xdc, 0x7a, 0xd2, 0x39, 0x19, 0xe8, 0xa1, 0x9, 0x73, 0x6f, 0x66, 0x74, 0x66, 0x6c, 0x6f, 0x61, 0x74, 0xe, 0x8, 0x6d, 0x65, 0x6d, 0x6f, 0x72, 0x69, 0x65, 0x73, 0xd, 0x83, 0x2, 0xfc, 0x9e, 0x4f, 0xa3, 0x44, 0x8d, 0xa5, 0xd, 0xc6, 0xff, 0x51, 0x4a, 0xba, 0x5, 0x68, 0xba, 0x4, 0x52, 0x76, 0xf5, 0x8d, 0x3c, 0x60, 0xfd, 0xf4, 0xc5, 0xc3, 0xd2, 0x8b, 0x16, 0xac, 0xc8, 0x4, 0x6b, 0x69, 0x6e, 0x64, 0x3c, 0x56, 0x6d, 0x45, 0x72, 0x72, 0x6f, 0x72, 0xf, 0x73, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65, 0x5f, 0x63, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x73, 0x5}, EqOutputs:[][]uint8(nil), Messages:[]validatorwallet.IMessagesSubmittedMessage(nil), Events:[]events.RawEvent(nil), StorageDeltas:[]storage.StorageStateItem(nil), Stdout:\"\", Stderr:\"Traceback (most recent call last):\\n  File \\\"/py/libs/_genlayer_runner.py\\\", line 180, in <module>\\n    _handle_main()\\n    ~~~~~~~~~~~~^^\\n  File \\\"/py/libs/_genlayer_runner.py\\\", line 170, in _handle_main\\n    _give_result(\\n    ~~~~~~~~~~~~^\\n    \\tlambda: meth2call(contract_instance, *cd.get('args', []), **cd.get('kwargs', {}))\\n     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n    )\\n    ^\\n  File \\\"/py/libs/_genlayer_runner.py\\\", line 65, in _give_result\\n    res = res_fn()\\n  File \\\"/py/libs/_genlayer_runner.py\\\", line 171, in <lambda>\\n    lambda: meth2call(contract_instance, *cd.get('args', []), **cd.get('kwargs', {}))\\n            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\\"/contract.py\\\", line 196, in get_proposal\\n    raise ValueError('PPA Adapter: proposal not found')\\nValueError: PPA Adapter: proposal not found\\n\", GenVMLog:[]map[string]interface {}{map[string]interface {}{\"file\":\"common/src/lib.rs:111\", \"level\":\"info\", \"message\":\"logging initialized\", \"target\":\"genvm_common\", \"ts\":\"1792341042725\", \"version\":\"v0.2.11-x86_64-linux-release\"}, map[string]interface {}{\"file\":\"src/exe/run.rs:150\", \"genvm_id\":\"5374248\", \"level\":\"info\", \"message\":\"genvm id\", \"target\":\"genvm::exe::run\", \"ts\":\"1792341042725\"}, map[string]interface {}{\"default\":\"v0.1.0\", \"file\":\"src/runners/parse.rs:88\", \"level\":\"warn\", \"message\":\"runner comment does not start with version, using default\", \"target\":\"genvm::runners::parse\", \"ts\":\"1792341042736\"}, map[string]interface {}{\"file\":\"src/lib.rs:299\", \"level\":\"info\", \"message\":\"metrics\", \"metrics\":map[string]interface {}{\"gvm\":map[string]interface {}{\"host\":map[string]interface {}{\"time\":9929}, \"llm_module\":map[string]interface {}{\"calls\":0, \"time\":0}, \"supervisor\":map[string]interface {}{\"compilation_time\":0, \"compiled_modules\":0, \"precompile_hits\":2}, \"web_module\":map[string]interface {}{\"calls\":0, \"time\":0}}, \"llm\":interface {}(nil), \"web\":interface {}(nil)}, \"target\":\"genvm\", \"ts\":\"1792341042921\"}, map[string]interface {}{\"file\":\"src/exe/run.rs:111\", \"level\":\"warn\", \"message\":\"sigterm received\", \"target\":\"genvm::exe::run\", \"ts\":\"1792341042921\"}}, StorageProof:[32]uint8{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}, RunTime:0, NondetDisagreementCallNo:(*uint32)(nil)}: genvm execution error"
+      ],
+      "expectation": "deliberate not-found revert"
+    },
+    {
+      "name": "neg_read_NEG-PROP-AMT-2284832",
+      "on": "canonical",
+      "present": true,
+      "value": {
+        "account_id": "LIVE-SPLIT-2283426",
+        "amount": "99999",
+        "created": "2026-10-18T00:53:56Z",
+        "decision_id": "NEG-AMT-2284832",
+        "dispatched": "2026-10-18T00:54:00Z",
+        "evidence_hash": "sha256:live-negative-bound",
+        "expires_at": "2099-01-01T00:00:00+00:00",
+        "payment_id": "NEG-PAY-AMT-2284832",
+        "policy_version": "TECH-V1",
+        "proposal_id": "NEG-PROP-AMT-2284832",
+        "status": "DISPATCHED",
+        "to": "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+      },
+      "attempts": 1
+    },
+    {
+      "name": "neg_read_NEG-PROP-REC-2284832",
+      "on": "canonical",
+      "present": true,
+      "value": {
+        "account_id": "LIVE-SPLIT-2283426",
+        "amount": "100",
+        "created": "2026-10-18T00:54:58Z",
+        "decision_id": "NEG-REC-2284832",
+        "dispatched": "2026-10-18T00:55:01Z",
+        "evidence_hash": "sha256:live-negative-bound",
+        "expires_at": "2099-01-01T00:00:00+00:00",
+        "payment_id": "NEG-PAY-REC-2284832",
+        "policy_version": "TECH-V1",
+        "proposal_id": "NEG-PROP-REC-2284832",
+        "status": "DISPATCHED",
+        "to": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "attempts": 1
+    },
+    {
+      "name": "neg_read_NEG-PROP-REJ-2284832",
+      "on": "canonical",
+      "present": false,
+      "deliberate_not_found": true,
+      "not_found_hits": 8,
+      "attempts": 8,
+      "error_head": "gen_call failed (code=-32000): execution failed: &genvm.VMResult{Kind:0x2, ReturnData:[]uint8{0x2e, 0x4, 0x64, 0x61, 0x74, 0x61, 0x5c, 0x65, 0x78, 0x69, 0x74, 0x5f, 0x63, 0x6f, 0x64, 0x65, 0x20, 0x31, 0x6, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x5, 0xb, 0x66, 0x69, 0x6e, 0x67, 0x65, 0x72, 0x70, 0x72, ",
+      "ascii": [
+        "gen_call failed (code=-32000): execution failed: &genvm.VMResult{Kind:0x2, ReturnData:[]uint8{0x2e, 0x4, 0x64, 0x61, 0x74, 0x61, 0x5c, 0x65, 0x78, 0x69, 0x74, 0x5f, 0x63, 0x6f, 0x64, 0x65, 0x20, 0x31, 0x6, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x5, 0xb, 0x66, 0x69, 0x6e, 0x67, 0x65, 0x72, 0x70, 0x72, 0x69, 0x6e, 0x74, 0x16, 0x6, 0x66, 0x72, 0x61, 0x6d, 0x65, 0x73, 0x15, 0x16, 0x4, 0x66, 0x75, 0x6e, 0x63, 0xe1, 0x7, 0xb, 0x6d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x3c, 0x63, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x16, 0x4, 0x66, 0x75, 0x6e, 0x63, 0xb9, 0x7, 0xb, 0x6d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x3c, 0x63, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x10, 0x6d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x5f, 0x69, 0x6e, 0x73, 0x74, 0x61, 0x6e, 0x63, 0x65, 0x73, 0x16, 0x7, 0x63, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0xe, 0x8, 0x6d, 0x65, 0x6d, 0x6f, 0x72, 0x69, 0x65, 0x73, 0xd, 0x83, 0x2, 0x7, 0x52, 0x97, 0xa6, 0x3b, 0x8, 0x67, 0x3d, 0xa0, 0xeb, 0xc6, 0xef, 0xa4, 0xfe, 0xf5, 0x5a, 0x24, 0x70, 0x46, 0x9e, 0xe6, 0x77, 0x1c, 0xc9, 0x38, 0xf0, 0xd4, 0x7d, 0x12, 0xd3, 0xee, 0x35, 0x9, 0x73, 0x6f, 0x66, 0x74, 0x66, 0x6c, 0x6f, 0x61, 0x74, 0xe, 0x8, 0x6d, 0x65, 0x6d, 0x6f, 0x72, 0x69, 0x65, 0x73, 0xd, 0x83, 0x2, 0xfc, 0x9e, 0x4f, 0xa3, 0x44, 0x8d, 0xa5, 0xd, 0xc6, 0xff, 0x51, 0x4a, 0xba, 0x5, 0x68, 0xba, 0x4, 0x52, 0x76, 0xf5, 0x8d, 0x3c, 0x60, 0xfd, 0xf4, 0xc5, 0xc3, 0xd2, 0x8b, 0x16, 0xac, 0xc8, 0x4, 0x6b, 0x69, 0x6e, 0x64, 0x3c, 0x56, 0x6d, 0x45, 0x72, 0x72, 0x6f, 0x72, 0xf, 0x73, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65, 0x5f, 0x63, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x73, 0x5}, EqOutputs:[][]uint8(nil), Messages:[]validatorwallet.IMessagesSubmittedMessage(nil), Events:[]events.RawEvent(nil), StorageDeltas:[]storage.StorageStateItem(nil), Stdout:\"\", Stderr:\"Traceback (most recent call last):\\n  File \\\"/py/libs/_genlayer_runner.py\\\", line 180, in <module>\\n    _handle_main()\\n    ~~~~~~~~~~~~^^\\n  File \\\"/py/libs/_genlayer_runner.py\\\", line 170, in _handle_main\\n    _give_result(\\n    ~~~~~~~~~~~~^\\n    \\tlambda: meth2call(contract_instance, *cd.get('args', []), **cd.get('kwargs', {}))\\n     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n    )\\n    ^\\n  File \\\"/py/libs/_genlayer_runner.py\\\", line 65, in _give_result\\n    res = res_fn()\\n  File \\\"/py/libs/_genlayer_runner.py\\\", line 171, in <lambda>\\n    lambda: meth2call(contract_instance, *cd.get('args', []), **cd.get('kwargs', {}))\\n            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\\"/contract.py\\\", line 196, in get_proposal\\n    raise ValueError('PPA Adapter: proposal not found')\\nValueError: PPA Adapter: proposal not found\\n\", GenVMLog:[]map[string]interface {}{map[string]interface {}{\"file\":\"common/src/lib.rs:111\", \"level\":\"info\", \"message\":\"logging initialized\", \"target\":\"genvm_common\", \"ts\":\"1792341077198\", \"version\":\"v0.2.11-x86_64-linux-release\"}, map[string]interface {}{\"file\":\"src/exe/run.rs:150\", \"genvm_id\":\"5374262\", \"level\":\"info\", \"message\":\"genvm id\", \"target\":\"genvm::exe::run\", \"ts\":\"1792341077198\"}, map[string]interface {}{\"default\":\"v0.1.0\", \"file\":\"src/runners/parse.rs:88\", \"level\":\"warn\", \"message\":\"runner comment does not start with version, using default\", \"target\":\"genvm::runners::parse\", \"ts\":\"1792341077210\"}, map[string]interface {}{\"file\":\"src/lib.rs:299\", \"level\":\"info\", \"message\":\"metrics\", \"metrics\":map[string]interface {}{\"gvm\":map[string]interface {}{\"host\":map[string]interface {}{\"time\":11088}, \"llm_module\":map[string]interface {}{\"calls\":0, \"time\":0}, \"supervisor\":map[string]interface {}{\"compilation_time\":0, \"compiled_modules\":0, \"precompile_hits\":2}, \"web_module\":map[string]interface {}{\"calls\":0, \"time\":0}}, \"llm\":interface {}(nil), \"web\":interface {}(nil)}, \"target\":\"genvm\", \"ts\":\"1792341077398\"}, map[string]interface {}{\"file\":\"src/exe/run.rs:111\", \"level\":\"warn\", \"message\":\"sigterm received\", \"target\":\"genvm::exe::run\", \"ts\":\"1792341077399\"}}, StorageProof:[32]uint8{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}, RunTime:0, NondetDisagreementCallNo:(*uint32)(nil)}: genvm execution error"
+      ]
+    },
+    {
+      "name": "neg_read_NEG-PROP-UNDETERMINED-2284832",
+      "on": "canonical",
+      "present": false,
+      "deliberate_not_found": true,
+      "not_found_hits": 8,
+      "attempts": 8,
+      "error_head": "gen_call failed (code=-32000): execution failed: &genvm.VMResult{Kind:0x2, ReturnData:[]uint8{0x2e, 0x4, 0x64, 0x61, 0x74, 0x61, 0x5c, 0x65, 0x78, 0x69, 0x74, 0x5f, 0x63, 0x6f, 0x64, 0x65, 0x20, 0x31, 0x6, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x5, 0xb, 0x66, 0x69, 0x6e, 0x67, 0x65, 0x72, 0x70, 0x72, ",
+      "ascii": [
+        "gen_call failed (code=-32000): execution failed: &genvm.VMResult{Kind:0x2, ReturnData:[]uint8{0x2e, 0x4, 0x64, 0x61, 0x74, 0x61, 0x5c, 0x65, 0x78, 0x69, 0x74, 0x5f, 0x63, 0x6f, 0x64, 0x65, 0x20, 0x31, 0x6, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x5, 0xb, 0x66, 0x69, 0x6e, 0x67, 0x65, 0x72, 0x70, 0x72, 0x69, 0x6e, 0x74, 0x16, 0x6, 0x66, 0x72, 0x61, 0x6d, 0x65, 0x73, 0x15, 0x16, 0x4, 0x66, 0x75, 0x6e, 0x63, 0xe1, 0x7, 0xb, 0x6d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x3c, 0x63, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x16, 0x4, 0x66, 0x75, 0x6e, 0x63, 0xb9, 0x7, 0xb, 0x6d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x3c, 0x63, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x10, 0x6d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x5f, 0x69, 0x6e, 0x73, 0x74, 0x61, 0x6e, 0x63, 0x65, 0x73, 0x16, 0x7, 0x63, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0xe, 0x8, 0x6d, 0x65, 0x6d, 0x6f, 0x72, 0x69, 0x65, 0x73, 0xd, 0x83, 0x2, 0x92, 0x37, 0x64, 0x4f, 0x63, 0xa7, 0x7e, 0x21, 0x56, 0x1b, 0x3c, 0x3, 0xc3, 0x49, 0x16, 0xf6, 0x11, 0x9c, 0xd4, 0x31, 0x72, 0x6b, 0x87, 0xf7, 0xce, 0x2d, 0x4c, 0xb0, 0x72, 0x26, 0x92, 0x0, 0x9, 0x73, 0x6f, 0x66, 0x74, 0x66, 0x6c, 0x6f, 0x61, 0x74, 0xe, 0x8, 0x6d, 0x65, 0x6d, 0x6f, 0x72, 0x69, 0x65, 0x73, 0xd, 0x83, 0x2, 0xfc, 0x9e, 0x4f, 0xa3, 0x44, 0x8d, 0xa5, 0xd, 0xc6, 0xff, 0x51, 0x4a, 0xba, 0x5, 0x68, 0xba, 0x4, 0x52, 0x76, 0xf5, 0x8d, 0x3c, 0x60, 0xfd, 0xf4, 0xc5, 0xc3, 0xd2, 0x8b, 0x16, 0xac, 0xc8, 0x4, 0x6b, 0x69, 0x6e, 0x64, 0x3c, 0x56, 0x6d, 0x45, 0x72, 0x72, 0x6f, 0x72, 0xf, 0x73, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65, 0x5f, 0x63, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x73, 0x5}, EqOutputs:[][]uint8(nil), Messages:[]validatorwallet.IMessagesSubmittedMessage(nil), Events:[]events.RawEvent(nil), StorageDeltas:[]storage.StorageStateItem(nil), Stdout:\"\", Stderr:\"Traceback (most recent call last):\\n  File \\\"/py/libs/_genlayer_runner.py\\\", line 180, in <module>\\n    _handle_main()\\n    ~~~~~~~~~~~~^^\\n  File \\\"/py/libs/_genlayer_runner.py\\\", line 170, in _handle_main\\n    _give_result(\\n    ~~~~~~~~~~~~^\\n    \\tlambda: meth2call(contract_instance, *cd.get('args', []), **cd.get('kwargs', {}))\\n     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n    )\\n    ^\\n  File \\\"/py/libs/_genlayer_runner.py\\\", line 65, in _give_result\\n    res = res_fn()\\n  File \\\"/py/libs/_genlayer_runner.py\\\", line 171, in <lambda>\\n    lambda: meth2call(contract_instance, *cd.get('args', []), **cd.get('kwargs', {}))\\n            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\\"/contract.py\\\", line 196, in get_proposal\\n    raise ValueError('PPA Adapter: proposal not found')\\nValueError: PPA Adapter: proposal not found\\n\", GenVMLog:[]map[string]interface {}{map[string]interface {}{\"file\":\"common/src/lib.rs:111\", \"level\":\"info\", \"message\":\"logging initialized\", \"target\":\"genvm_common\", \"ts\":\"1792341109733\", \"version\":\"v0.2.11-x86_64-linux-release\"}, map[string]interface {}{\"file\":\"src/exe/run.rs:150\", \"genvm_id\":\"5374271\", \"level\":\"info\", \"message\":\"genvm id\", \"target\":\"genvm::exe::run\", \"ts\":\"1792341109734\"}, map[string]interface {}{\"default\":\"v0.1.0\", \"file\":\"src/runners/parse.rs:88\", \"level\":\"warn\", \"message\":\"runner comment does not start with version, using default\", \"target\":\"genvm::runners::parse\", \"ts\":\"1792341109746\"}, map[string]interface {}{\"file\":\"src/lib.rs:299\", \"level\":\"info\", \"message\":\"metrics\", \"metrics\":map[string]interface {}{\"gvm\":map[string]interface {}{\"host\":map[string]interface {}{\"time\":11738}, \"llm_module\":map[string]interface {}{\"calls\":0, \"time\":0}, \"supervisor\":map[string]interface {}{\"compilation_time\":0, \"compiled_modules\":0, \"precompile_hits\":2}, \"web_module\":map[string]interface {}{\"calls\":0, \"time\":0}}, \"llm\":interface {}(nil), \"web\":interface {}(nil)}, \"target\":\"genvm\", \"ts\":\"1792341109936\"}, map[string]interface {}{\"file\":\"src/exe/run.rs:111\", \"level\":\"warn\", \"message\":\"sigterm received\", \"target\":\"genvm::exe::run\", \"ts\":\"1792341109947\"}}, StorageProof:[32]uint8{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}, RunTime:0, NondetDisagreementCallNo:(*uint32)(nil)}: genvm execution error"
+      ]
+    },
+    {
+      "name": "neg_read_NEG-PROP-ADAPTER-2284832",
+      "on": "second",
+      "present": true,
+      "value": {
+        "account_id": "LIVE-SPLIT-2283426",
+        "amount": "100",
+        "created": "2026-10-18T01:02:13Z",
+        "decision_id": "NEG-ADAPTER-2284832",
+        "dispatched": "2026-10-18T01:02:16Z",
+        "evidence_hash": "sha256:live-negative-bound",
+        "expires_at": "2099-01-01T00:00:00+00:00",
+        "payment_id": "NEG-PAY-ADAPTER-2284832",
+        "policy_version": "TECH-V1",
+        "proposal_id": "NEG-PROP-ADAPTER-2284832",
+        "status": "DISPATCHED",
+        "to": "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+      },
+      "attempts": 1
+    },
+    {
+      "name": "preB_account",
+      "value": [
+        {
+          "account_id": "LIVE-SPLIT-2283426",
+          "balance": "900",
+          "committed": "0",
+          "created": "2026-10-18T00:30:41Z",
+          "daily_spent": "100",
+          "daily_window_start": "2026-10-18T00:30:41Z",
+          "rules": {
+            "allowlist": [
+              "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+            ],
+            "currency": "USDC",
+            "daily_limit": "1000",
+            "per_tx_limit": "500",
+            "policy_version": "TECH-V1"
+          },
+          "status": "ACTIVE"
+        },
+        null
+      ]
+    },
+    {
+      "name": "B_submit",
+      "method": "submit_decision_receipt",
+      "to": "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+      "tx": "0xd5f1c77b30dff629a2bc05cec68aa5168e261ffa9cf0d2b67a8fed681591471d",
+      "status": 1,
+      "gas_used": 1117829,
+      "block": 25463424
+    },
+    {
+      "name": "B_admit",
+      "method": "admit_proposal",
+      "to": "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+      "tx": "0x37aeb411e858dbf75a6a5ab68e5d8fc62b5cae42f3e96817e2a9909e519007ed",
+      "status": 1,
+      "gas_used": 953071,
+      "block": 25463428
+    },
+    {
+      "name": "B_proposal_pre_mutation",
+      "value": [
+        {
+          "account_id": "LIVE-SPLIT-2283426",
+          "amount": "100",
+          "created": "2026-10-18T16:31:58Z",
+          "decision_id": "ASYNC-POL-2341019",
+          "evidence_hash": "sha256:async-refusal",
+          "expires_at": "2099-01-01T00:00:00+00:00",
+          "payment_id": "ASYNC-PAY-POL-2341019",
+          "policy_version": "TECH-V1",
+          "proposal_id": "ASYNC-PROP-POL-2341019",
+          "status": "ADMITTED",
+          "to": "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+        },
+        null
+      ]
+    },
+    {
+      "name": "B_policy_cut_to_10",
+      "method": "update_rules",
+      "to": "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE",
+      "tx": "0x79abfce4e274880c8cae50423bf9f08b607a5ea2d59676420147434a742322bb",
+      "status": 1,
+      "gas_used": 934830,
+      "block": 25463472
+    },
+    {
+      "name": "B_account_after_policy_cut",
+      "value": [
+        {
+          "account_id": "LIVE-SPLIT-2283426",
+          "balance": "900",
+          "committed": "0",
+          "created": "2026-10-18T00:30:41Z",
+          "daily_spent": "100",
+          "daily_window_start": "2026-10-18T00:30:41Z",
+          "rules": {
+            "allowlist": [
+              "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+            ],
+            "currency": "USDC",
+            "daily_limit": "1000",
+            "per_tx_limit": "500",
+            "policy_version": "TECH-V1"
+          },
+          "status": "ACTIVE"
+        },
+        null
+      ]
+    },
+    {
+      "name": "B_dispatch",
+      "method": "dispatch_proposal",
+      "to": "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+      "tx": "0xfa99b1ad5f946f8dcc52a3d955707184c533be59e381999f44ef6571410beabb",
+      "status": 1,
+      "gas_used": 820635,
+      "block": 25463478
+    },
+    {
+      "name": "B_consequence",
+      "value": [
+        {
+          "adapter_caller": "29c88a9dbe42fa74341f7932003b6601b1d317c5",
+          "created_at": "2026-10-18T16:32:44Z",
+          "decision_id": "ASYNC-POL-2341019",
+          "detail": "PER_TX_LIMIT",
+          "payment_id": "ASYNC-PAY-POL-2341019",
+          "policy_version": "TECH-V1",
+          "proposal_id": "ASYNC-PROP-POL-2341019",
+          "reason_code": "REJECTED_AMOUNT",
+          "requested_amount": "100",
+          "requested_recipient": "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6",
+          "status": "REJECTED"
+        },
+        null
+      ]
+    },
+    {
+      "name": "B_account_post_dispatch",
+      "value": [
+        {
+          "account_id": "LIVE-SPLIT-2283426",
+          "balance": "900",
+          "committed": "0",
+          "created": "2026-10-18T00:30:41Z",
+          "daily_spent": "100",
+          "daily_window_start": "2026-10-18T00:30:41Z",
+          "rules": {
+            "allowlist": [
+              "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+            ],
+            "currency": "USDC",
+            "daily_limit": "1000",
+            "per_tx_limit": "10",
+            "policy_version": "TECH-V1"
+          },
+          "status": "ACTIVE"
+        },
+        null
+      ]
+    },
+    {
+      "name": "B_policy_restore_500",
+      "method": "update_rules",
+      "to": "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE",
+      "tx": "0x74ec1b117ac26ae0ce0449a964949ad7afa02e5f987d5e086e173e9e799d790d",
+      "status": 1,
+      "gas_used": 934842,
+      "block": 25463521
+    },
+    {
+      "name": "B_account_restored",
+      "value": [
+        {
+          "account_id": "LIVE-SPLIT-2283426",
+          "balance": "900",
+          "committed": "0",
+          "created": "2026-10-18T00:30:41Z",
+          "daily_spent": "100",
+          "daily_window_start": "2026-10-18T00:30:41Z",
+          "rules": {
+            "allowlist": [
+              "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+            ],
+            "currency": "USDC",
+            "daily_limit": "1000",
+            "per_tx_limit": "10",
+            "policy_version": "TECH-V1"
+          },
+          "status": "ACTIVE"
+        },
+        null
+      ]
+    },
+    {
+      "name": "C1_submit",
+      "method": "submit_decision_receipt",
+      "to": "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+      "tx": "0x52cd94f7d4df11a5e896899dc1f52b24bcd5235c95139f241c04958606a0355f",
+      "status": 1,
+      "gas_used": 1117841,
+      "block": 25463530
+    },
+    {
+      "name": "C1_admit_900",
+      "method": "admit_proposal",
+      "to": "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+      "tx": "0xe6bac2505ebe0388cc26e2d52ec7616d04da9ebf5dfd72df7f7f21e47aa60bbd",
+      "status": 1,
+      "gas_used": 975566,
+      "block": 25463537
+    },
+    {
+      "name": "C1_withdraw_900",
+      "method": "withdraw",
+      "to": "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE",
+      "tx": "0x47830f86d62d36cc70b0e9b0cdd015687603a9a8cf7df55225142dd1a8e62178",
+      "status": 1,
+      "gas_used": 792797,
+      "block": 25463543
+    },
+    {
+      "name": "C1_account_after_withdraw",
+      "value": [
+        {
+          "account_id": "LIVE-SPLIT-2283426",
+          "balance": "900",
+          "committed": "0",
+          "created": "2026-10-18T00:30:41Z",
+          "daily_spent": "100",
+          "daily_window_start": "2026-10-18T00:30:41Z",
+          "rules": {
+            "allowlist": [
+              "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+            ],
+            "currency": "USDC",
+            "daily_limit": "1000",
+            "per_tx_limit": "500",
+            "policy_version": "TECH-V1"
+          },
+          "status": "ACTIVE"
+        },
+        null
+      ]
+    },
+    {
+      "name": "C1_dispatch",
+      "method": "dispatch_proposal",
+      "to": "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+      "tx": "0x9f896c97843374631debc1d4018bc40483bbf36429963ad0d683a3b6b12bfc7f",
+      "status": 1,
+      "gas_used": 792944,
+      "block": 25463551
+    },
+    {
+      "name": "C1_consequence",
+      "value": [
+        {
+          "adapter_caller": "29c88a9dbe42fa74341f7932003b6601b1d317c5",
+          "created_at": "2026-10-18T16:33:32Z",
+          "decision_id": "ASYNC-CAP1-2341019",
+          "detail": "PER_TX_LIMIT",
+          "payment_id": "ASYNC-PAY-CAP1-2341019",
+          "policy_version": "TECH-V1",
+          "proposal_id": "ASYNC-PROP-CAP1-2341019",
+          "reason_code": "REJECTED_AMOUNT",
+          "requested_amount": "900",
+          "requested_recipient": "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6",
+          "status": "REJECTED"
+        },
+        null
+      ],
+      "note": "Core checks per_tx_limit before capital; 900>500 so REJECTED_AMOUNT expected, NOT_REJECTED_CAPITAL"
+    },
+    {
+      "name": "C1_redeposit_900",
+      "method": "deposit",
+      "to": "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE",
+      "tx": "0x1b83f1cf00a8a8251f1776c4ad4427845c6b2f99c185e8f36c2f2466981001fc",
+      "status": 1,
+      "gas_used": 820488,
+      "block": 25463599
+    },
+    {
+      "name": "C2_submit",
+      "method": "submit_decision_receipt",
+      "to": "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+      "tx": "0x2c3a11f3f4d35cd676b496ce40e66f7ec119bb04dd4b000238dd40be9a62de37",
+      "status": 1,
+      "gas_used": 1117841,
+      "block": 25463602
+    },
+    {
+      "name": "C2_admit_400",
+      "method": "admit_proposal",
+      "to": "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+      "tx": "0x59a917a18e7606d98577026ca10c666df5507556c5093db55dcf0d03f97d1145",
+      "status": 1,
+      "gas_used": 983136,
+      "block": 25463607
+    },
+    {
+      "name": "C2_proposal_pre_mutation",
+      "value": [
+        {
+          "account_id": "LIVE-SPLIT-2283426",
+          "amount": "400",
+          "created": "2026-10-18T16:33:50Z",
+          "decision_id": "ASYNC-CAP2-2341019",
+          "evidence_hash": "sha256:async-refusal",
+          "expires_at": "2099-01-01T00:00:00+00:00",
+          "payment_id": "ASYNC-PAY-CAP2-2341019",
+          "policy_version": "TECH-V1",
+          "proposal_id": "ASYNC-PROP-CAP2-2341019",
+          "status": "ADMITTED",
+          "to": "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+        },
+        null
+      ]
+    },
+    {
+      "name": "C2_withdraw_600",
+      "method": "withdraw",
+      "to": "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE",
+      "tx": "0xb7c4437809521b6629cf2bee3a44e152c7ecd1371a36d46bacba295b56b874a6",
+      "status": 1,
+      "gas_used": 820500,
+      "block": 25463639
+    },
+    {
+      "name": "C2_account_after_withdraw",
+      "value": [
+        {
+          "account_id": "LIVE-SPLIT-2283426",
+          "balance": "900",
+          "committed": "0",
+          "created": "2026-10-18T00:30:41Z",
+          "daily_spent": "100",
+          "daily_window_start": "2026-10-18T00:30:41Z",
+          "rules": {
+            "allowlist": [
+              "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+            ],
+            "currency": "USDC",
+            "daily_limit": "1000",
+            "per_tx_limit": "500",
+            "policy_version": "TECH-V1"
+          },
+          "status": "ACTIVE"
+        },
+        null
+      ]
+    },
+    {
+      "name": "C2_dispatch",
+      "method": "dispatch_proposal",
+      "to": "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+      "tx": "0xfa94a19c0ba9ac3292c6098f43025ce39ec7787e57af69f3142c82aa766e2385",
+      "status": 1,
+      "gas_used": 820647,
+      "block": 25463645
+    },
+    {
+      "name": "C2_consequence",
+      "value": [
+        {
+          "adapter_caller": "29c88a9dbe42fa74341f7932003b6601b1d317c5",
+          "created_at": "2026-10-18T16:34:27Z",
+          "decision_id": "ASYNC-CAP2-2341019",
+          "detail": "INSUFFICIENT_UNCOMMITTED",
+          "payment_id": "ASYNC-PAY-CAP2-2341019",
+          "policy_version": "TECH-V1",
+          "proposal_id": "ASYNC-PROP-CAP2-2341019",
+          "reason_code": "REJECTED_CAPITAL",
+          "requested_amount": "400",
+          "requested_recipient": "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6",
+          "status": "REJECTED"
+        },
+        null
+      ]
+    },
+    {
+      "name": "C2_account_post_dispatch",
+      "value": [
+        {
+          "account_id": "LIVE-SPLIT-2283426",
+          "balance": "300",
+          "committed": "0",
+          "created": "2026-10-18T00:30:41Z",
+          "daily_spent": "100",
+          "daily_window_start": "2026-10-18T00:30:41Z",
+          "rules": {
+            "allowlist": [
+              "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+            ],
+            "currency": "USDC",
+            "daily_limit": "1000",
+            "per_tx_limit": "500",
+            "policy_version": "TECH-V1"
+          },
+          "status": "ACTIVE"
+        },
+        null
+      ]
+    },
+    {
+      "name": "C2_redeposit_600",
+      "method": "deposit",
+      "to": "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE",
+      "tx": "0x0481d0d35539eaf61242f3dd634e0b6d07cefa01727603f9e572d4a012a80a40",
+      "status": 1,
+      "gas_used": 820488,
+      "block": 25463697
+    },
+    {
+      "name": "final_account",
+      "value": [
+        {
+          "account_id": "LIVE-SPLIT-2283426",
+          "balance": "300",
+          "committed": "0",
+          "created": "2026-10-18T00:30:41Z",
+          "daily_spent": "100",
+          "daily_window_start": "2026-10-18T00:30:41Z",
+          "rules": {
+            "allowlist": [
+              "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+            ],
+            "currency": "USDC",
+            "daily_limit": "1000",
+            "per_tx_limit": "500",
+            "policy_version": "TECH-V1"
+          },
+          "status": "ACTIVE"
+        },
+        null
+      ]
+    },
+    {
+      "name": "final_account_confirmed",
+      "value": [
+        {
+          "account_id": "LIVE-SPLIT-2283426",
+          "balance": "900",
+          "committed": "0",
+          "created": "2026-10-18T00:30:41Z",
+          "daily_spent": "100",
+          "daily_window_start": "2026-10-18T00:30:41Z",
+          "rules": {
+            "allowlist": [
+              "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+            ],
+            "currency": "USDC",
+            "daily_limit": "1000",
+            "per_tx_limit": "500",
+            "policy_version": "TECH-V1"
+          },
+          "status": "ACTIVE"
+        },
+        null
+      ],
+      "note": "polled until C2_redeposit_600 visible; readbacks during the run raced ahead of pending writes (B_account_after_policy_cut, C1/C2 post-withdraw reads showed pre-tx state)"
+    }
+  ],
+  "status": "RECORDED",
+  "readback_note": "some post-write reads observed pre-commit state; consequence and final-account reads are authoritative"
+}

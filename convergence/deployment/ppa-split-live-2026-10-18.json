@@ -1,0 +1,221 @@
+{
+  "network": "testnet-bradbury",
+  "chain_id": 4221,
+  "core": "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE",
+  "adapter": "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+  "deployer": "0x8311BfD717708d6E9c4933e80762cC4901F836BF",
+  "run": "2283426",
+  "steps": [
+    {
+      "method": "initialize",
+      "to": "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE",
+      "evm_tx": "0x475fcf43d36a2bd0213d58f0672e1b5ec62529ba6d8ed50d646badc582a20cdf",
+      "evm_status": 1,
+      "gas_used": 843273,
+      "block": 25415989,
+      "consensus_tx": "0x3232be7e9a531e0a1bf69fc182ece4fbfd003cd059cca363c21651a769a28726",
+      "consensus_status": "5",
+      "consensus_poll_error": "'14'"
+    },
+    {
+      "method": "create_account",
+      "to": "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE",
+      "evm_tx": "0xf177ab57e42ef57021822c4ef8de90b99d124079e59433832bedc6f2b2ceccea",
+      "evm_status": 1,
+      "gas_used": 889165,
+      "block": 25416004,
+      "consensus_tx": "0xcdf8556655da6866d066d20a2882d8152167e7b89a8b72f429119dc9f5790625",
+      "consensus_status": "5"
+    },
+    {
+      "method": "deposit",
+      "to": "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE",
+      "evm_tx": "0xc19d279674d687842c2d235f983512254f26c6a109ec100e535f8cf5cd4b3bf3",
+      "evm_status": 1,
+      "gas_used": 820500,
+      "block": 25416021,
+      "consensus_tx": "0x9d72f3c26f18c47ff6d084e82dbb9acb82b5017a62a39a6c027933be6117aaaa",
+      "consensus_status": "5"
+    },
+    {
+      "method": "initialize",
+      "to": "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+      "evm_tx": "0xeb8fe88de08a7c7099210df96036dd982f8de442413c5690965b738c55d45616",
+      "evm_status": 1,
+      "gas_used": 866274,
+      "block": 25416042,
+      "consensus_tx": "0x2c2d13c04850c27ef8f244ddac54dfe1f01cd8c13cb4aa6f4376f76ab91dcdc1",
+      "consensus_status": "5"
+    },
+    {
+      "method": "register_adapter",
+      "to": "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE",
+      "evm_tx": "0x1d1a3a38d1556ee581ed048bbb4578a580e4839aec56ab77d596be5cca800b86",
+      "evm_status": 1,
+      "gas_used": 843357,
+      "block": 25416059,
+      "consensus_tx": "0x5606ede8c77f4a30b7edfb3a3cf024719706fac2d39b7ad622c64db4ee5c1516",
+      "consensus_status": "5",
+      "consensus_poll_error": "'14'"
+    },
+    {
+      "method": "register_adjudicator",
+      "to": "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+      "evm_tx": "0x0b4e1910688e16b7a1c9570fd74b74e7e63ffccc61f29f5bef352b4a576843cc",
+      "evm_status": 1,
+      "gas_used": 980774,
+      "block": 25416080,
+      "consensus_tx": "0xf403367db8539e4cdf75ececb8b730630525bd3a8c88cbe920c2fc9606a5dfb8",
+      "consensus_status": "5",
+      "consensus_poll_error": "'14'"
+    },
+    {
+      "method": "submit_decision_receipt",
+      "to": "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+      "evm_tx": "0x5a3db912c24938cd99c169fb5095117a015bc484a20c1314e9e413a42328f72d",
+      "evm_status": 1,
+      "gas_used": 1117901,
+      "block": 25416103,
+      "consensus_tx": "0xd9592fa5f7a07591af816e8903bea50f0e8e4259999e3efa34b9f97719020e26",
+      "consensus_status": "5"
+    },
+    {
+      "method": "admit_proposal",
+      "to": "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+      "evm_tx": "0xa4c89fdc765fdea9b5a53f89ab15621df338a1d26d36546a302e2b9790b811a5",
+      "evm_status": 1,
+      "gas_used": 980652,
+      "block": 25416119,
+      "consensus_tx": "0x3e60af3f6a4d59287da78f7fe2990136c36c9b53e729e36c177332690e5d439c",
+      "consensus_status": "5",
+      "consensus_poll_error": "'14'"
+    },
+    {
+      "method": "dispatch_proposal",
+      "to": "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+      "evm_tx": "0x7c2c5a01e4c61772be14ec07cf908bd7871626ea8a75b3b1cc55d9b99fae0c54",
+      "evm_status": 1,
+      "gas_used": 820560,
+      "block": 25416137,
+      "consensus_tx": "0x353f9b9ed33c0c294512dd2cabac4198865da72bc58ad0c5c8727a955e0f26ff",
+      "consensus_status": "5"
+    }
+  ],
+  "reads": {
+    "core_adapter": {
+      "adapter_caller": "29c88a9dbe42fa74341f7932003b6601b1d317c5",
+      "created_at": "2026-10-18T00:31:19Z",
+      "expires_at": "2099-01-01T00:00:00+00:00",
+      "status": "ACTIVE"
+    },
+    "core_account": {
+      "account_id": "LIVE-SPLIT-2283426",
+      "balance": "1000",
+      "committed": "0",
+      "created": "2026-10-18T00:30:41Z",
+      "daily_spent": "0",
+      "daily_window_start": "2026-10-18T00:30:41Z",
+      "rules": {
+        "currency": "USDC",
+        "daily_limit": "1000",
+        "per_tx_limit": "500",
+        "policy_version": "TECH-V1"
+      },
+      "status": "ACTIVE"
+    },
+    "adapter_adjudicator": {
+      "authority_fingerprint": "sha256:live-adjudicator-source-001",
+      "created_at": "2020-01-01T00:00:00+00:00",
+      "expires_at": "2099-01-01T00:00:00+00:00",
+      "policy_version": "TECH-V1",
+      "source_contract": "8311bfd717708d6e9c4933e80762cc4901f836bf",
+      "status": "ACTIVE"
+    },
+    "adapter_receipt": {
+      "actionability": "ACTIONABLE",
+      "authority_fingerprint": "sha256:live-adjudicator-source-001",
+      "created_at": "2020-01-01T00:00:00+00:00",
+      "decision_id": "DEC-SPLIT-2283426",
+      "decision_status": "ACCEPTED",
+      "equivalence_mode": "comparative",
+      "evidence_hash": "sha256:real-live-bound-test",
+      "expires_at": "2099-01-01T00:00:00+00:00",
+      "origin_status": "BOUND",
+      "policy_version": "TECH-V1",
+      "question_hash": "sha256:q-live",
+      "recorded": "2026-10-18T00:31:51Z",
+      "source_contract": "0x8311BfD717708d6E9c4933e80762cC4901F836BF"
+    },
+    "adapter_proposal": {
+      "account_id": "LIVE-SPLIT-2283426",
+      "amount": "100",
+      "created": "2026-10-18T00:32:04Z",
+      "decision_id": "DEC-SPLIT-2283426",
+      "dispatched": "2026-10-18T00:32:20Z",
+      "evidence_hash": "sha256:real-live-bound-test",
+      "expires_at": "2099-01-01T00:00:00+00:00",
+      "payment_id": "PAY-SPLIT-2283426",
+      "policy_version": "TECH-V1",
+      "proposal_id": "PROP-SPLIT-2283426",
+      "status": "DISPATCHED",
+      "to": "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+    },
+    "core_consequence": {
+      "adapter_caller": "29c88a9dbe42fa74341f7932003b6601b1d317c5",
+      "created_at": "2026-10-18T00:32:32Z",
+      "decision_id": "DEC-SPLIT-2283426",
+      "payment_id": "PAY-SPLIT-2283426",
+      "payment_status": "SETTLED",
+      "policy_version": "TECH-V1",
+      "proposal_id": "PROP-SPLIT-2283426",
+      "reason_code": "EXECUTED",
+      "requested_amount": "100",
+      "requested_recipient": "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6",
+      "status": "EXECUTED"
+    },
+    "core_payment": {
+      "account_id": "LIVE-SPLIT-2283426",
+      "actor": "adapter:29c88a9dbe42fa74341f7932003b6601b1d317c5",
+      "amount": "100",
+      "created": "2026-10-18T00:32:32Z",
+      "decision_id": "DEC-SPLIT-2283426",
+      "evidence_hash": "sha256:real-live-bound-test",
+      "memo": "proposal:PROP-SPLIT-2283426",
+      "payment_id": "PAY-SPLIT-2283426",
+      "proposal_id": "PROP-SPLIT-2283426",
+      "status": "SETTLED",
+      "to": "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+    },
+    "core_account_final": {
+      "account_id": "LIVE-SPLIT-2283426",
+      "balance": "900",
+      "committed": "0",
+      "created": "2026-10-18T00:30:41Z",
+      "daily_spent": "100",
+      "daily_window_start": "2026-10-18T00:30:41Z",
+      "rules": {
+        "currency": "USDC",
+        "daily_limit": "1000",
+        "per_tx_limit": "500",
+        "policy_version": "TECH-V1"
+      },
+      "status": "ACTIVE"
+    }
+  },
+  "checks": {
+    "adapter_registered": true,
+    "adjudicator_registered": true,
+    "receipt_actionable": true,
+    "proposal_admitted_or_dispatched": true,
+    "core_observed_adapter": true,
+    "executed": true,
+    "payment_settled": true,
+    "balance_900": true
+  },
+  "status": "TESTNET_OBSERVED",
+  "limitations": [
+    "Owner EOA is the registered adjudicator source for this bound-receipt test; no real nondeterministic producer",
+    "Internal ledger only; no external token custody",
+    "Core/Adapter caller boundary tested through actual Bradbury emit path"
+  ]
+}

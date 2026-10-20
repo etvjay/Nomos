@@ -1,0 +1,123 @@
+{
+  "schemaVersion": "0.3.0",
+  "primitive": "ppa",
+  "version": "v0.3-origin",
+  "mode": "EXACT",
+  "sender": "0x2bd806c97f0e00af1a1fc3328fa763a9269723c8",
+  "note": "Receipt origin binding. The runner replays every action as the single sender `alice`, who is also the account owner, so alice registers herself as the adjudicator and origin resolves to BOUND. Cases that require a genuinely different caller (unregistered second caller) are not expressible in this corpus and are specified in primitives/ppa/implementations/genlayer/tests/test_ppa_receipt_origin.py.",
+  "vectors": [
+    {
+      "id": "ppa/origin-bound-accepted-settles-001",
+      "description": "Registered ACTIVE source, matching caller, matching fingerprint, ACCEPTED -> ACTIONABLE -> proposal -> settled",
+      "actions": [
+        {"op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok"},
+        {"op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"1000\",\"per_tx_limit\":\"500\",\"currency\":\"USDC\"}"], "expect": "ok"},
+        {"op": "deposit", "args": ["ACC1", "1000"], "expect": "ok"},
+        {"op": "register_adjudicator", "args": ["{\"source_contract\":\"0x2bd806c97f0e00af1a1fc3328fa763a9269723c8\",\"authority_fingerprint\":\"sha256:fp-001\",\"policy_version\":\"TECH-V1\",\"created_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\"}"], "expect": "ok"},
+        {"op": "submit_decision_receipt", "args": ["{\"decision_id\":\"DEC-1\",\"source_contract\":\"0x2bd806c97f0e00af1a1fc3328fa763a9269723c8\",\"authority_fingerprint\":\"sha256:fp-001\",\"question_hash\":\"sha256:q\",\"evidence_hash\":\"sha256:e\",\"decision_status\":\"ACCEPTED\",\"equivalence_mode\":\"comparative\",\"policy_version\":\"TECH-V1\",\"created_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\"}"], "expect": "ok"},
+        {"op": "get_receipt", "args": ["DEC-1"], "expect": {"actionability": "ACTIONABLE", "origin_status": "BOUND", "decision_status": "ACCEPTED"}},
+        {"op": "admit_proposal", "args": ["{\"proposal_id\":\"PROP-1\",\"decision_id\":\"DEC-1\",\"account_id\":\"ACC1\",\"payment_id\":\"PAY-1\",\"to\":\"0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6\",\"amount\":\"100\",\"policy_version\":\"TECH-V1\"}"], "expect": "ok"},
+        {"op": "get_proposal", "args": ["PROP-1"], "expect": {"status": "ADMITTED"}},
+        {"op": "execute_proposal", "args": ["PROP-1"], "expect": "ok"},
+        {"op": "get_payment", "args": ["PAY-1"], "expect": {"status": "SETTLED", "decision_id": "DEC-1"}},
+        {"op": "get_account", "args": ["ACC1"], "expect": {"balance": "900"}}
+      ]
+    },
+    {
+      "id": "ppa/origin-source-mismatch-002",
+      "description": "Registered source submits a receipt naming a different source_contract -> RECEIPT_SOURCE_MISMATCH, no movement",
+      "actions": [
+        {"op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok"},
+        {"op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"1000\",\"per_tx_limit\":\"500\",\"currency\":\"USDC\"}"], "expect": "ok"},
+        {"op": "deposit", "args": ["ACC1", "1000"], "expect": "ok"},
+        {"op": "register_adjudicator", "args": ["{\"source_contract\":\"0x2bd806c97f0e00af1a1fc3328fa763a9269723c8\",\"authority_fingerprint\":\"sha256:fp-001\",\"policy_version\":\"TECH-V1\",\"created_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\"}"], "expect": "ok"},
+        {"op": "submit_decision_receipt", "args": ["{\"decision_id\":\"DEC-2\",\"source_contract\":\"0xabc000000000000000000000000000000000001\",\"authority_fingerprint\":\"sha256:fp-001\",\"question_hash\":\"sha256:q\",\"evidence_hash\":\"sha256:e\",\"decision_status\":\"ACCEPTED\",\"equivalence_mode\":\"comparative\",\"policy_version\":\"TECH-V1\",\"created_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\"}"], "expect": "ok"},
+        {"op": "get_receipt", "args": ["DEC-2"], "expect": {"actionability": "NON_ACTIONABLE", "fail_reason": "RECEIPT_SOURCE_MISMATCH"}},
+        {"op": "admit_proposal", "args": ["{\"proposal_id\":\"PROP-2\",\"decision_id\":\"DEC-2\",\"account_id\":\"ACC1\",\"payment_id\":\"PAY-2\",\"to\":\"0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6\",\"amount\":\"100\",\"policy_version\":\"TECH-V1\"}"], "expect": "ok"},
+        {"op": "get_account", "args": ["ACC1"], "expect": {"balance": "1000"}}
+      ]
+    },
+    {
+      "id": "ppa/origin-authority-mismatch-003",
+      "description": "Receipt carries a different authority_fingerprint than registered -> RECEIPT_AUTHORITY_MISMATCH",
+      "actions": [
+        {"op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok"},
+        {"op": "register_adjudicator", "args": ["{\"source_contract\":\"0x2bd806c97f0e00af1a1fc3328fa763a9269723c8\",\"authority_fingerprint\":\"sha256:fp-001\",\"policy_version\":\"TECH-V1\",\"created_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\"}"], "expect": "ok"},
+        {"op": "submit_decision_receipt", "args": ["{\"decision_id\":\"DEC-3\",\"source_contract\":\"0x2bd806c97f0e00af1a1fc3328fa763a9269723c8\",\"authority_fingerprint\":\"sha256:fp-DIFFERENT\",\"question_hash\":\"sha256:q\",\"evidence_hash\":\"sha256:e\",\"decision_status\":\"ACCEPTED\",\"equivalence_mode\":\"comparative\",\"policy_version\":\"TECH-V1\",\"created_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\"}"], "expect": "ok"},
+        {"op": "get_receipt", "args": ["DEC-3"], "expect": {"actionability": "NON_ACTIONABLE", "fail_reason": "RECEIPT_AUTHORITY_MISMATCH"}}
+      ]
+    },
+    {
+      "id": "ppa/origin-source-revoked-004",
+      "description": "Revoked adjudicator -> RECEIPT_SOURCE_REVOKED, prior provenance untouched",
+      "actions": [
+        {"op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok"},
+        {"op": "register_adjudicator", "args": ["{\"source_contract\":\"0x2bd806c97f0e00af1a1fc3328fa763a9269723c8\",\"authority_fingerprint\":\"sha256:fp-001\",\"policy_version\":\"TECH-V1\",\"created_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\"}"], "expect": "ok"},
+        {"op": "revoke_adjudicator", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok"},
+        {"op": "get_adjudicator", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": {"status": "REVOKED"}},
+        {"op": "submit_decision_receipt", "args": ["{\"decision_id\":\"DEC-4\",\"source_contract\":\"0x2bd806c97f0e00af1a1fc3328fa763a9269723c8\",\"authority_fingerprint\":\"sha256:fp-001\",\"question_hash\":\"sha256:q\",\"evidence_hash\":\"sha256:e\",\"decision_status\":\"ACCEPTED\",\"equivalence_mode\":\"comparative\",\"policy_version\":\"TECH-V1\",\"created_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\"}"], "expect": "ok"},
+        {"op": "get_receipt", "args": ["DEC-4"], "expect": {"actionability": "NON_ACTIONABLE", "fail_reason": "RECEIPT_SOURCE_REVOKED"}}
+      ]
+    },
+    {
+      "id": "ppa/origin-source-expired-005",
+      "description": "Registry entry past expires_at -> RECEIPT_SOURCE_EXPIRED",
+      "actions": [
+        {"op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok"},
+        {"op": "register_adjudicator", "args": ["{\"source_contract\":\"0x2bd806c97f0e00af1a1fc3328fa763a9269723c8\",\"authority_fingerprint\":\"sha256:fp-001\",\"policy_version\":\"TECH-V1\",\"created_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2021-01-01T00:00:00+00:00\"}"], "expect": "ok"},
+        {"op": "submit_decision_receipt", "args": ["{\"decision_id\":\"DEC-5\",\"source_contract\":\"0x2bd806c97f0e00af1a1fc3328fa763a9269723c8\",\"authority_fingerprint\":\"sha256:fp-001\",\"question_hash\":\"sha256:q\",\"evidence_hash\":\"sha256:e\",\"decision_status\":\"ACCEPTED\",\"equivalence_mode\":\"comparative\",\"policy_version\":\"TECH-V1\",\"created_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\"}"], "expect": "ok"},
+        {"op": "get_receipt", "args": ["DEC-5"], "expect": {"actionability": "NON_ACTIONABLE", "fail_reason": "RECEIPT_SOURCE_EXPIRED"}}
+      ]
+    },
+    {
+      "id": "ppa/origin-rejected-006",
+      "description": "REJECTED from a valid registered source stays non-actionable (fail-closed does not relax for trusted callers)",
+      "actions": [
+        {"op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok"},
+        {"op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"1000\",\"per_tx_limit\":\"500\",\"currency\":\"USDC\"}"], "expect": "ok"},
+        {"op": "deposit", "args": ["ACC1", "1000"], "expect": "ok"},
+        {"op": "register_adjudicator", "args": ["{\"source_contract\":\"0x2bd806c97f0e00af1a1fc3328fa763a9269723c8\",\"authority_fingerprint\":\"sha256:fp-001\",\"policy_version\":\"TECH-V1\",\"created_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\"}"], "expect": "ok"},
+        {"op": "submit_decision_receipt", "args": ["{\"decision_id\":\"DEC-6\",\"source_contract\":\"0x2bd806c97f0e00af1a1fc3328fa763a9269723c8\",\"authority_fingerprint\":\"sha256:fp-001\",\"question_hash\":\"sha256:q\",\"evidence_hash\":\"sha256:e\",\"decision_status\":\"REJECTED\",\"equivalence_mode\":\"comparative\",\"policy_version\":\"TECH-V1\",\"created_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\"}"], "expect": "ok"},
+        {"op": "get_receipt", "args": ["DEC-6"], "expect": {"actionability": "NON_ACTIONABLE", "fail_reason": "NOT_ACCEPTED"}},
+        {"op": "get_account", "args": ["ACC1"], "expect": {"balance": "1000"}}
+      ]
+    },
+    {
+      "id": "ppa/origin-undetermined-007",
+      "description": "UNDETERMINED stays non-actionable; no proposal, no settlement",
+      "actions": [
+        {"op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok"},
+        {"op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"1000\",\"per_tx_limit\":\"500\",\"currency\":\"USDC\"}"], "expect": "ok"},
+        {"op": "deposit", "args": ["ACC1", "1000"], "expect": "ok"},
+        {"op": "register_adjudicator", "args": ["{\"source_contract\":\"0x2bd806c97f0e00af1a1fc3328fa763a9269723c8\",\"authority_fingerprint\":\"sha256:fp-001\",\"policy_version\":\"TECH-V1\",\"created_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\"}"], "expect": "ok"},
+        {"op": "submit_decision_receipt", "args": ["{\"decision_id\":\"DEC-7\",\"source_contract\":\"0x2bd806c97f0e00af1a1fc3328fa763a9269723c8\",\"authority_fingerprint\":\"sha256:fp-001\",\"question_hash\":\"sha256:q\",\"evidence_hash\":\"sha256:e\",\"decision_status\":\"UNDETERMINED\",\"equivalence_mode\":\"comparative\",\"policy_version\":\"TECH-V1\",\"created_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\"}"], "expect": "ok"},
+        {"op": "get_receipt", "args": ["DEC-7"], "expect": {"actionability": "NON_ACTIONABLE", "fail_reason": "NOT_ACCEPTED"}},
+        {"op": "get_account", "args": ["ACC1"], "expect": {"balance": "1000"}}
+      ]
+    },
+    {
+      "id": "ppa/origin-receipt-expired-008",
+      "description": "ACCEPTED receipt whose own validity window has closed -> RECEIPT_EXPIRED even from a bound source",
+      "actions": [
+        {"op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok"},
+        {"op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"1000\",\"per_tx_limit\":\"500\",\"currency\":\"USDC\"}"], "expect": "ok"},
+        {"op": "deposit", "args": ["ACC1", "1000"], "expect": "ok"},
+        {"op": "register_adjudicator", "args": ["{\"source_contract\":\"0x2bd806c97f0e00af1a1fc3328fa763a9269723c8\",\"authority_fingerprint\":\"sha256:fp-001\",\"policy_version\":\"TECH-V1\",\"created_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\"}"], "expect": "ok"},
+        {"op": "submit_decision_receipt", "args": ["{\"decision_id\":\"DEC-8\",\"source_contract\":\"0x2bd806c97f0e00af1a1fc3328fa763a9269723c8\",\"authority_fingerprint\":\"sha256:fp-001\",\"question_hash\":\"sha256:q\",\"evidence_hash\":\"sha256:e\",\"decision_status\":\"ACCEPTED\",\"equivalence_mode\":\"comparative\",\"policy_version\":\"TECH-V1\",\"created_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2020-02-01T00:00:00+00:00\"}"], "expect": "ok"},
+        {"op": "get_receipt", "args": ["DEC-8"], "expect": {"actionability": "NON_ACTIONABLE", "fail_reason": "RECEIPT_EXPIRED", "origin_status": "BOUND"}},
+        {"op": "get_account", "args": ["ACC1"], "expect": {"balance": "1000"}}
+      ]
+    },
+    {
+      "id": "ppa/origin-replay-refused-009",
+      "description": "A decision_id is consumed on first submission; replay is refused even with a different verdict",
+      "actions": [
+        {"op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok"},
+        {"op": "register_adjudicator", "args": ["{\"source_contract\":\"0x2bd806c97f0e00af1a1fc3328fa763a9269723c8\",\"authority_fingerprint\":\"sha256:fp-001\",\"policy_version\":\"TECH-V1\",\"created_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\"}"], "expect": "ok"},
+        {"op": "submit_decision_receipt", "args": ["{\"decision_id\":\"DEC-9\",\"source_contract\":\"0x2bd806c97f0e00af1a1fc3328fa763a9269723c8\",\"authority_fingerprint\":\"sha256:fp-001\",\"question_hash\":\"sha256:q\",\"evidence_hash\":\"sha256:e\",\"decision_status\":\"REJECTED\",\"equivalence_mode\":\"comparative\",\"policy_version\":\"TECH-V1\",\"created_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\"}"], "expect": "ok"},
+        {"op": "submit_decision_receipt", "args": ["{\"decision_id\":\"DEC-9\",\"source_contract\":\"0x2bd806c97f0e00af1a1fc3328fa763a9269723c8\",\"authority_fingerprint\":\"sha256:fp-001\",\"question_hash\":\"sha256:q\",\"evidence_hash\":\"sha256:e\",\"decision_status\":\"ACCEPTED\",\"equivalence_mode\":\"comparative\",\"policy_version\":\"TECH-V1\",\"created_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\"}"], "expect": "reject"},
+        {"op": "get_receipt", "args": ["DEC-9"], "expect": {"decision_status": "REJECTED", "actionability": "NON_ACTIONABLE"}}
+      ]
+    }
+  ]
+}

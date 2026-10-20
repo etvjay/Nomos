@@ -1,0 +1,168 @@
+{
+  "schemaVersion": "1.0.0",
+  "primitiveId": "ppa-receipt-adapter",
+  "name": "PPA Receipt / Proposal Adapter",
+  "capabilityVersion": "0.1.0",
+  "status": "IMPLEMENTING",
+  "convergenceMode": "EXACT",
+  "judgmentBearing": false,
+  "implementation": {
+    "environment": "genlayer",
+    "path": "primitives/ppa-receipt-adapter/implementations/genlayer/ppa_receipt_adapter.py"
+  },
+  "publicMethods": [
+    {
+      "name": "initialize",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "name": "core_address",
+          "type": "address"
+        }
+      ],
+      "output": "status-string"
+    },
+    {
+      "name": "register_adjudicator",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "adjudicator_json",
+          "type": "json-string"
+        }
+      ],
+      "output": "adjudicator-registration-result"
+    },
+    {
+      "name": "revoke_adjudicator",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "source_contract",
+          "type": "address"
+        }
+      ],
+      "output": "adjudicator-revocation-result"
+    },
+    {
+      "name": "get_adjudicator",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "source_contract",
+          "type": "address"
+        }
+      ],
+      "output": "adjudicator-record"
+    },
+    {
+      "name": "submit_decision_receipt",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "receipt_json",
+          "type": "json-string"
+        }
+      ],
+      "output": "receipt-admission-result"
+    },
+    {
+      "name": "get_receipt",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "decision_id",
+          "type": "string"
+        }
+      ],
+      "output": "receipt-record"
+    },
+    {
+      "name": "admit_proposal",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "proposal_json",
+          "type": "json-string"
+        }
+      ],
+      "output": "proposal-admission-result"
+    },
+    {
+      "name": "get_proposal",
+      "kind": "view",
+      "inputs": [
+        {
+          "name": "proposal_id",
+          "type": "string"
+        }
+      ],
+      "output": "proposal-record"
+    },
+    {
+      "name": "dispatch_proposal",
+      "kind": "write",
+      "inputs": [
+        {
+          "name": "proposal_id",
+          "type": "string"
+        }
+      ],
+      "output": "dispatch-result"
+    }
+  ],
+  "stateOwnership": {
+    "owns": [
+      "adjudicator registry (source_contract, authority_fingerprint, policy_version, status, validity window)",
+      "adjudication receipts with origin provenance",
+      "admitted proposals"
+    ],
+    "doesNotOwn": [
+      "any balance authority",
+      "account policy",
+      "ledger state",
+      "settlement \u2014 all belong to PPA Core"
+    ]
+  },
+  "canonicalDecision": {
+    "refusalVocabulary": [
+      "REJECTED_SOURCE_NOT_REGISTERED",
+      "REJECTED_SOURCE_FINGERPRINT_MISMATCH",
+      "REJECTED_UNDETERMINED",
+      "REJECTED_EXPIRED",
+      "REJECTED_PROPOSAL_REPLAY",
+      "REJECTED_POLICY",
+      "REJECTED_AMOUNT",
+      "REJECTED_RECIPIENT"
+    ],
+    "oneAuditableOutcomePerAttempt": [
+      "EXECUTED",
+      "DENIED",
+      "REJECTED"
+    ]
+  },
+  "boundary": {
+    "callerIdentity": "Verified by convergence/reports/CALLER-IDENTITY-SPIKE.json: at the receiving contract, gl.message.sender_address is the CALLING CONTRACT. The original EOA is consumed at the previous hop.",
+    "originRule": "Origin is the actual sender address. A JSON source_contract field is never provenance.",
+    "atomicity": "NON-ATOMIC. Adapter emits; Core executes in a later transaction."
+  },
+  "unsupported": [
+    "real web/LLM adjudication producer",
+    "external token custody",
+    "bridges",
+    "frontend"
+  ],
+  "reproduce": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "python -m pytest tests/split/ -q (requires glsim on :4000)"
+  ],
+  "component": "PPA Receipt / Proposal Adapter \u2014 the adjudication/proposal boundary",
+  "vectors": [
+    "primitives/ppa-receipt-adapter/vectors/v0.1.json"
+  ]
+}

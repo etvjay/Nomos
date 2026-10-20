@@ -1,0 +1,148 @@
+{
+  "contract": "0xB61670E0C8a44d8434815F397a8E80FD0f55B7c6",
+  "chain_id": 4221,
+  "steps": [
+    {
+      "method": "send",
+      "tx": "0x5d0a7991df1c94ac340a3c9f4ef6b1b96444145ef96009b094fd6dd7df12808c",
+      "raw_status": 5,
+      "raw_result": 1
+    },
+    {
+      "method": "register_attestation",
+      "tx": "0x835087a1611777100d2ffa8fa3784c9d21610a84d8e1606bbe2f89df068c16cc",
+      "raw_status": 5,
+      "raw_result": 1
+    },
+    {
+      "method": "send",
+      "tx": "0x5640ba94abab0d9cfcbda65d8ed3189f383fd1e701d9e217eed8f7a9193d9938",
+      "raw_status": 5,
+      "raw_result": 1
+    },
+    {
+      "method": "revoke_attestation",
+      "tx": "0xcfe79fd664e3c074204eee3f7bdb3716505c531bc24bd8648430aa282a1a26f7",
+      "raw_status": 5,
+      "raw_result": 1
+    },
+    {
+      "method": "send",
+      "tx": "0xe925147fe1a751c6edbc00a2570107bace45fdb33a836553ffbedb3217af5ade",
+      "raw_status": 5,
+      "raw_result": 1
+    }
+  ],
+  "initial_account": {
+    "account_id": "COMPLIANCE-ACC",
+    "balance": "1000",
+    "committed": "0",
+    "created": "2026-08-29T19:54:40Z",
+    "daily_spent": "0",
+    "daily_window_start": "2026-08-29T19:54:40Z",
+    "rules": {
+      "attestation_issuers": [
+        "0x1111111111111111111111111111111111111111"
+      ],
+      "attestation_policy_version": "TECH-V1",
+      "currency": "USDC",
+      "daily_limit": "1000",
+      "per_tx_limit": "500",
+      "require_attestation": true
+    },
+    "status": "ACTIVE"
+  },
+  "missing_payment": {
+    "account_id": "COMPLIANCE-ACC",
+    "created": "2026-08-29T21:11:49Z",
+    "payment_id": "COMP-MISSING-2",
+    "reason": "ATTESTATION_MISSING",
+    "status": "DENIED"
+  },
+  "after_missing": {
+    "account_id": "COMPLIANCE-ACC",
+    "balance": "1000",
+    "committed": "0",
+    "created": "2026-08-29T19:54:40Z",
+    "daily_spent": "0",
+    "daily_window_start": "2026-08-29T19:54:40Z",
+    "rules": {
+      "attestation_issuers": [
+        "0x1111111111111111111111111111111111111111"
+      ],
+      "attestation_policy_version": "TECH-V1",
+      "currency": "USDC",
+      "daily_limit": "1000",
+      "per_tx_limit": "500",
+      "require_attestation": true
+    },
+    "status": "ACTIVE"
+  },
+  "attestation": {
+    "attestation_id": "ATT-COMP-2",
+    "created": "2026-08-29T21:12:02Z",
+    "evidence_hash": "sha256:demo-attestation-2",
+    "expires_at": "2099-01-01T00:00:00+00:00",
+    "issued_at": "2020-01-01T00:00:00+00:00",
+    "issuer": "1111111111111111111111111111111111111111",
+    "policy_version": "TECH-V1",
+    "status": "VALID",
+    "subject": "9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+  },
+  "valid_payment": {
+    "account_id": "COMPLIANCE-ACC",
+    "actor": "owner",
+    "amount": "100",
+    "created": "2026-08-29T21:12:17Z",
+    "evidence_hash": "",
+    "memo": "",
+    "payment_id": "COMP-VALID-2",
+    "status": "SETTLED",
+    "to": "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+  },
+  "after_valid": {
+    "account_id": "COMPLIANCE-ACC",
+    "balance": "900",
+    "committed": "0",
+    "created": "2026-08-29T19:54:40Z",
+    "daily_spent": "100",
+    "daily_window_start": "2026-08-29T19:54:40Z",
+    "rules": {
+      "attestation_issuers": [
+        "0x1111111111111111111111111111111111111111"
+      ],
+      "attestation_policy_version": "TECH-V1",
+      "currency": "USDC",
+      "daily_limit": "1000",
+      "per_tx_limit": "500",
+      "require_attestation": true
+    },
+    "status": "ACTIVE"
+  },
+  "revoked_payment": {
+    "account_id": "COMPLIANCE-ACC",
+    "created": "2026-08-29T21:12:49Z",
+    "payment_id": "COMP-REVOKED-2",
+    "reason": "ATTESTATION_REVOKED",
+    "status": "DENIED"
+  },
+  "after_revoked": {
+    "account_id": "COMPLIANCE-ACC",
+    "balance": "900",
+    "committed": "0",
+    "created": "2026-08-29T19:54:40Z",
+    "daily_spent": "100",
+    "daily_window_start": "2026-08-29T19:54:40Z",
+    "rules": {
+      "attestation_issuers": [
+        "0x1111111111111111111111111111111111111111"
+      ],
+      "attestation_policy_version": "TECH-V1",
+      "currency": "USDC",
+      "daily_limit": "1000",
+      "per_tx_limit": "500",
+      "require_attestation": true
+    },
+    "status": "ACTIVE"
+  }
+}

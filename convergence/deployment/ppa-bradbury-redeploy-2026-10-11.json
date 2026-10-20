@@ -1,0 +1,97 @@
+{
+  "artifact": "ppa-bradbury-redeploy-2026-10-11",
+  "status": "SUPERSEDED",
+  "recorded_at": "2026-10-11T23:55:00Z",
+  "network": "testnet-bradbury",
+  "chain_id": 4221,
+  "rpc": "https://rpc-bradbury.genlayer.com",
+  "deployer": "0x8311BfD717708d6E9c4933e80762cC4901F836BF",
+  "contract_file": "contracts/ppa.py",
+  "source_chars": 25653,
+  "local_prechecks": {
+    "vectors": "15/15 PASS",
+    "nomos_lint": "PASS",
+    "nomos_converge": "PASS",
+    "capability_status": "CONFORMANT"
+  },
+  "existing_live_ppa": {
+    "contract": "0xB61670E0C8a44d8434815F397a8E80FD0f55B7c6",
+    "explorer": "https://explorer-bradbury.genlayer.com/address/0xB61670E0C8a44d8434815F397a8E80FD0f55B7c6",
+    "eth_getCode_bytes": 300,
+    "note": "Prior attestation-lifecycle deployment remains present on-chain"
+  },
+  "fresh_redeploy_attempts": [
+    {
+      "path": "tools/deploy_testnet.py / genlayer_py default estimate",
+      "estimate_gas": 20993871,
+      "result": "eth_sendRawTransaction rejected: gas limit too high"
+    },
+    {
+      "path": "explicit gas 15000000",
+      "tx": "0x7c2d738a6227e9e86b6d76f454032bc9ba9a01633e994546e60736db798065dd",
+      "evm_status": 0,
+      "gas_used": 13924759,
+      "logs": 0,
+      "result": "EVM revert / OOG-like full consumption, no contract created"
+    },
+    {
+      "path": "explicit gas ~16.5M-16.77M binary probe",
+      "txs": [
+        "0x0a7c841bfb7686f740c4d807a59200fa2cc29c3b3826d945a1163fd5fee64c7f",
+        "0x314bd1b1b4009cab10ba42a22dcf2c3702dfd7afe364f824e6f9bd5369de033e",
+        "0x0a7f4e78e5326a5e46bf680a22c3cd3452c85ad28a8d9f2cba05512f8961fe06"
+      ],
+      "max_accepted_gas_observed": 16773925,
+      "evm_status": 0,
+      "gas_used_examples": [
+        15311176,
+        15556930,
+        15564361
+      ],
+      "logs": 0,
+      "result": "accepted by mempool then reverted; no NewTransaction / no bytecode"
+    },
+    {
+      "path": "genlayer-js 2.0.0-rc.1 deployContract",
+      "result": "eth_estimateGas execution reverted; fallback gas 200000 -> intrinsic gas too low"
+    },
+    {
+      "path": "genlayer CLI deploy",
+      "result": "blocked: keystore password for account test1/default does not match available local secret; did not brute-force"
+    }
+  ],
+  "comparison": {
+    "dal.py": {
+      "chars": 4886,
+      "estimate_gas": 4789424
+    },
+    "sda_price.py": {
+      "chars": 8730,
+      "estimate_gas": 7813462
+    },
+    "policy_envelope.py": {
+      "chars": 12076,
+      "estimate_gas": 10336651
+    },
+    "ppa.py_current": {
+      "chars": 25653,
+      "estimate_gas": 20993871
+    }
+  },
+  "root_cause": "Current CONFORMANT PPA source (~25.6KB) encodes to a Bradbury deploy whose eth_estimateGas is ~20.99M. Observed Bradbury max accepted gas for this sender/payload class is ~16.77M. Transactions at or below that cap still revert with near-full gas consumption and create no contract. leader_only does not change the estimate.",
+  "conclusion": "Fresh Bradbury redeploy of the elevated PPA is BLOCKED by network per-tx gas ceiling versus contract size. Prior live PPA address remains deployed. No new PPA address is claimed.",
+  "next_options": [
+    "Split PPA into smaller GenLayer contracts (core ledger vs attestation/invoice/dispute modules) under the ~16.8M gas envelope",
+    "Reduce embedded comments/docs in contract source if they inflate deploy calldata materially",
+    "Continue using existing live PPA 0xB61670E0... for attestation demos until a slim redeploy fits",
+    "Investigate Studio/other networks only if explicitly authorized; do not present them as Bradbury proof"
+  ],
+  "limitations": [
+    "No new contract address produced",
+    "Internal accounting only on existing live PPA",
+    "Private key values not recorded here"
+  ],
+  "superseded_by": "convergence/deployment/ppa-bradbury.json",
+  "resolution": "Slim deploy succeeded; public-annotation variant tracked in ppa-bradbury-public-ann-2026-10-17.json / ppa-bradbury.json when DEPLOYED",
+  "resolved_at": "2026-10-17T00:00:00Z"
+}

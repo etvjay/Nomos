@@ -31,6 +31,21 @@ Nomos account rules
 
 The account is not an oracle wrapper. It is an account with an adjudication boundary.
 
+## The GenLayer integration contract
+
+GenLayer adjudication is consumed through a structured receipt rather than
+free-form model output. The receipt binds a decision identifier, source
+contract, question and evidence hashes, decision status, equivalence mode,
+policy version, and validity window. Only an `ACCEPTED` and unexpired receipt
+can create an executable account proposal. `REJECTED` and `UNDETERMINED`
+outcomes remain observable records but cannot authorize execution.
+
+The proposal then enters the same deterministic authority, policy, capital,
+replay, claim, and settlement gates as a human action. Autonomy changes who
+triggers that proposal path; it does not widen the authority available to it.
+The implementation boundary and deterministic receipt checks are documented in
+[`ias/integration/README.md`](../../ias/integration/README.md).
+
 ## Why GenLayer?
 
 Bitcoin made money trustless. Ethereum made computation trustless. GenLayer presents a third problem: **adjudication**.

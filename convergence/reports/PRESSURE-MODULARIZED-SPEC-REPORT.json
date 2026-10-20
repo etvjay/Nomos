@@ -1,0 +1,88 @@
+{
+  "report": "PRESSURE-MODULARIZED-SPEC-REPORT",
+  "workContract": "WORK-PRESSURE-MODULARIZED-SPEC-2026-10-17",
+  "recorded_at": "2026-10-17",
+  "headline": "Pressure behavior is specified but NOT executable in the current core deploy.",
+  "classification": "MODULARIZED_OUT_PRESSURE_SPEC",
+  "problem": {
+    "summary": "Six AGENTS.md-mandated adversarial tests target PPA methods (delegate, dispute_payment, issue_invoice and getters) that were gas-modularized out of the core to fit the Bradbury per-tx ceiling.",
+    "previousState": "6 failed, 150 passed, 2 skipped \u2014 the repository's reported test state contained six unresolved adversarial questions.",
+    "notRegressions": "Caused by the earlier modularization, not by the v0.3 origin work or the vector-runner hardening.",
+    "whyNotJustLeaveThem": "Six red tests misreport repository state. Deleting or migrating them would destroy the specification of the negative properties."
+  },
+  "resolution": {
+    "action": "Each test marked skipped via @modularized_out('<extension>') with an explicit reason.",
+    "assertionsPreserved": "verbatim; no assertion deleted, weakened, or rewritten",
+    "skipIsNotAPass": "Every skip reason ends with 'This skip is not a pass.'",
+    "mandatoryPropertyCarried": "Every skip reason states the property that remains mandatory when the extension returns."
+  },
+  "tests": {
+    "classified": [
+      {
+        "test": "test_delegation_never_widens_and_revocation_kills_spend",
+        "extension": "delegation",
+        "mandatory": "delegation narrows limits and never widens; revocation kills future spend immediately"
+      },
+      {
+        "test": "test_expired_delegation_loses_authority",
+        "extension": "delegation",
+        "mandatory": "an expired delegation confers no authority"
+      },
+      {
+        "test": "test_policy_allowlist_applies_to_delegate",
+        "extension": "delegation",
+        "mandatory": "the account allowlist still binds a delegate"
+      },
+      {
+        "test": "test_dispute_refund_is_compensating_not_rewrite",
+        "extension": "dispute-refund",
+        "mandatory": "refund is a compensating entry; settled history is never rewritten; no double refund"
+      },
+      {
+        "test": "test_dispute_guards_payment_lookup_and_authority",
+        "extension": "dispute-refund",
+        "mandatory": "dispute requires an existing payment and correct authority; duplicate disputes rejected"
+      },
+      {
+        "test": "test_invoice_settles_once_through_send_gates",
+        "extension": "invoice-settlement",
+        "mandatory": "an invoice settles exactly once and only through the send gates"
+      }
+    ],
+    "guard": "tests/pressure/test_pressure_surface_guard.py \u2014 5 tests",
+    "guardCovers": [
+      "every skip is classified against a known extension and retains its assertions (assert or pytest.raises)",
+      "skipped tests only touch methods that are genuinely modularized out",
+      "no UNSKIPPED test calls a method that exists in no primitive implementation (drift guard)",
+      "every skip reason carries the classification, the mandatory property, and 'not a pass'",
+      "the public-method union is non-trivial, so the drift guard cannot be vacuous"
+    ],
+    "guardMutationProved": "Removing one skip marker makes three tests fail: the unskipped test itself plus both classification guards. The guard is not decorative."
+  },
+  "adversarialQuestionsStillUnexecutable": [
+    "Can delegation widen account authority? (delegation extension absent)",
+    "Does an expired delegation lose authority? (delegation extension absent)",
+    "Does the account allowlist bind a delegate? (delegation extension absent)",
+    "Is a refund compensating rather than a rewrite, and single-shot? (dispute/refund extension absent)",
+    "Are dispute lookups and authority guarded? (dispute/refund extension absent)",
+    "Does an invoice settle exactly once through send gates? (invoice extension absent)"
+  ],
+  "suiteAccounting": {
+    "before": "6 failed, 150 passed, 2 skipped",
+    "after": "155 passed, 8 skipped, 0 failed",
+    "delta": "6 failed -> 6 skipped; 5 new guard tests added (150 -> 155 passed)",
+    "meaning": "The repository no longer reports a red suite, and the six adversarial questions are explicitly classified rather than silently absent."
+  },
+  "retainedAuthorityValues": {
+    "ppaAuthorityFingerprint": "sha256:34c90df60eb03170b9cbbea65c5e1d9f0e17af04e83fd68db6821881b6fd9be3",
+    "ppaImplementationSha256": "f1ba2058926828f50e0c0c9859f02a2593bc43b245bbae0b329e715e61d7a310",
+    "note": "Recorded separately and unchanged by this work. The authority fingerprint covers specification documents; the implementation hash covers source bytes. They are distinct identities and are never combined."
+  },
+  "notDone": [
+    "delegate / invoice / dispute methods were NOT restored to the core",
+    "the superseded v0.2 spine vectors were NOT migrated",
+    "no assertion was modified",
+    "no primitive implementation, CAPABILITY.json, or capability version was touched"
+  ],
+  "next": "WORK-PPA-SPLIT: split PPA Core (ledger, policy/attestation, capital, send gates, settlement) from the Receipt/Proposal Adapter (adjudicator registry, origin binding, authority fingerprint, receipt validation, replay protection, proposal state). The adapter must be the only authorized proposal caller into Core. The adjudication producer remains a third contract and stays blocked until an origin-bound adapter is deployed."
+}

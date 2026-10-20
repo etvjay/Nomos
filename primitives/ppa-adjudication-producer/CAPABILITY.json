@@ -1,0 +1,114 @@
+{
+  "schemaVersion": "1.0.0",
+  "primitiveId": "ppa-adjudication-producer",
+  "name": "PPA Adjudication Producer",
+  "capabilityVersion": "0.1.0",
+  "status": "IMPLEMENTING",
+  "convergenceMode": "EXACT",
+  "judgmentBearing": true,
+  "implementation": {
+    "environment": "genlayer",
+    "path": "primitives/ppa-adjudication-producer/implementations/genlayer/ppa_adjudication_producer.py"
+  },
+  "publicMethods": [
+    {
+      "name": "initialize",
+      "kind": "write",
+      "inputs": [
+        { "name": "owner", "type": "address" },
+        { "name": "adapter_address", "type": "address" },
+        { "name": "authority_fingerprint", "type": "string" },
+        { "name": "policy_version", "type": "string" }
+      ],
+      "output": "status-string"
+    },
+    {
+      "name": "register_question",
+      "kind": "write",
+      "inputs": [
+        { "name": "question_id", "type": "string" },
+        { "name": "url", "type": "string" },
+        { "name": "clause", "type": "string" },
+        { "name": "ttl_seconds", "type": "string" }
+      ],
+      "output": "question-registration-result"
+    },
+    {
+      "name": "adjudicate",
+      "kind": "write",
+      "inputs": [
+        { "name": "decision_id", "type": "string" },
+        { "name": "question_id", "type": "string" }
+      ],
+      "output": "receipt-record (status ACCEPTED | REJECTED | UNDETERMINED, adapter_submit QUEUED | EMIT_FAILED)"
+    },
+    {
+      "name": "submit_receipt",
+      "kind": "write",
+      "inputs": [
+        { "name": "decision_id", "type": "string" }
+      ],
+      "output": "retry of the emit to the Adapter (QUEUED | ALREADY_QUEUED | EMIT_FAILED)"
+    },
+    {
+      "name": "get_question",
+      "kind": "view",
+      "inputs": [
+        { "name": "question_id", "type": "string" }
+      ],
+      "output": "question-record"
+    },
+    {
+      "name": "get_receipt",
+      "kind": "view",
+      "inputs": [
+        { "name": "decision_id", "type": "string" }
+      ],
+      "output": "producer-receipt-record"
+    },
+    {
+      "name": "get_meta",
+      "kind": "view",
+      "inputs": [],
+      "output": "owner, adapter_address, authority_fingerprint, policy_version"
+    }
+  ],
+  "stateOwnership": {
+    "owns": [
+      "question registry (url, clause, question_hash, ttl)",
+      "producer receipts: normalized observation envelope, evidence_hash (sha256 over canonical content), decision status",
+      "emit state to the Adapter (PENDING | QUEUED | EMIT_FAILED)"
+    ],
+    "doesNotOwn": [
+      "any balance or capital authority",
+      "account policy or Core access",
+      "settlement or proposal authority",
+      "receipt trustworthiness \u2014 the Adapter judges origin, the Core gates execution"
+    ]
+  },
+  "canonicalDecision": {
+    "judgmentStatuses": ["ACCEPTED", "REJECTED", "UNDETERMINED"],
+    "rule": "ACCEPTED iff (satisfied=true, verdict=delivered, confidence=high); REJECTED iff (false, not_delivered, high); everything else \u2014 ambiguous, low confidence, malformed model output, evidence unavailable \u2014 fails closed to UNDETERMINED.",
+    "equivalenceMode": "comparative",
+    "consensusTriple": ["satisfied", "verdict", "confidence"]
+  },
+  "boundary": {
+    "authorityPath": "adjudicate() \u2192 gl.nondet.web.render + gl.nondet.exec_prompt under gl.vm.run_nondet \u2192 canonicalization \u2192 evidence_hash \u2192 cross-contract emit(on=\"accepted\").submit_decision_receipt to the bound Adapter.",
+    "identity": "The Adapter must observe msg.sender = this contract's address. The owner EOA never submits producer receipts on its behalf.",
+    "honest-labeling": "adapter_submit is QUEUED, never EMITTED \u2014 the producer cannot observe the Adapter's acceptance. Delivery is proven by Adapter-side readback.",
+    "replay": "Duplicate decision_id \u2192 REJECTED_REPLAY; questions are immutable once registered."
+  },
+  "unsupported": [
+    "external token custody",
+    "bridges",
+    "frontend",
+    "challenge windows / appeal (adjudicated-receipt primitive territory)"
+  ],
+  "reproduce": [
+    "python tools/nomos_lint.py",
+    "genvm-lint check primitives/ppa-adjudication-producer/implementations/genlayer/ppa_adjudication_producer.py",
+    "pytest primitives/ppa-adjudication-producer/implementations/genlayer/tests/ -v",
+    "gltest primitives/ppa-adjudication-producer/implementations/genlayer/tests/integration/ -v -s (requires glsim on :4000)"
+  ],
+  "component": "PPA Adjudication Producer \u2014 the judgment source of the Core/Adapter/Producer split"
+}

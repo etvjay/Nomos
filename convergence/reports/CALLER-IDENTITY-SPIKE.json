@@ -1,0 +1,70 @@
+{
+  "report": "CALLER-IDENTITY-SPIKE",
+  "recorded_at": "2026-10-17",
+  "status": "PASS",
+  "question": "When an Adapter contract calls PPA Core, does Core observe the Adapter or the original initiating EOA?",
+  "answer": "CORE OBSERVES THE ADAPTER. The original EOA identity is consumed at the adapter hop.",
+  "scope": {
+    "nature": "throwaway probes; no PPA edits, no capability change, no deployment",
+    "environment": "GLSim localnet on :4000 via gltest, genlayer-py 0.18 / genlayer-test 0.29, pinned runner py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6",
+    "probes": "convergence/reports/caller-identity-spike/*.py"
+  },
+  "observations": [
+    {
+      "case": "direct EOA -> Core",
+      "coreObserved": "the EOA",
+      "matchesEOA": true
+    },
+    {
+      "case": "Adapter -> Core via gl.get_contract_at + emit(on='accepted')",
+      "coreObserved": "the ADAPTER",
+      "matchesEOA": false
+    },
+    {
+      "case": "Adapter forwards with spoofed declared_source 0xabab...",
+      "coreObserved": "the ADAPTER (unchanged)",
+      "note": "the JSON declared_source flowed through untouched; the true caller remained the Adapter"
+    }
+  ],
+  "enforcementProof": [
+    {
+      "case": "A unregistered adapter",
+      "verdict": "REJECTED_CALLER_NOT_REGISTERED_ADAPTER",
+      "coreAttributedCaller": "adapter"
+    },
+    {
+      "case": "B registered adapter, amount 100 <= cap 500",
+      "verdict": "EXECUTED",
+      "coreAttributedCaller": "adapter"
+    },
+    {
+      "case": "C registered adapter widens amount to 99999",
+      "verdict": "REJECTED_WIDENS_BEYOND_CAP",
+      "note": "Core saw the widened value and rejected it independently; the Adapter cannot widen"
+    },
+    {
+      "case": "D adapter observed vs core observed",
+      "adapterObserved": "the EOA",
+      "coreObserved": "the Adapter",
+      "note": "identity is consumed at the hop"
+    }
+  ],
+  "selectedModel": "Core sees the Adapter -> use a Core trusted-adapter registry plus an Adapter trusted-adjudicator registry.",
+  "designConsequences": [
+    "Core authenticates the Adapter via gl.message.sender_address, never via a JSON field.",
+    "Adapter authenticates the adjudicator via the sender it observes when the adjudicator calls it.",
+    "Core CANNOT know which human initiated the request. It authenticates the Adapter, which is the correct and intended trust boundary.",
+    "Core must independently recheck account policy, amount, recipient, capital and replay. The spike proves an Adapter cannot widen amount beyond a Core-side cap.",
+    "A JSON source_contract field is worthless as provenance; the spoof case demonstrates it.",
+    "emit() is ASYNCHRONOUS: Core runs in a later transaction. The boundary is not atomic.",
+    "Core must NOT raise to signal refusal on an emitted call. A raise reverts the emitted transaction and leaves NO observable artifact; the Adapter and any observer then cannot learn why. Proven during this spike: a rejecting raise produced an absent log, and the identical logic changed to return a verdict produced a readable verdict. Refusal must be a returned status.",
+    "Reads after an emit must poll; the emitted transaction is not immediately visible.",
+    "Appeal hazard: if the emitting transaction is appealed after emit(), the emitted call still executes (per the write-contract skill). Core-side revalidation is the mitigation."
+  ],
+  "notClaimed": [
+    "This spike used GLSim localnet, not Bradbury. Semantics are expected to match but must be re-proven live before the split is trusted.",
+    "The probe proves the caller-identity model and that Core can bound an Adapter. It does NOT prove that the real PPA Core and Adapter enforce correctly; that is Work Contract 2's job.",
+    "Nothing here was deployed. No PPA source was modified."
+  ],
+  "verdictForDesign": "ADAPTER_ORIGIN_MODEL_SUPPORTED. The two-registry design is viable and does not require any signed-receipt or proof-carrying mechanism, because Core can authenticate the Adapter from the sender address alone."
+}

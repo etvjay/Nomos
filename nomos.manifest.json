@@ -142,12 +142,11 @@
     {
       "id": "financial-contract",
       "name": "Financial Contract",
-      "status": "SPECIFIED",
-      "qualification": "SCOPE_PROVISIONAL",
+      "status": "CONFORMANT",
+      "qualification": "QUALIFIED",
       "judgmentBearing": false,
       "genlayerRequired": true,
       "canonicalPath": "primitives/financial-contract",
-      "implementationBlockedUntil": "canonical state-machine scope is narrowed",
       "capabilityVersion": "0.1.0",
       "convergenceMode": "EXACT"
     },
@@ -159,6 +158,60 @@
       "judgmentBearing": false,
       "genlayerRequired": true,
       "canonicalPath": "primitives/gaia",
+      "capabilityVersion": "0.1.0",
+      "convergenceMode": "EXACT"
+    },
+    {
+      "id": "ppa",
+      "name": "Programmable Payment Account",
+      "status": "IMPLEMENTING",
+      "qualification": "QUALIFIED_EXTENSION",
+      "judgmentBearing": false,
+      "genlayerRequired": true,
+      "canonicalPath": "primitives/ppa",
+      "capabilityVersion": "0.4.0",
+      "convergenceMode": "EXACT",
+      "deployable": false,
+      "role": "canonical composition product",
+      "composedUnits": [
+        "ppa-core",
+        "ppa-receipt-adapter"
+      ]
+    },
+    {
+      "id": "adjudicated-receipt",
+      "name": "Adjudicated Receipt",
+      "status": "CONFORMANT",
+      "qualification": "QUALIFIED",
+      "judgmentBearing": true,
+      "genlayerRequired": true,
+      "canonicalPath": "primitives/adjudicated-receipt",
+      "capabilityVersion": "0.2.0",
+      "convergenceMode": "SEMANTIC"
+    },
+    {
+      "id": "ppa-core",
+      "name": "PPA Core",
+      "status": "IMPLEMENTING",
+      "qualification": "QUALIFIED_EXTENSION",
+      "judgmentBearing": false,
+      "genlayerRequired": true,
+      "canonicalPath": "primitives/ppa-core",
+      "deployable": true,
+      "role": "deployable component",
+      "capabilityVersion": "0.1.0",
+      "convergenceMode": "EXACT"
+    },
+    {
+      "id": "ppa-receipt-adapter",
+      "name": "PPA Receipt / Proposal Adapter",
+      "status": "IMPLEMENTING",
+      "qualification": "QUALIFIED_EXTENSION",
+      "judgmentBearing": false,
+      "genlayerRequired": true,
+      "canonicalPath": "primitives/ppa-receipt-adapter",
+      "deployable": true,
+      "role": "deployable component",
       "capabilityVersion": "0.1.0",
       "convergenceMode": "EXACT"
     }

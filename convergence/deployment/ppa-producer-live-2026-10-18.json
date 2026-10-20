@@ -1,0 +1,1184 @@
+{
+  "schemaVersion": "1.0.0",
+  "network": "testnet-bradbury",
+  "chain_id": 4221,
+  "run": {
+    "run1": "2435780-partial(failed at poll timeout)",
+    "run2": "continuation"
+  },
+  "owner": "0x8311BfD717708d6E9c4933e80762cC4901F836BF",
+  "core": "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE",
+  "adapter": "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+  "producer_source_fingerprint": "sha256:f94d50e9d1e2d48f9cf543d501ef2ed45b082c7802943f10a8ff9bce1bcd5e12",
+  "producer_source_file": "primitives/ppa-adjudication-producer/implementations/genlayer/ppa_adjudication_producer.py",
+  "questions": {
+    "ok": {
+      "url": "https://example.com/",
+      "clause": "The page displays the main heading 'Example Domain'. Judge satisfied=true verdict=delivered confidence=high only if the fetched text clearly contains that heading; otherwise ambiguous/low."
+    },
+    "neg": {
+      "url": "https://example.com/",
+      "clause": "A shipment order referenced by this page is confirmed delivered and fulfilled with exactly 3 packages."
+    },
+    "und": {
+      "url": "https://ppa-no-such-host-2435780.invalid/delivery",
+      "clause": "The delivery status on this page equals delivered."
+    }
+  },
+  "steps": [
+    {
+      "name": "00_fingerprint",
+      "fp": "sha256:f94d50e9d1e2d48f9cf543d501ef2ed45b082c7802943f10a8ff9bce1bcd5e12",
+      "note": "sha256 over the exact producer source deployed on Bradbury"
+    },
+    {
+      "name": "00b_orphan_scan",
+      "recovery_error": "eth_getLogs failed (code=-32603): Internal error",
+      "candidates": []
+    },
+    {
+      "name": "01_deploy_producer",
+      "evm_tx": "0x622cc044e0cd33264a465a455ac858b94c60562bcac0e81301e6363fa0c68baa",
+      "evm_status": 1,
+      "gas_used": 13305420,
+      "contract": "0xb52d7F87ED15FD8146b3820387Ab2E05de884790",
+      "consensus_tx": "0x48b7eda901cdbfcc82237b1212ac0f11d488bb8dbae62034bff8fddfc9cd285e",
+      "consensus": {
+        "status_name": "REVEALING",
+        "result_name": "IDLE",
+        "tx_execution_result_name": "FINISHED_WITH_RETURN",
+        "num_of_rounds": "0",
+        "votes_committed": "5",
+        "votes_revealed": "1",
+        "round_validators": [
+          "0x470AAa7DE37ff3E1C2b38eD9096263ca0d541F21",
+          "0x7c23E70217AB2A9E777940Eb769bA4198d1BaA61",
+          "0x3f5cAED686336ED9cF3Dede61154B0Cd67Fb9bD7",
+          "0x4f36CB2C58385575fafb443d80E3c290b12DA6aE",
+          "0x58a7b7ac6Cb01843e4e5af117C551E59449E0F49"
+        ],
+        "validator_votes_name": [
+          "AGREE",
+          "NOT_VOTED",
+          "NOT_VOTED",
+          "NOT_VOTED",
+          "NOT_VOTED"
+        ],
+        "leader_index": "0",
+        "rotations_left": "3"
+      }
+    },
+    {
+      "name": "02_initialize",
+      "method": "initialize",
+      "evm_tx": "0x9f609bb22650fc6c4205aaa9f8591df4c02b4acd19953fbbcefadd8e2a7bb0b8",
+      "evm_status": 1,
+      "gas_used": 934710,
+      "block": 25549257,
+      "consensus_tx": "0xf934856776ba8cc8915e60a59ea6a6c7621a076cab389369b7a7344ed81f6784",
+      "status_name": "ACCEPTED",
+      "result_name": "AGREE",
+      "tx_execution_result_name": "FINISHED_WITH_RETURN",
+      "num_of_rounds": "0",
+      "votes_committed": "5",
+      "votes_revealed": "5",
+      "round_validators": [
+        "0x3B940A5b4A762583453D9e9Cf0981BE0426A8e79",
+        "0xE8fdefdfe18fD8E5B0d576b7CcfC5a29CE43fD7f",
+        "0x3a130401885fD9322E2E21174A5496065f716b35",
+        "0x77a07271abB443F55be19c357AA35206BeB63E1d",
+        "0xb4Fb7ADc6877a6A16bd131c7c9270834bD3DEf34"
+      ],
+      "validator_votes_name": [
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "AGREE"
+      ],
+      "leader_index": "3",
+      "rotations_left": "3"
+    },
+    {
+      "name": "03_meta_readback",
+      "value": {
+        "adapter": "29c88a9dbe42fa74341f7932003b6601b1d317c5",
+        "authority_fingerprint": "sha256:f94d50e9d1e2d48f9cf543d501ef2ed45b082c7802943f10a8ff9bce1bcd5e12",
+        "capital_methods": "NONE",
+        "created": "2026-10-19T18:49:52Z",
+        "owner": "8311bfd717708d6e9c4933e80762cc4901f836bf",
+        "policy_version": "TECH-V1"
+      },
+      "adapter_bound": true,
+      "fp_match": true
+    },
+    {
+      "name": "04_register_adjudicator_on_adapter",
+      "method": "register_adjudicator",
+      "evm_tx": "0x7cf45c260876dcf5e0cc95367906cdacc528f97b41bc141b6a962890b4bfcd82",
+      "evm_status": 1,
+      "gas_used": 1043262,
+      "block": 25549311,
+      "consensus_tx": "0x1b941bbd73f65009aab0ed84bd4bb0a4b7656620cbdffb48e813437c2224ed35",
+      "status_name": "ACCEPTED",
+      "result_name": "AGREE",
+      "tx_execution_result_name": "FINISHED_WITH_RETURN",
+      "num_of_rounds": "0",
+      "votes_committed": "5",
+      "votes_revealed": "5",
+      "round_validators": [
+        "0x2d012a292244C7ce6423a114d19109990923Af76",
+        "0x79485eF57aC2055dC83b9E7b2C9Cf184Fc79648E",
+        "0x992E8D62263eD1Fe2E14FfB11aDf1080edBe4b5a",
+        "0xa856ae1b278F030082c66Fa50A5F51F485D1F940",
+        "0xB93a46B843fB32E8Ce392e68eDFE93Faa4a40817"
+      ],
+      "validator_votes_name": [
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "AGREE"
+      ],
+      "leader_index": "0",
+      "rotations_left": "3"
+    },
+    {
+      "name": "05_adjudicator_readback",
+      "value": {
+        "authority_fingerprint": "sha256:f94d50e9d1e2d48f9cf543d501ef2ed45b082c7802943f10a8ff9bce1bcd5e12",
+        "created_at": "2020-01-01T00:00:00+00:00",
+        "expires_at": "2099-01-01T00:00:00+00:00",
+        "policy_version": "TECH-V1",
+        "source_contract": "b52d7f87ed15fd8146b3820387ab2e05de884790",
+        "status": "ACTIVE"
+      }
+    },
+    {
+      "name": "06_register_question_ok",
+      "method": "register_question",
+      "evm_tx": "0x4636bc9eefde93dab13ec449c881024f62bfde496d4f358463a24486de5ef54d",
+      "evm_status": 1,
+      "gas_used": 980520,
+      "block": 25549354,
+      "consensus_tx": "0xba3a26a14ee23c35875270436b5dff6adb2b749ad6d0a4c50e8770b430d973a3",
+      "status_name": "ACCEPTED",
+      "result_name": "AGREE",
+      "tx_execution_result_name": "FINISHED_WITH_RETURN",
+      "num_of_rounds": "0",
+      "votes_committed": "5",
+      "votes_revealed": "5",
+      "round_validators": [
+        "0x96298d411a2D622945BEACa6112374583b501d52",
+        "0x2d012a292244C7ce6423a114d19109990923Af76",
+        "0xB7551beF37a05995218f9a1BB7A93e5B6705f535",
+        "0x59dC5E6fD7428c5Ee6fc24aE2B99E5860A9c9499",
+        "0x77a07271abB443F55be19c357AA35206BeB63E1d"
+      ],
+      "validator_votes_name": [
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "AGREE"
+      ],
+      "leader_index": "4",
+      "rotations_left": "3"
+    },
+    {
+      "name": "07_question_readback_ok",
+      "question_hash": "sha256:46959187dcfd5e22aafbb3781a7c98a9207480ac77c33bce8913ab1300e944ac",
+      "non_placeholder": true
+    },
+    {
+      "name": "06_register_question_neg",
+      "method": "register_question",
+      "evm_tx": "0xcd19cdf641ea20d8f397e479dac4bf6fbfd05d22719750322764f3a9038bc433",
+      "evm_status": 1,
+      "gas_used": 912009,
+      "block": 25549395,
+      "consensus_tx": "0x771ff3e00fa3126852a2b6e14376e1ce9da6ba818317bf69cf9491b3ce7a1a21",
+      "status_name": "ACCEPTED",
+      "result_name": "AGREE",
+      "tx_execution_result_name": "FINISHED_WITH_RETURN",
+      "num_of_rounds": "0",
+      "votes_committed": "5",
+      "votes_revealed": "5",
+      "round_validators": [
+        "0x58a7b7ac6Cb01843e4e5af117C551E59449E0F49",
+        "0x7538369A22a176afFccb6B273eedfbb92780bf22",
+        "0xA58D6FcCD69eaafB5869dA58913f116045D75444",
+        "0x8E7765267023F88d4155d52F4ce2319aDDf1dc33",
+        "0xB93a46B843fB32E8Ce392e68eDFE93Faa4a40817"
+      ],
+      "validator_votes_name": [
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "AGREE"
+      ],
+      "leader_index": "1",
+      "rotations_left": "3"
+    },
+    {
+      "name": "07_question_readback_neg",
+      "question_hash": "sha256:6d3d7e984f56a169dcb20dfe2a80db0010e3ee87409e78da5d8d13978caddb1e",
+      "non_placeholder": true
+    },
+    {
+      "name": "06_register_question_und",
+      "method": "register_question",
+      "evm_tx": "0xe30014221a0c83490b786df3414d8d937e2f54691da03d93103c66eadd25fcdd",
+      "evm_status": 1,
+      "gas_used": 892070,
+      "block": 25549437,
+      "consensus_tx": "0x43d1d2fe752f62c236ab1edb9cfe0ded9e822ea75e19eebd584d9c3b78b65a42",
+      "status_name": "ACCEPTED",
+      "result_name": "AGREE",
+      "tx_execution_result_name": "FINISHED_WITH_RETURN",
+      "num_of_rounds": "0",
+      "votes_committed": "5",
+      "votes_revealed": "5",
+      "round_validators": [
+        "0x9D998aD7C7f9Cc448A4DbDf49edD7CADBe3d57B6",
+        "0x0c526A6af46A038E31dA21C123756Ab2D75f06Bc",
+        "0x79485eF57aC2055dC83b9E7b2C9Cf184Fc79648E",
+        "0x58a7b7ac6Cb01843e4e5af117C551E59449E0F49",
+        "0x422357d87B035e478777C84748BAC834CE2A9597"
+      ],
+      "validator_votes_name": [
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "AGREE"
+      ],
+      "leader_index": "2",
+      "rotations_left": "3"
+    },
+    {
+      "name": "07_question_readback_und",
+      "question_hash": "sha256:e32c4385484d2f03831755d69883330c718cc891906f615d5a68e280e98ec83a",
+      "non_placeholder": true
+    },
+    {
+      "name": "08_account_pre",
+      "balance": "900",
+      "daily_spent": "100"
+    },
+    {
+      "name": "09_adjudicate_ok",
+      "method": "adjudicate",
+      "evm_tx": "0x2eed3ae6bbccf097b249bbdb415beb37faf306aa4bc66049c79a9e8ae804e83d",
+      "evm_status": 1,
+      "gas_used": 820596,
+      "block": 25549505,
+      "consensus_tx": "0xb4efb859cf3dd27fe4e9bd5b5aa4cf99068f2f8d67ded4c7cdd689420d905d48",
+      "status_name": "COMMITTING",
+      "result_name": "IDLE",
+      "tx_execution_result_name": "NOT_VOTED",
+      "num_of_rounds": "8",
+      "votes_committed": "34",
+      "votes_revealed": "0",
+      "round_validators": [
+        "0xE8fdefdfe18fD8E5B0d576b7CcfC5a29CE43fD7f",
+        "0x4f36CB2C58385575fafb443d80E3c290b12DA6aE",
+        "0x8E7765267023F88d4155d52F4ce2319aDDf1dc33",
+        "0x183217483618c4EBd34C987DE400e01bEFfe5860",
+        "0x79485eF57aC2055dC83b9E7b2C9Cf184Fc79648E",
+        "0x9D998aD7C7f9Cc448A4DbDf49edD7CADBe3d57B6",
+        "0x59dC5E6fD7428c5Ee6fc24aE2B99E5860A9c9499",
+        "0xfd811B16001077243e07173ec72a4735FF04C3AA",
+        "0x4Cd1ab61867487F45988dB08eb18bd00e20c518a",
+        "0xB93a46B843fB32E8Ce392e68eDFE93Faa4a40817",
+        "0x3B940A5b4A762583453D9e9Cf0981BE0426A8e79",
+        "0x2d012a292244C7ce6423a114d19109990923Af76",
+        "0x9F6aa7364D20CF25F054Ea83f3CB950317fD34b6",
+        "0xA58D6FcCD69eaafB5869dA58913f116045D75444",
+        "0x2CD9051E10cd1547a7b64eF61EbF1E608235dBda",
+        "0xF01877B6Ac60861CA3b134e0E483C482679b4682",
+        "0xB7551beF37a05995218f9a1BB7A93e5B6705f535",
+        "0x77a07271abB443F55be19c357AA35206BeB63E1d",
+        "0xf5E017C93f37E3f03595C03D5A6A98396769C175",
+        "0x859dF0816Ed95B22B946C56dBc004b17993d1Ed6",
+        "0xa856ae1b278F030082c66Fa50A5F51F485D1F940",
+        "0xb4Fb7ADc6877a6A16bd131c7c9270834bD3DEf34",
+        "0x96298d411a2D622945BEACa6112374583b501d52",
+        "0x318128e88e5CC86Cd6898f6AFe93660c8ea0be8E",
+        "0x0c526A6af46A038E31dA21C123756Ab2D75f06Bc",
+        "0xe9aEF995C8a47FABcc36d3958b6d9ad41dc91b7a",
+        "0x4FC292d5D255Ec8Ad4cdcd36c5E188dfEE9D160e",
+        "0x3f5cAED686336ED9cF3Dede61154B0Cd67Fb9bD7",
+        "0x992E8D62263eD1Fe2E14FfB11aDf1080edBe4b5a",
+        "0x58a7b7ac6Cb01843e4e5af117C551E59449E0F49",
+        "0x422357d87B035e478777C84748BAC834CE2A9597",
+        "0x7c23E70217AB2A9E777940Eb769bA4198d1BaA61",
+        "0x470AAa7DE37ff3E1C2b38eD9096263ca0d541F21",
+        "0x3a130401885fD9322E2E21174A5496065f716b35",
+        "0x27276953fa2052A5178Ae5a3D114a3DFB9A2fC98",
+        "0x3675279b6425Fff4AE1608021190B6e52effcf6a"
+      ],
+      "validator_votes_name": [
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED"
+      ],
+      "leader_index": "28",
+      "rotations_left": "0",
+      "consensus_timeout": true
+    },
+    {
+      "name": "10_consensus_tx_ok_attempt1",
+      "consensus_tx": "0xb4efb859cf3dd27fe4e9bd5b5aa4cf99068f2f8d67ded4c7cdd689420d905d48",
+      "status_name": "UNDETERMINED",
+      "result_name": "IDLE",
+      "tx_execution_result_name": "NOT_VOTED",
+      "num_of_rounds": "8",
+      "votes_committed": "34",
+      "votes_revealed": "0",
+      "round_validators": [
+        "0xE8fdefdfe18fD8E5B0d576b7CcfC5a29CE43fD7f",
+        "0x4f36CB2C58385575fafb443d80E3c290b12DA6aE",
+        "0x8E7765267023F88d4155d52F4ce2319aDDf1dc33",
+        "0x183217483618c4EBd34C987DE400e01bEFfe5860",
+        "0x79485eF57aC2055dC83b9E7b2C9Cf184Fc79648E",
+        "0x9D998aD7C7f9Cc448A4DbDf49edD7CADBe3d57B6",
+        "0x59dC5E6fD7428c5Ee6fc24aE2B99E5860A9c9499",
+        "0xfd811B16001077243e07173ec72a4735FF04C3AA",
+        "0x4Cd1ab61867487F45988dB08eb18bd00e20c518a",
+        "0xB93a46B843fB32E8Ce392e68eDFE93Faa4a40817",
+        "0x3B940A5b4A762583453D9e9Cf0981BE0426A8e79",
+        "0x2d012a292244C7ce6423a114d19109990923Af76",
+        "0x9F6aa7364D20CF25F054Ea83f3CB950317fD34b6",
+        "0xA58D6FcCD69eaafB5869dA58913f116045D75444",
+        "0x2CD9051E10cd1547a7b64eF61EbF1E608235dBda",
+        "0xF01877B6Ac60861CA3b134e0E483C482679b4682",
+        "0xB7551beF37a05995218f9a1BB7A93e5B6705f535",
+        "0x77a07271abB443F55be19c357AA35206BeB63E1d",
+        "0xf5E017C93f37E3f03595C03D5A6A98396769C175",
+        "0x859dF0816Ed95B22B946C56dBc004b17993d1Ed6",
+        "0xa856ae1b278F030082c66Fa50A5F51F485D1F940",
+        "0xb4Fb7ADc6877a6A16bd131c7c9270834bD3DEf34",
+        "0x96298d411a2D622945BEACa6112374583b501d52",
+        "0x318128e88e5CC86Cd6898f6AFe93660c8ea0be8E",
+        "0x0c526A6af46A038E31dA21C123756Ab2D75f06Bc",
+        "0xe9aEF995C8a47FABcc36d3958b6d9ad41dc91b7a",
+        "0x4FC292d5D255Ec8Ad4cdcd36c5E188dfEE9D160e",
+        "0x3f5cAED686336ED9cF3Dede61154B0Cd67Fb9bD7",
+        "0x992E8D62263eD1Fe2E14FfB11aDf1080edBe4b5a",
+        "0x58a7b7ac6Cb01843e4e5af117C551E59449E0F49",
+        "0x422357d87B035e478777C84748BAC834CE2A9597",
+        "0x7c23E70217AB2A9E777940Eb769bA4198d1BaA61",
+        "0x470AAa7DE37ff3E1C2b38eD9096263ca0d541F21",
+        "0x3a130401885fD9322E2E21174A5496065f716b35",
+        "0x27276953fa2052A5178Ae5a3D114a3DFB9A2fC98",
+        "0x3675279b6425Fff4AE1608021190B6e52effcf6a"
+      ],
+      "validator_votes_name": [
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED",
+        "NOT_VOTED"
+      ],
+      "leader_index": "28",
+      "rotations_left": "0"
+    },
+    {
+      "name": "10a_adjudicate_ok_retry2",
+      "method": "adjudicate",
+      "evm_tx": "0x0ec68ccedd4e5d7efe763f9ee85579753ab2165053abfe37245581b3d51024c2",
+      "evm_status": 1,
+      "gas_used": 820647,
+      "block": 25553676,
+      "consensus_tx": "0xfcc616a76a37a540d1e0d67b202a55e8a745146cb2629ae6b27012d8dc9d7b52",
+      "status_name": "ACCEPTED",
+      "result_name": "AGREE",
+      "tx_execution_result_name": "FINISHED_WITH_RETURN",
+      "num_of_rounds": "0",
+      "votes_committed": "5",
+      "votes_revealed": "5",
+      "round_validators": [
+        "0xfd811B16001077243e07173ec72a4735FF04C3AA",
+        "0x992E8D62263eD1Fe2E14FfB11aDf1080edBe4b5a",
+        "0x3a130401885fD9322E2E21174A5496065f716b35",
+        "0x2CD9051E10cd1547a7b64eF61EbF1E608235dBda",
+        "0x9F6aa7364D20CF25F054Ea83f3CB950317fD34b6"
+      ],
+      "validator_votes_name": [
+        "TIMEOUT",
+        "AGREE",
+        "TIMEOUT",
+        "AGREE",
+        "AGREE"
+      ],
+      "leader_index": "4",
+      "rotations_left": "2"
+    },
+    {
+      "name": "10b_producer_receipt_ok",
+      "decision_id": "D-PROV-OK-2435780-R2",
+      "present": true,
+      "value": {
+        "adapter_submit": "QUEUED",
+        "adjudicated_at": "2026-10-19T20:53:10Z",
+        "observation": {
+          "bytes": 917,
+          "excerpt": "This domain is for use in documentation examples without needing permission. This is not a service; avoid relying on it for testing and monitoring purposes.\n\n\u0647\u0630\u0627 \u0627\u0644\u0646\u0637\u0627\u0642 \u0645\u064f\u062e\u0635\u0635 \u0644\u0644\u0627\u0633\u062a\u062e\u062f\u0627\u0645 \u0641\u064a \u0623\u0645\u062b\u0644\u0629 \u0627\u0644\u062a\u0648\u062b\u064a",
+          "reason": null
+        },
+        "question_id": "Q-LIVE-OK",
+        "receipt": {
+          "authority_fingerprint": "sha256:f94d50e9d1e2d48f9cf543d501ef2ed45b082c7802943f10a8ff9bce1bcd5e12",
+          "created_at": "2026-10-19T20:53:10Z",
+          "decision_id": "D-PROV-OK-2435780-R2",
+          "decision_status": "UNDETERMINED",
+          "equivalence_mode": "comparative",
+          "evidence_hash": "sha256:83b2c675e3e14cbb343d83ba14e3061ca2f492312ba9db3ef5686327bf1a2fc2",
+          "expires_at": "2026-10-20T18:50:22Z",
+          "policy_version": "TECH-V1",
+          "question_hash": "sha256:46959187dcfd5e22aafbb3781a7c98a9207480ac77c33bce8913ab1300e944ac",
+          "source_contract": "0xb52d7f87ed15fd8146b3820387ab2e05de884790"
+        },
+        "status": "UNDETERMINED"
+      },
+      "wait_s": 1
+    },
+    {
+      "name": "10c_producer_receipt_fields_ok",
+      "status": "UNDETERMINED",
+      "adapter_submit": "QUEUED",
+      "evidence_hash": "sha256:83b2c675e3e14cbb343d83ba14e3061ca2f492312ba9db3ef5686327bf1a2fc2",
+      "observation": {
+        "bytes": 917,
+        "excerpt": "This domain is for use in documentation examples without needing permission. This is not a service; avoid relying on it for testing and monitoring purposes.\n\n\u0647\u0630\u0627 \u0627\u0644\u0646\u0637\u0627\u0642 \u0645\u064f\u062e\u0635\u0635 \u0644\u0644\u0627\u0633\u062a\u062e\u062f\u0627\u0645 \u0641\u064a \u0623\u0645\u062b\u0644\u0629 \u0627\u0644\u062a\u0648\u062b\u064a",
+        "reason": null
+      },
+      "non_placeholder": true
+    },
+    {
+      "name": "11_adapter_receipt_ok",
+      "present": true,
+      "origin_status": "BOUND",
+      "actionability": "NON_ACTIONABLE",
+      "source_contract": "0xb52d7f87ed15fd8146b3820387ab2e05de884790",
+      "sender_is_producer_contract": true,
+      "evidence_hash_match": true,
+      "authority_fingerprint_match": true,
+      "value_head": "{\"actionability\": \"NON_ACTIONABLE\", \"authority_fingerprint\": \"sha256:f94d50e9d1e2d48f9cf543d501ef2ed45b082c7802943f10a8ff9bce1bcd5e12\", \"created_at\": \"2026-10-19T20:53:10Z\", \"decision_id\": \"D-PROV-OK-2435780-R2\", \"decision_status\": \"UNDETERMINED\", \"equivalence_mode\": \"comparative\", \"evidence_hash\": \"sha256:83b2c675e3e14cbb343d83ba14e3061ca2f492312ba9db3ef5686327bf1a2fc2\", \"expires_at\": \"2026-10-20"
+    },
+    {
+      "name": "08_account_pre_confirmed",
+      "present": true,
+      "value": {
+        "account_id": "LIVE-SPLIT-2283426",
+        "balance": "900",
+        "committed": "0",
+        "created": "2026-10-18T00:30:41Z",
+        "daily_spent": "100",
+        "daily_window_start": "2026-10-18T00:30:41Z",
+        "rules": {
+          "allowlist": [
+            "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+          ],
+          "currency": "USDC",
+          "daily_limit": "1000",
+          "per_tx_limit": "500",
+          "policy_version": "TECH-V1"
+        },
+        "status": "ACTIVE"
+      },
+      "wait_s": 1
+    },
+    {
+      "name": "12_settlement_skipped",
+      "reason": "ACCEPTED path not proven live; per work order: UNDETERMINED / BLOCKED, no proposal execution, no settlement claim.",
+      "producer_status": "UNDETERMINED",
+      "consensus_status": "ACCEPTED",
+      "validator_votes": [
+        "TIMEOUT",
+        "AGREE",
+        "TIMEOUT",
+        "AGREE",
+        "AGREE"
+      ],
+      "adapter_origin": "BOUND",
+      "adapter_actionability": "NON_ACTIONABLE"
+    },
+    {
+      "name": "13_account_unchanged",
+      "present": true,
+      "value": {
+        "account_id": "LIVE-SPLIT-2283426",
+        "balance": "900",
+        "committed": "0",
+        "created": "2026-10-18T00:30:41Z",
+        "daily_spent": "100",
+        "daily_window_start": "2026-10-18T00:30:41Z",
+        "rules": {
+          "allowlist": [
+            "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+          ],
+          "currency": "USDC",
+          "daily_limit": "1000",
+          "per_tx_limit": "500",
+          "policy_version": "TECH-V1"
+        },
+        "status": "ACTIVE"
+      },
+      "wait_s": 1
+    },
+    {
+      "name": "18_adjudicate_neg",
+      "method": "adjudicate",
+      "evm_tx": "0x18655f8f4d3e65872044365660ce33d7fa9de02cf9a0be89316a9029eeaeb21f",
+      "evm_status": 1,
+      "gas_used": 820635,
+      "block": 25554112,
+      "consensus_tx": "0xa0327fc1d5d382508e2a2c21d50ef104fe7129828aa0cd64881184d7658ee925",
+      "status_name": "ACCEPTED",
+      "result_name": "AGREE",
+      "tx_execution_result_name": "FINISHED_WITH_RETURN",
+      "num_of_rounds": "0",
+      "votes_committed": "5",
+      "votes_revealed": "5",
+      "round_validators": [
+        "0x58a7b7ac6Cb01843e4e5af117C551E59449E0F49",
+        "0x27276953fa2052A5178Ae5a3D114a3DFB9A2fC98",
+        "0x9F6aa7364D20CF25F054Ea83f3CB950317fD34b6",
+        "0x9D998aD7C7f9Cc448A4DbDf49edD7CADBe3d57B6",
+        "0x59dC5E6fD7428c5Ee6fc24aE2B99E5860A9c9499"
+      ],
+      "validator_votes_name": [
+        "TIMEOUT",
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "AGREE"
+      ],
+      "leader_index": "3",
+      "rotations_left": "3"
+    },
+    {
+      "name": "19_producer_receipt_neg",
+      "status": "UNDETERMINED",
+      "observation": {
+        "bytes": 917,
+        "excerpt": "This domain is for use in documentation examples without needing permission. This is not a service; avoid relying on it for testing and monitoring purposes.\n\n\u0647\u0630\u0627 \u0627\u0644\u0646\u0637\u0627\u0642 \u0645\u064f\u062e\u0635\u0635 \u0644\u0644\u0627\u0633\u062a\u062e\u062f\u0627\u0645 \u0641\u064a \u0623\u0645\u062b\u0644\u0629 \u0627\u0644\u062a\u0648\u062b\u064a",
+        "reason": null
+      },
+      "evidence_hash": "sha256:5c66f02d2eca42b0929e7a235f11d9255e4fefda30288ce619e0aa9e32ee9e91"
+    },
+    {
+      "name": "20_adapter_receipt_neg",
+      "present": true,
+      "origin_status": "BOUND",
+      "actionability": "NON_ACTIONABLE",
+      "fail_reason": "REJECTED_UNDETERMINED"
+    },
+    {
+      "name": "21_admit_neg_attempt",
+      "method": "admit_proposal",
+      "evm_tx": "0x26921a0d1bb2d8a98a1f6872961d3f49ba2ff313602e16f2ce1704fa246336d1",
+      "evm_status": 1,
+      "gas_used": 980739,
+      "block": 25554583,
+      "consensus_tx": "0x80ff8cbb71ca9286899ca7632f5471cc40f221aad87b34f532550002a3388675",
+      "status_name": "ACCEPTED",
+      "result_name": "AGREE",
+      "tx_execution_result_name": "FINISHED_WITH_RETURN",
+      "num_of_rounds": "0",
+      "votes_committed": "5",
+      "votes_revealed": "5",
+      "round_validators": [
+        "0x7c23E70217AB2A9E777940Eb769bA4198d1BaA61",
+        "0x470AAa7DE37ff3E1C2b38eD9096263ca0d541F21",
+        "0x9D998aD7C7f9Cc448A4DbDf49edD7CADBe3d57B6",
+        "0x79485eF57aC2055dC83b9E7b2C9Cf184Fc79648E",
+        "0x859dF0816Ed95B22B946C56dBc004b17993d1Ed6"
+      ],
+      "validator_votes_name": [
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "AGREE"
+      ],
+      "leader_index": "0",
+      "rotations_left": "3"
+    },
+    {
+      "name": "22_neg_proposal_absent",
+      "absent": true,
+      "present": false,
+      "last_error": "gen_call failed (code=-32000): execution failed: &genvm.VMResult{Kind:0x2, ReturnData:[]uint8{0x2e, 0x4, 0x64, 0x61, 0x74, 0x61, 0x5c, 0x65, 0x78, 0x69, 0x74, 0x5f, 0x63, 0x6f, 0x64, 0x65, 0x20, 0x31,",
+      "wait_s": 30
+    },
+    {
+      "name": "23_adjudicate_und",
+      "method": "adjudicate",
+      "evm_tx": "0xaa46f532ee3e8241423e91343ff740aa6ed32be7d52c58a9e3028f49b6e6a8b3",
+      "evm_status": 1,
+      "gas_used": 828205,
+      "block": 25554598,
+      "consensus_tx": "0x492c080abb075139bcae28f001153e86dedfc52917a444993c2e2f69f9c47970",
+      "status_name": "ACCEPTED",
+      "result_name": "AGREE",
+      "tx_execution_result_name": "FINISHED_WITH_RETURN",
+      "num_of_rounds": "0",
+      "votes_committed": "5",
+      "votes_revealed": "5",
+      "round_validators": [
+        "0x9D998aD7C7f9Cc448A4DbDf49edD7CADBe3d57B6",
+        "0x2CD9051E10cd1547a7b64eF61EbF1E608235dBda",
+        "0x27276953fa2052A5178Ae5a3D114a3DFB9A2fC98",
+        "0xB93a46B843fB32E8Ce392e68eDFE93Faa4a40817",
+        "0x4f36CB2C58385575fafb443d80E3c290b12DA6aE"
+      ],
+      "validator_votes_name": [
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "AGREE"
+      ],
+      "leader_index": "0",
+      "rotations_left": "3"
+    },
+    {
+      "name": "24_producer_receipt_und",
+      "status": "UNDETERMINED",
+      "observation": {
+        "bytes": 0,
+        "excerpt": "",
+        "reason": "evidence_unavailable"
+      },
+      "adapter_submit": "QUEUED"
+    },
+    {
+      "name": "25_adapter_receipt_und",
+      "present": true,
+      "origin_status": "BOUND",
+      "actionability": "NON_ACTIONABLE",
+      "fail_reason": "REJECTED_UNDETERMINED"
+    },
+    {
+      "name": "26_replay_attempt",
+      "method": "adjudicate",
+      "evm_tx": "0xdbc0e5d6d8be82a7dc825b855a4d4b20ed1a2b3a0a54a3111a62948b5a8068be",
+      "evm_status": 1,
+      "gas_used": 820647,
+      "block": 25554629,
+      "consensus_tx": "0xe58222717715df449d78404056d378b1334537d84682a016d98e57af519108e8",
+      "status_name": "ACCEPTED",
+      "result_name": "AGREE",
+      "tx_execution_result_name": "FINISHED_WITH_RETURN",
+      "num_of_rounds": "0",
+      "votes_committed": "5",
+      "votes_revealed": "5",
+      "round_validators": [
+        "0x2CD9051E10cd1547a7b64eF61EbF1E608235dBda",
+        "0x4FC292d5D255Ec8Ad4cdcd36c5E188dfEE9D160e",
+        "0x859dF0816Ed95B22B946C56dBc004b17993d1Ed6",
+        "0x96298d411a2D622945BEACa6112374583b501d52",
+        "0x27276953fa2052A5178Ae5a3D114a3DFB9A2fC98"
+      ],
+      "validator_votes_name": [
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "AGREE"
+      ],
+      "leader_index": "1",
+      "rotations_left": "3"
+    },
+    {
+      "name": "27_final_account",
+      "present": true,
+      "value": {
+        "account_id": "LIVE-SPLIT-2283426",
+        "balance": "900",
+        "committed": "0",
+        "created": "2026-10-18T00:30:41Z",
+        "daily_spent": "100",
+        "daily_window_start": "2026-10-18T00:30:41Z",
+        "rules": {
+          "allowlist": [
+            "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+          ],
+          "currency": "USDC",
+          "daily_limit": "1000",
+          "per_tx_limit": "500",
+          "policy_version": "TECH-V1"
+        },
+        "status": "ACTIVE"
+      },
+      "wait_s": 1
+    },
+    {
+      "name": "30_account_pre",
+      "balance": "900",
+      "daily_spent": "100"
+    },
+    {
+      "name": "31_register_OK0",
+      "qid": "Q-P3-OK0-2435780-p3",
+      "url": "https://example.com/",
+      "reg_status": "ACCEPTED"
+    },
+    {
+      "name": "32_adjudicate_OK0_t1",
+      "did": "D-P3-OK0-1-2435780-p3",
+      "consensus": "ACCEPTED",
+      "votes_committed": "5",
+      "votes_revealed": "5",
+      "validator_votes_name": [
+        "AGREE",
+        "TIMEOUT",
+        "AGREE",
+        "TIMEOUT",
+        "AGREE"
+      ],
+      "producer_status": "REJECTED",
+      "evidence_hash": "sha256:91491423d604ec1a6815447e0d9f85888d827d6f33a7a97eab0fcf50065d528c",
+      "obs_bytes": 917,
+      "obs_excerpt": "This domain is for use in documentation examples without needing permission. This is not a service; avoid relying on it for testing and monitoring purposes.\n\n\u0647\u0630"
+    },
+    {
+      "name": "32_adjudicate_OK0_t2",
+      "did": "D-P3-OK0-2-2435780-p3",
+      "consensus": "VALIDATORS_TIMEOUT",
+      "votes_committed": "5",
+      "votes_revealed": "5",
+      "validator_votes_name": [
+        "TIMEOUT",
+        "TIMEOUT",
+        "AGREE",
+        "TIMEOUT",
+        "TIMEOUT"
+      ],
+      "producer_status": null,
+      "evidence_hash": "",
+      "obs_bytes": null,
+      "obs_excerpt": ""
+    },
+    {
+      "name": "30_account_pre",
+      "balance": "900",
+      "daily_spent": "100"
+    },
+    {
+      "name": "31_register_OK0",
+      "qid": "Q-P3-OK0-2435780-p3",
+      "url": "https://example.com/",
+      "reg_status": "ACCEPTED"
+    },
+    {
+      "name": "32_adjudicate_OK0_t1",
+      "did": "D-P3-OK0-1-2435780-p3",
+      "consensus": "ACCEPTED",
+      "votes_committed": "5",
+      "votes_revealed": "4",
+      "validator_votes_name": [
+        "AGREE",
+        "AGREE",
+        "NOT_VOTED",
+        "AGREE",
+        "AGREE"
+      ],
+      "producer_status": "REJECTED",
+      "evidence_hash": "sha256:91491423d604ec1a6815447e0d9f85888d827d6f33a7a97eab0fcf50065d528c",
+      "obs_bytes": 917,
+      "obs_excerpt": "This domain is for use in documentation examples without needing permission. This is not a service; avoid relying on it for testing and monitoring purposes.\n\n\u0647\u0630"
+    },
+    {
+      "name": "32_adjudicate_OK0_t2",
+      "did": "D-P3-OK0-2-2435780-p3",
+      "consensus": "VALIDATORS_TIMEOUT",
+      "votes_committed": "5",
+      "votes_revealed": "5",
+      "validator_votes_name": [
+        "AGREE",
+        "TIMEOUT",
+        "AGREE",
+        "TIMEOUT",
+        "TIMEOUT"
+      ],
+      "producer_status": null,
+      "evidence_hash": "",
+      "obs_bytes": null,
+      "obs_excerpt": ""
+    },
+    {
+      "name": "32_adjudicate_OK0_t3",
+      "did": "D-P3-OK0-3-2435780-p3",
+      "consensus": "ACCEPTED",
+      "votes_committed": "5",
+      "votes_revealed": "5",
+      "validator_votes_name": [
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "TIMEOUT",
+        "TIMEOUT"
+      ],
+      "producer_status": "REJECTED",
+      "evidence_hash": "sha256:e6199e260a29b963d32661716f683311c63d05e0795167652f7f5bde3b57322a",
+      "obs_bytes": 917,
+      "obs_excerpt": "This domain is for use in documentation examples without needing permission. This is not a service; avoid relying on it for testing and monitoring purposes.\n\n\u0647\u0630"
+    },
+    {
+      "name": "31_register_OK1",
+      "qid": "Q-P3-OK1-2435780-p3",
+      "url": "https://httpbin.org/html",
+      "reg_status": "ACCEPTED"
+    },
+    {
+      "name": "32_adjudicate_OK1_t1",
+      "did": "D-P3-OK1-1-2435780-p3",
+      "consensus": "ACCEPTED",
+      "votes_committed": "5",
+      "votes_revealed": "5",
+      "validator_votes_name": [
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "TIMEOUT"
+      ],
+      "producer_status": "ACCEPTED",
+      "evidence_hash": "sha256:5b17fbcd16a93254b8bc3e477d59718c56389c9c9f865a9aede64e601931f855",
+      "obs_bytes": 3595,
+      "obs_excerpt": "Herman Melville - Moby-Dick\n\nAvailing himself of the mild, summer-cool weather that now reigned in these latitudes, and in preparation for the peculiarly active"
+    },
+    {
+      "name": "33_adapter_OK1_t1",
+      "origin_status": "BOUND",
+      "actionability": "ACTIONABLE",
+      "source_contract": "0xb52d7f87ed15fd8146b3820387ab2e05de884790",
+      "evidence_hash_match": true,
+      "sender_is_producer": true
+    },
+    {
+      "name": "34_admit",
+      "method": "admit_proposal",
+      "evm_tx": "0x973f0b63792e2a7e74a0f6bf3680935ac7407c30ef2ea9880b49624d157fe986",
+      "evm_status": 1,
+      "gas_used": 989840,
+      "block": 25557052,
+      "consensus_tx": "0x6dab9b947d77ee44a38ea77b80ba404313472d9810e323d7ebb6895d0f9ae19b",
+      "status_name": "ACCEPTED",
+      "result_name": "AGREE",
+      "tx_execution_result_name": "FINISHED_WITH_RETURN",
+      "num_of_rounds": "0",
+      "votes_committed": "5",
+      "votes_revealed": "5",
+      "round_validators": [
+        "0x2CD9051E10cd1547a7b64eF61EbF1E608235dBda",
+        "0x3a130401885fD9322E2E21174A5496065f716b35",
+        "0x859dF0816Ed95B22B946C56dBc004b17993d1Ed6",
+        "0x9F6aa7364D20CF25F054Ea83f3CB950317fD34b6",
+        "0x4FC292d5D255Ec8Ad4cdcd36c5E188dfEE9D160e"
+      ],
+      "validator_votes_name": [
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "AGREE"
+      ]
+    },
+    {
+      "name": "35_proposal_readback",
+      "present": true,
+      "value": {
+        "account_id": "LIVE-SPLIT-2283426",
+        "amount": "100",
+        "created": "2026-10-20T00:56:23Z",
+        "decision_id": "D-P3-OK1-1-2435780-p3",
+        "evidence_hash": "sha256:5b17fbcd16a93254b8bc3e477d59718c56389c9c9f865a9aede64e601931f855",
+        "expires_at": "2026-10-21T00:52:32Z",
+        "payment_id": "P3-PAY-2435780-p3",
+        "policy_version": "TECH-V1",
+        "proposal_id": "P3-PROP-2435780-p3",
+        "status": "ADMITTED",
+        "to": "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+      },
+      "wait_s": 1
+    },
+    {
+      "name": "36_dispatch",
+      "method": "dispatch_proposal",
+      "evm_tx": "0x168dcbafd43b032d9a8d9b5536b3289160029fcabcf9b2b493027177c6d04cfd",
+      "evm_status": 1,
+      "gas_used": 884262,
+      "block": 25557069,
+      "consensus_tx": "0xf5c713ca9d605f316ed573ca83869ceaaece89a4f5daceb61bb484faa6dc1719",
+      "status_name": "ACCEPTED",
+      "result_name": "AGREE",
+      "tx_execution_result_name": "FINISHED_WITH_RETURN",
+      "num_of_rounds": "0",
+      "votes_committed": "5",
+      "votes_revealed": "5",
+      "round_validators": [
+        "0x859dF0816Ed95B22B946C56dBc004b17993d1Ed6",
+        "0x27276953fa2052A5178Ae5a3D114a3DFB9A2fC98",
+        "0x7c23E70217AB2A9E777940Eb769bA4198d1BaA61",
+        "0x9D998aD7C7f9Cc448A4DbDf49edD7CADBe3d57B6",
+        "0xfd811B16001077243e07173ec72a4735FF04C3AA"
+      ],
+      "validator_votes_name": [
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "AGREE"
+      ]
+    },
+    {
+      "name": "37_core_consequence",
+      "present": true,
+      "value": {
+        "adapter_caller": "29c88a9dbe42fa74341f7932003b6601b1d317c5",
+        "created_at": "2026-10-20T00:56:53Z",
+        "decision_id": "D-P3-OK1-1-2435780-p3",
+        "payment_id": "P3-PAY-2435780-p3",
+        "payment_status": "SETTLED",
+        "policy_version": "TECH-V1",
+        "proposal_id": "P3-PROP-2435780-p3",
+        "reason_code": "EXECUTED",
+        "requested_amount": "100",
+        "requested_recipient": "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6",
+        "status": "EXECUTED"
+      },
+      "wait_s": 13
+    },
+    {
+      "name": "38_payment_readback",
+      "present": true,
+      "value": {
+        "account_id": "LIVE-SPLIT-2283426",
+        "actor": "adapter:29c88a9dbe42fa74341f7932003b6601b1d317c5",
+        "amount": "100",
+        "created": "2026-10-20T00:56:53Z",
+        "decision_id": "D-P3-OK1-1-2435780-p3",
+        "evidence_hash": "sha256:5b17fbcd16a93254b8bc3e477d59718c56389c9c9f865a9aede64e601931f855",
+        "memo": "proposal:P3-PROP-2435780-p3",
+        "payment_id": "P3-PAY-2435780-p3",
+        "proposal_id": "P3-PROP-2435780-p3",
+        "status": "SETTLED",
+        "to": "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+      },
+      "wait_s": 1
+    },
+    {
+      "name": "39_account_post",
+      "present": true,
+      "value": {
+        "account_id": "LIVE-SPLIT-2283426",
+        "balance": "800",
+        "committed": "0",
+        "created": "2026-10-18T00:30:41Z",
+        "daily_spent": "100",
+        "daily_window_start": "2026-10-20T00:56:53Z",
+        "rules": {
+          "allowlist": [
+            "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+          ],
+          "currency": "USDC",
+          "daily_limit": "1000",
+          "per_tx_limit": "500",
+          "policy_version": "TECH-V1"
+        },
+        "status": "ACTIVE"
+      },
+      "wait_s": 1
+    },
+    {
+      "name": "40_replay_attempt",
+      "method": "adjudicate",
+      "evm_tx": "0x7717b306f4d53071df4e3393c0a745bd5c9ef8534a8c53ba7e0110f8345ec884",
+      "evm_status": 1,
+      "gas_used": 858413,
+      "block": 25557092,
+      "consensus_tx": "0xf31e62332dba11a8c1b2fe6c9f0ce18cefeef5b9fbd46089f5b292e5454b9bd1",
+      "status_name": "ACCEPTED",
+      "result_name": "AGREE",
+      "tx_execution_result_name": "FINISHED_WITH_RETURN",
+      "num_of_rounds": "0",
+      "votes_committed": "5",
+      "votes_revealed": "5",
+      "round_validators": [
+        "0x859dF0816Ed95B22B946C56dBc004b17993d1Ed6",
+        "0xfd811B16001077243e07173ec72a4735FF04C3AA",
+        "0x9F6aa7364D20CF25F054Ea83f3CB950317fD34b6",
+        "0x9D998aD7C7f9Cc448A4DbDf49edD7CADBe3d57B6",
+        "0x992E8D62263eD1Fe2E14FfB11aDf1080edBe4b5a"
+      ],
+      "validator_votes_name": [
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "AGREE",
+        "AGREE"
+      ]
+    },
+    {
+      "name": "41_final_account",
+      "present": true,
+      "value": {
+        "account_id": "LIVE-SPLIT-2283426",
+        "balance": "800",
+        "committed": "0",
+        "created": "2026-10-18T00:30:41Z",
+        "daily_spent": "100",
+        "daily_window_start": "2026-10-20T00:56:53Z",
+        "rules": {
+          "allowlist": [
+            "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+          ],
+          "currency": "USDC",
+          "daily_limit": "1000",
+          "per_tx_limit": "500",
+          "policy_version": "TECH-V1"
+        },
+        "status": "ACTIVE"
+      },
+      "wait_s": 1
+    },
+    {
+      "name": "42_live_rejected_adapter_readback",
+      "decision_id": "D-P3-OK0-1-2435780-p3",
+      "origin_status": "BOUND",
+      "decision_status": "REJECTED",
+      "actionability": "NON_ACTIONABLE",
+      "fail_reason": "REJECTED_PROPOSAL_REPLAY",
+      "source_contract": "0xb52d7f87ed15fd8146b3820387ab2e05de884790"
+    },
+    {
+      "name": "42_live_rejected_adapter_readback",
+      "decision_id": "D-P3-OK0-3-2435780-p3",
+      "origin_status": "BOUND",
+      "decision_status": "REJECTED",
+      "actionability": "NON_ACTIONABLE",
+      "fail_reason": "REJECTED_PROPOSAL_REPLAY",
+      "source_contract": "0xb52d7f87ed15fd8146b3820387ab2e05de884790"
+    }
+  ],
+  "status": "TESTNET_OBSERVED",
+  "producer": "0xb52d7F87ED15FD8146b3820387Ab2E05de884790",
+  "error": "gen_call failed (code=-32000): execution failed: &genvm.VMResult{Kind:0x2, ReturnData:[]uint8{0x2e, 0x4, 0x64, 0x61, 0x74, 0x61, 0x5c, 0x65, 0x78, 0x69, 0x74, 0x5f, 0x63, 0x6f, 0x64, 0x65, 0x20, 0x31, 0x6, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x5, 0xb, 0x66, 0x69, 0x6e, 0x67, 0x65, 0x72, 0x70, 0x72, 0x69, 0x6e, 0x74, 0x16, 0x6, 0x66, 0x72, 0x61, 0x6d, 0x65, 0x73, 0x15, 0x16, 0x4, 0x66, 0x75, 0x6e, 0x63, 0xe1, 0x7, 0xb, 0x6d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x3c, 0x63, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x16, 0x4, 0x66, 0x75, 0x6e, 0x63, 0xb9, 0x7, 0xb, 0x6d, 0x6f, 0",
+  "checks": {
+    "validator_votes_present": true,
+    "equivalence_accepted": true,
+    "sender_is_producer_contract": true,
+    "origin_bound": true,
+    "evidence_non_placeholder": true,
+    "balance_unchanged": true,
+    "neg_non_actionable": true,
+    "neg_admit_refused": true,
+    "und_fail_closed": true,
+    "replay_keeps_original": true
+  },
+  "settlement_attempted": true,
+  "blocked_reason": "OK judgment did not canonicalize ACCEPTED+BOUND+ACTIONABLE end to end",
+  "checks_pass3": {
+    "live_accepted_producer_receipt": true,
+    "adapter_bound_sender_is_producer": true,
+    "adapter_actionable": true,
+    "evidence_non_placeholder": true,
+    "consequence_executed": true,
+    "payment_settled": true,
+    "balance_900_to_800": true,
+    "replay_keeps_original": true,
+    "exactly_one_settlement": true,
+    "live_rejected_non_actionable": true
+  },
+  "pass3_pairs": [
+    {
+      "kind": "OK",
+      "url": "https://example.com/",
+      "clause": "The web document located at this address was successfully delivered and, in its fetched text, displays the main heading 'Example Domain'. Treating 'the document was delivered and shows that heading' as the fulfillment condition: if the fetched text contains that heading, respond satisfied=true verdict=delivered confidence=high; only if the heading is absent respond satisfied=false verdict=not_delivered confidence=high; otherwise verdict=ambiguous confidence=low."
+    },
+    {
+      "kind": "OK",
+      "url": "https://httpbin.org/html",
+      "clause": "This document was delivered and its text is the opening of Herman Melville's 'Moby Dick'. If the fetched text clearly mentions Moby Dick or Melville, respond satisfied=true verdict=delivered confidence=high; if it clearly does not, respond satisfied=false verdict=not_delivered confidence=high; otherwise ambiguous/low."
+    },
+    {
+      "kind": "NEG",
+      "url": "https://example.com/",
+      "clause": "This document is a signed shipping manifest confirming that 5 servers were delivered and installed. If the fetched text does NOT contain any such server delivery manifest, respond satisfied=false verdict=not_delivered confidence=high."
+    }
+  ],
+  "checks_pass2_and_3_summary": {
+    "accepted_chain": true,
+    "fail_closed_paths": true
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "0.2.0",
+  "primitive": "adjudicated-receipt",
+  "convergenceMode": "SEMANTIC",
+  "statuses": ["OPEN", "CANCELLED", "SETTLED", "PROVISIONAL_ACCEPTED", "FINAL_ACCEPTED", "CHALLENGED", "REJECTED", "UNDETERMINED", "UNDETERMINED_DELIVERY_UNCERTAIN", "EXPIRED"],
+  "note": "Deterministic-envelope vectors (no LLM). The quorum verdict outcomes (PROVISIONAL_ACCEPTED/REJECTED/UNDETERMINED_*), challenge, resolution, and finalization transitions that require a quorum verdict are covered by judgment-surface tests with mocked web/LLM (direct) and by integration tests against GLSim consensus, per DECISION_BOUNDARY.md.",
+  "vectors": [
+    {
+      "id": "ar-register-001",
+      "description": "Registering a release object binds immutable terms (incl. policy version, challenge window, expected source id) and derives the obligation hash",
+      "actions": [
+        {"op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok"},
+        {"op": "register_release", "args": ["OBJ-1", "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6", "2500", "USDC", "https://vendor.example.com/api/deliveries/OBJ-1", "All 5 servers delivered and passing acceptance", "86400", "3600", "policy-v1", "vendor.example.com"], "expect": "ok"},
+        {"op": "get_object", "args": ["OBJ-1"], "expect": {"invoice_id": "OBJ-1", "object_ref": "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6", "surrender_value": "2500", "surrender_asset": "USDC", "evidence_pointer": "https://vendor.example.com/api/deliveries/OBJ-1", "adjudication_clause": "All 5 servers delivered and passing acceptance", "valid_for_seconds": "86400", "challenge_window": "3600", "policy_version": "policy-v1", "expected_source_id": "vendor.example.com", "status": "OPEN"}}
+      ]
+    },
+    {
+      "id": "ar-register-duplicate-rejected-002",
+      "description": "Object ids are unique; duplicates are rejected",
+      "actions": [
+        {"op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok"},
+        {"op": "register_release", "args": ["OBJ-1", "REF-1", "100", "USDC", "https://x.example.com/e", "clause", "60", "60", "policy-v1", "x.example.com"], "expect": "ok"},
+        {"op": "register_release", "args": ["OBJ-1", "REF-1", "100", "USDC", "https://x.example.com/e", "clause", "60", "60", "policy-v1", "x.example.com"], "expect": "reject"}
+      ]
+    },
+    {
+      "id": "ar-register-invalid-rejected-003",
+      "description": "Empty refs, non-positive values/TTLs/windows, non-https pointers, empty clauses, and empty policy versions are all rejected",
+      "actions": [
+        {"op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok"},
+        {"op": "register_release", "args": ["OBJ-X", "", "100", "USDC", "https://x.example.com/e", "clause", "60", "60", "policy-v1", "x"], "expect": "reject"},
+        {"op": "register_release", "args": ["OBJ-X", "REF", "0", "USDC", "https://x.example.com/e", "clause", "60", "60", "policy-v1", "x"], "expect": "reject"},
+        {"op": "register_release", "args": ["OBJ-X", "REF", "100", "USDC", "http://x.example.com/e", "clause", "60", "60", "policy-v1", "x"], "expect": "reject"},
+        {"op": "register_release", "args": ["OBJ-X", "REF", "100", "USDC", "https://x.example.com/e", "", "60", "60", "policy-v1", "x"], "expect": "reject"},
+        {"op": "register_release", "args": ["OBJ-X", "REF", "100", "USDC", "https://x.example.com/e", "clause", "0", "60", "policy-v1", "x"], "expect": "reject"},
+        {"op": "register_release", "args": ["OBJ-X", "REF", "100", "USDC", "https://x.example.com/e", "clause", "60", "0", "policy-v1", "x"], "expect": "reject"},
+        {"op": "register_release", "args": ["OBJ-X", "REF", "100", "USDC", "https://x.example.com/e", "clause", "60", "60", "", "x"], "expect": "reject"},
+        {"op": "get_object", "args": ["OBJ-X"], "expect": "reject"}
+      ]
+    },
+    {
+      "id": "ar-cancel-001",
+      "description": "Cancellation is an explicit terminal rule: a CANCELLED object can no longer be adjudicated",
+      "actions": [
+        {"op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok"},
+        {"op": "register_release", "args": ["OBJ-1", "REF-1", "100", "USDC", "https://x.example.com/e", "clause", "60", "60", "policy-v1", "x"], "expect": "ok"},
+        {"op": "cancel_release", "args": ["OBJ-1"], "expect": "ok"},
+        {"op": "get_object", "args": ["OBJ-1"], "expect": {"status": "CANCELLED"}},
+        {"op": "adjudicate_object", "args": ["OBJ-1", "RC-1"], "expect": "reject"},
+        {"op": "cancel_release", "args": ["OBJ-1"], "expect": "reject"}
+      ]
+    },
+    {
+      "id": "ar-lifecycle-guards-rejected-004",
+      "description": "Settle, finalize, and challenge against unknown receipts fail closed",
+      "actions": [
+        {"op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok"},
+        {"op": "settle_release", "args": ["RC-NOPE"], "expect": "reject"},
+        {"op": "finalize_release", "args": ["RC-NOPE"], "expect": "reject"},
+        {"op": "challenge_release", "args": ["RC-NOPE", "100", "sha256:x", "r"], "expect": "reject"}
+      ]
+    }
+  ]
+}

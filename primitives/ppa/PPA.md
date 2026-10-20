@@ -38,19 +38,26 @@ A PPA is opened by an owner and configured with a **rules envelope**:
 
 From there, the account exposes the verbs people actually expect:
 
-**`send`** - the core flow. Every payment passes through four gates in order,
+**`send`** - the core flow. Every payment passes through five gates in order,
 and no gate can be skipped:
 
 1. **Policy gate.** Is the recipient allowed? Is the amount within per-transaction
    and daily limits? Denied requests are recorded for audit but move nothing
    and consume nothing - fix the rule, retry the same payment id.
-2. **Encumbrance gate.** Is there uncommitted balance to cover this? The
+2. **Attestation gate** (when the account sets `require_attestation: true`).
+   Technical compliance evidence registered by the owner is checked
+   fail-closed: the payment settles only against a currently valid, unexpired,
+   non-revoked attestation bound to the recipient, an authorized issuer, and
+   the account's configured policy version. An absent, stale, or revoked
+   attestation denies - an unavailable provider is never mistaken for approval.
+   Attestations are technical evidence only, not legal KYC/AML compliance.
+3. **Encumbrance gate.** Is there uncommitted balance to cover this? The
    account tracks committed vs available funds separately, so overcommitment
    is structurally impossible rather than merely forbidden.
-3. **Payable claim.** The payment exists as a claim with an evidence hash and
+4. **Payable claim.** The payment exists as a claim with an evidence hash and
    memo - not just a ledger line, but a settlement record that downstream
    verification (claim-verification) can later attest.
-4. **Settle.** Funds move. History is written once and never rewritten.
+5. **Settle.** Funds move. History is written once and never rewritten.
 
 **Invoices** are structured receivables. Issuing one creates an open claim
 against a payer; settling it runs the payer's own policy and encumbrance
@@ -100,6 +107,12 @@ consensus (`6/6 PASS`):
 - insufficient commitment: denied without touching balances
 - invoice: issue → settle through gates → both records updated
 - dispute: refund restores balance, original payment marked REFUNDED, case closed
+
+The attestation gate carries its own canonical vectors
+(`primitives/ppa/vectors/v0.1.json`, 15/15 PASS via the Nomos vector runner)
+and focused gltest coverage (backward compatibility, missing/valid/expired/
+revoked, status/subject/issuer/policy binding, provider outage as absent
+evidence, replay, balance conservation).
 
 Deployed to Testnet Bradbury alongside the eleven underlying primitives.
 

@@ -1,0 +1,26 @@
+{
+  "network": "testnet-bradbury",
+  "chainId": "4221",
+  "rpc": "https://rpc-bradbury.genlayer.com",
+  "deployer": "0x8311BfD717708d6E9c4933e80762cC4901F836BF",
+  "contractFile": "ppa.py",
+  "source_chars": 19546,
+  "authority_fingerprint": "sha256:24f00f6ecba7a3bbb0638c2eb46aee812b3a88471333b05a5099bd6e5f4e074a",
+  "implementation_sha256": "sha256:cbabb88b54b9be10759a62c4d18a89e7de7e84b62473624e6df724b034d0d593",
+  "variant": "docstring/comment-slim + public method annotations retained + helper annotations omitted",
+  "estimate_gas": 16272521,
+  "submit_gas": 16760696,
+  "evm_tx": "0xf3d18fe2ce52465fb921a33d69299c082c6768dc3e9791b65d3e55e9a44e42f6",
+  "evm_status": 1,
+  "gas_used": 15068113,
+  "consensus_tx": "0x6c5ca2f609290347f0f4e99e0a4d34437b80e916d0bb6e5580eaeacfd0110d73",
+  "contractAddress": "0x6D999C4c3A4f25897b67190FF644E5a76817aabf",
+  "block": 25379042,
+  "eth_getCode_bytes": 300,
+  "explorer": "https://explorer-bradbury.genlayer.com/address/0x6D999C4c3A4f25897b67190FF644E5a76817aabf",
+  "status": "DEPLOYED",
+  "prior_contracts": [
+    "0xB61670E0C8a44d8434815F397a8E80FD0f55B7c6",
+    "0x126fFE048b821116810B538Adfb1Ce600189e0F9"
+  ]
+}

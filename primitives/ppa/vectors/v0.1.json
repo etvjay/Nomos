@@ -1,0 +1,190 @@
+{
+  "schemaVersion": "0.1.0",
+  "primitive": "ppa",
+  "convergenceMode": "EXACT",
+  "statuses": ["SETTLED", "DENIED"],
+  "attestationStatuses": ["VALID", "REVOKED"],
+  "vectors": [
+    {
+      "id": "ppa-gate-off-backcompat-001",
+      "description": "Without require_attestation, send settles exactly as before (no attestation registry needed)",
+      "actions": [
+        { "op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok" },
+        { "op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"1000\",\"per_tx_limit\":\"500\",\"currency\":\"USDC\"}"], "expect": "ok" },
+        { "op": "deposit", "args": ["ACC1", "1000"], "expect": "ok" },
+        { "op": "send", "args": ["ACC1", "P1", "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6", "300"], "expect": "ok" },
+        { "op": "get_payment", "args": ["P1"], "expect": { "status": "SETTLED", "amount": "300" } },
+        { "op": "get_account", "args": ["ACC1"], "expect": { "balance": "700", "daily_spent": "300" } }
+      ]
+    },
+    {
+      "id": "ppa-att-missing-fail-closed-002",
+      "description": "With require_attestation and an empty registry, the send is denied ATTESTATION_MISSING and no funds move",
+      "actions": [
+        { "op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok" },
+        { "op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"1000\",\"per_tx_limit\":\"500\",\"currency\":\"USDC\",\"require_attestation\":true,\"attestation_issuers\":[\"0x1111111111111111111111111111111111111111\"],\"attestation_policy_version\":\"TECH-V1\"}"], "expect": "ok" },
+        { "op": "deposit", "args": ["ACC1", "1000"], "expect": "ok" },
+        { "op": "send", "args": ["ACC1", "P1", "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6", "300"], "expect": "ok" },
+        { "op": "get_payment", "args": ["P1"], "expect": { "status": "DENIED", "reason": "ATTESTATION_MISSING" } },
+        { "op": "get_account", "args": ["ACC1"], "expect": { "balance": "1000", "daily_spent": "0" } }
+      ]
+    },
+    {
+      "id": "ppa-att-valid-admits-003",
+      "description": "A currently valid, correctly bound attestation admits the payment",
+      "actions": [
+        { "op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok" },
+        { "op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"1000\",\"per_tx_limit\":\"500\",\"currency\":\"USDC\",\"require_attestation\":true,\"attestation_issuers\":[\"0x1111111111111111111111111111111111111111\"],\"attestation_policy_version\":\"TECH-V1\"}"], "expect": "ok" },
+        { "op": "deposit", "args": ["ACC1", "1000"], "expect": "ok" },
+        { "op": "register_attestation", "args": ["A1", "{\"subject\":\"0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6\",\"issuer\":\"0x1111111111111111111111111111111111111111\",\"status\":\"VALID\",\"issued_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\",\"evidence_hash\":\"evh-att-001\",\"policy_version\":\"TECH-V1\"}"], "expect": "ok" },
+        { "op": "send", "args": ["ACC1", "P1", "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6", "300"], "expect": "ok" },
+        { "op": "get_payment", "args": ["P1"], "expect": { "status": "SETTLED", "amount": "300" } },
+        { "op": "get_account", "args": ["ACC1"], "expect": { "balance": "700", "daily_spent": "300" } }
+      ]
+    },
+    {
+      "id": "ppa-att-expired-004",
+      "description": "An expired attestation cannot authorize a new payment",
+      "actions": [
+        { "op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok" },
+        { "op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"1000\",\"per_tx_limit\":\"500\",\"currency\":\"USDC\",\"require_attestation\":true,\"attestation_issuers\":[\"0x1111111111111111111111111111111111111111\"],\"attestation_policy_version\":\"TECH-V1\"}"], "expect": "ok" },
+        { "op": "deposit", "args": ["ACC1", "1000"], "expect": "ok" },
+        { "op": "register_attestation", "args": ["A1", "{\"subject\":\"0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6\",\"issuer\":\"0x1111111111111111111111111111111111111111\",\"status\":\"VALID\",\"issued_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2021-01-01T00:00:00+00:00\",\"evidence_hash\":\"evh-att-001\",\"policy_version\":\"TECH-V1\"}"], "expect": "ok" },
+        { "op": "send", "args": ["ACC1", "P1", "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6", "300"], "expect": "ok" },
+        { "op": "get_payment", "args": ["P1"], "expect": { "status": "DENIED", "reason": "ATTESTATION_EXPIRED" } },
+        { "op": "get_account", "args": ["ACC1"], "expect": { "balance": "1000" } }
+      ]
+    },
+    {
+      "id": "ppa-att-revoked-005",
+      "description": "A revoked attestation cannot authorize a new payment",
+      "actions": [
+        { "op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok" },
+        { "op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"1000\",\"per_tx_limit\":\"500\",\"currency\":\"USDC\",\"require_attestation\":true,\"attestation_issuers\":[\"0x1111111111111111111111111111111111111111\"],\"attestation_policy_version\":\"TECH-V1\"}"], "expect": "ok" },
+        { "op": "deposit", "args": ["ACC1", "1000"], "expect": "ok" },
+        { "op": "register_attestation", "args": ["A1", "{\"subject\":\"0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6\",\"issuer\":\"0x1111111111111111111111111111111111111111\",\"status\":\"VALID\",\"issued_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\",\"evidence_hash\":\"evh-att-001\",\"policy_version\":\"TECH-V1\"}"], "expect": "ok" },
+        { "op": "revoke_attestation", "args": ["A1"], "expect": "ok" },
+        { "op": "send", "args": ["ACC1", "P1", "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6", "300"], "expect": "ok" },
+        { "op": "get_payment", "args": ["P1"], "expect": { "status": "DENIED", "reason": "ATTESTATION_REVOKED" } },
+        { "op": "get_account", "args": ["ACC1"], "expect": { "balance": "1000" } }
+      ]
+    },
+    {
+      "id": "ppa-att-invalid-status-register-rejected-006",
+      "description": "Only VALID/REVOKED statuses are registrable; an unknown status leaves the gate fail-closed",
+      "actions": [
+        { "op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok" },
+        { "op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"1000\",\"per_tx_limit\":\"500\",\"currency\":\"USDC\",\"require_attestation\":true,\"attestation_issuers\":[\"0x1111111111111111111111111111111111111111\"],\"attestation_policy_version\":\"TECH-V1\"}"], "expect": "ok" },
+        { "op": "deposit", "args": ["ACC1", "1000"], "expect": "ok" },
+        { "op": "register_attestation", "args": ["A1", "{\"subject\":\"0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6\",\"issuer\":\"0x1111111111111111111111111111111111111111\",\"status\":\"PENDING\",\"issued_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\",\"evidence_hash\":\"evh-att-001\",\"policy_version\":\"TECH-V1\"}"], "expect": "reject" },
+        { "op": "send", "args": ["ACC1", "P1", "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6", "300"], "expect": "ok" },
+        { "op": "get_payment", "args": ["P1"], "expect": { "status": "DENIED", "reason": "ATTESTATION_MISSING" } }
+      ]
+    },
+    {
+      "id": "ppa-att-subject-mismatch-007",
+      "description": "An attestation bound to another subject cannot authorize payment to the recipient",
+      "actions": [
+        { "op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok" },
+        { "op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"1000\",\"per_tx_limit\":\"500\",\"currency\":\"USDC\",\"require_attestation\":true,\"attestation_issuers\":[\"0x1111111111111111111111111111111111111111\"],\"attestation_policy_version\":\"TECH-V1\"}"], "expect": "ok" },
+        { "op": "deposit", "args": ["ACC1", "1000"], "expect": "ok" },
+        { "op": "register_attestation", "args": ["A1", "{\"subject\":\"0x2222222222222222222222222222222222222222\",\"issuer\":\"0x1111111111111111111111111111111111111111\",\"status\":\"VALID\",\"issued_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\",\"evidence_hash\":\"evh-att-001\",\"policy_version\":\"TECH-V1\"}"], "expect": "ok" },
+        { "op": "send", "args": ["ACC1", "P1", "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6", "300"], "expect": "ok" },
+        { "op": "get_payment", "args": ["P1"], "expect": { "status": "DENIED", "reason": "ATTESTATION_SUBJECT_MISMATCH" } }
+      ]
+    },
+    {
+      "id": "ppa-att-issuer-unauthorized-008",
+      "description": "An issuer outside rules.attestation_issuers is denied",
+      "actions": [
+        { "op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok" },
+        { "op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"1000\",\"per_tx_limit\":\"500\",\"currency\":\"USDC\",\"require_attestation\":true,\"attestation_issuers\":[\"0x1111111111111111111111111111111111111111\"],\"attestation_policy_version\":\"TECH-V1\"}"], "expect": "ok" },
+        { "op": "deposit", "args": ["ACC1", "1000"], "expect": "ok" },
+        { "op": "register_attestation", "args": ["A1", "{\"subject\":\"0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6\",\"issuer\":\"0x2222222222222222222222222222222222222222\",\"status\":\"VALID\",\"issued_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\",\"evidence_hash\":\"evh-att-001\",\"policy_version\":\"TECH-V1\"}"], "expect": "ok" },
+        { "op": "send", "args": ["ACC1", "P1", "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6", "300"], "expect": "ok" },
+        { "op": "get_payment", "args": ["P1"], "expect": { "status": "DENIED", "reason": "ATTESTATION_ISSUER_UNAUTHORIZED" } }
+      ]
+    },
+    {
+      "id": "ppa-att-policy-mismatch-009",
+      "description": "A policy_version drift between attestation and account rules is denied",
+      "actions": [
+        { "op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok" },
+        { "op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"1000\",\"per_tx_limit\":\"500\",\"currency\":\"USDC\",\"require_attestation\":true,\"attestation_issuers\":[\"0x1111111111111111111111111111111111111111\"],\"attestation_policy_version\":\"TECH-V1\"}"], "expect": "ok" },
+        { "op": "deposit", "args": ["ACC1", "1000"], "expect": "ok" },
+        { "op": "register_attestation", "args": ["A1", "{\"subject\":\"0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6\",\"issuer\":\"0x1111111111111111111111111111111111111111\",\"status\":\"VALID\",\"issued_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\",\"evidence_hash\":\"evh-att-001\",\"policy_version\":\"TECH-V0\"}"], "expect": "ok" },
+        { "op": "send", "args": ["ACC1", "P1", "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6", "300"], "expect": "ok" },
+        { "op": "get_payment", "args": ["P1"], "expect": { "status": "DENIED", "reason": "ATTESTATION_POLICY_MISMATCH" } }
+      ]
+    },
+    {
+      "id": "ppa-att-duplicate-id-rejected-010",
+      "description": "An attestation_id is consumed exactly once; the original record is retained",
+      "actions": [
+        { "op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok" },
+        { "op": "register_attestation", "args": ["A1", "{\"subject\":\"0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6\",\"issuer\":\"0x1111111111111111111111111111111111111111\",\"status\":\"VALID\",\"issued_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\",\"evidence_hash\":\"evh-att-001\",\"policy_version\":\"TECH-V1\"}"], "expect": "ok" },
+        { "op": "register_attestation", "args": ["A1", "{\"subject\":\"0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6\",\"issuer\":\"0x1111111111111111111111111111111111111111\",\"status\":\"VALID\",\"issued_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\",\"evidence_hash\":\"evh-att-002\",\"policy_version\":\"TECH-V1\"}"], "expect": "reject" },
+        { "op": "get_attestation", "args": ["A1"], "expect": { "evidence_hash": "evh-att-001", "status": "VALID" } }
+      ]
+    },
+    {
+      "id": "ppa-att-schema-pii-rejected-011",
+      "description": "Unknown fields (PII carriers) are rejected at registration",
+      "actions": [
+        { "op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok" },
+        { "op": "register_attestation", "args": ["A1", "{\"subject\":\"0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6\",\"issuer\":\"0x1111111111111111111111111111111111111111\",\"status\":\"VALID\",\"issued_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\",\"evidence_hash\":\"evh-att-001\",\"policy_version\":\"TECH-V1\",\"full_name\":\"Jane Doe\"}"], "expect": "reject" },
+        { "op": "get_attestation", "args": ["A1"], "expect": "reject" }
+      ]
+    },
+    {
+      "id": "ppa-payment-id-replay-rejected-012",
+      "description": "A settled payment id cannot be replayed; balance is conserved",
+      "actions": [
+        { "op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok" },
+        { "op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"1000\",\"per_tx_limit\":\"500\",\"currency\":\"USDC\"}"], "expect": "ok" },
+        { "op": "deposit", "args": ["ACC1", "1000"], "expect": "ok" },
+        { "op": "send", "args": ["ACC1", "P1", "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6", "300"], "expect": "ok" },
+        { "op": "send", "args": ["ACC1", "P1", "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6", "100"], "expect": "reject" },
+        { "op": "get_payment", "args": ["P1"], "expect": { "status": "SETTLED", "amount": "300" } },
+        { "op": "get_account", "args": ["ACC1"], "expect": { "balance": "700", "daily_spent": "300" } }
+      ]
+    },
+    {
+      "id": "ppa-denied-id-retryable-013",
+      "description": "A denied payment burns nothing: after a valid attestation appears the same id settles once",
+      "actions": [
+        { "op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok" },
+        { "op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"1000\",\"per_tx_limit\":\"500\",\"currency\":\"USDC\",\"require_attestation\":true,\"attestation_issuers\":[\"0x1111111111111111111111111111111111111111\"],\"attestation_policy_version\":\"TECH-V1\"}"], "expect": "ok" },
+        { "op": "deposit", "args": ["ACC1", "1000"], "expect": "ok" },
+        { "op": "send", "args": ["ACC1", "P1", "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6", "300"], "expect": "ok" },
+        { "op": "get_payment", "args": ["P1"], "expect": { "status": "DENIED", "reason": "ATTESTATION_MISSING" } },
+        { "op": "register_attestation", "args": ["A1", "{\"subject\":\"0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6\",\"issuer\":\"0x1111111111111111111111111111111111111111\",\"status\":\"VALID\",\"issued_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\",\"evidence_hash\":\"evh-att-001\",\"policy_version\":\"TECH-V1\"}"], "expect": "ok" },
+        { "op": "send", "args": ["ACC1", "P1", "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6", "300"], "expect": "ok" },
+        { "op": "get_payment", "args": ["P1"], "expect": { "status": "SETTLED", "amount": "300" } },
+        { "op": "get_account", "args": ["ACC1"], "expect": { "balance": "700" } }
+      ]
+    },
+    {
+      "id": "ppa-multi-candidate-conservation-014",
+      "description": "Candidates are evaluated in id order: an expired candidate does not block a later valid one; only settled amounts leave the balance",
+      "actions": [
+        { "op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok" },
+        { "op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"1000\",\"per_tx_limit\":\"500\",\"currency\":\"USDC\",\"require_attestation\":true,\"attestation_issuers\":[\"0x1111111111111111111111111111111111111111\"],\"attestation_policy_version\":\"TECH-V1\"}"], "expect": "ok" },
+        { "op": "deposit", "args": ["ACC1", "1000"], "expect": "ok" },
+        { "op": "register_attestation", "args": ["A1", "{\"subject\":\"0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6\",\"issuer\":\"0x1111111111111111111111111111111111111111\",\"status\":\"VALID\",\"issued_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2021-01-01T00:00:00+00:00\",\"evidence_hash\":\"evh-att-001\",\"policy_version\":\"TECH-V1\"}"], "expect": "ok" },
+        { "op": "register_attestation", "args": ["A2", "{\"subject\":\"0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6\",\"issuer\":\"0x1111111111111111111111111111111111111111\",\"status\":\"VALID\",\"issued_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\",\"evidence_hash\":\"evh-att-002\",\"policy_version\":\"TECH-V1\"}"], "expect": "ok" },
+        { "op": "send", "args": ["ACC1", "P1", "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6", "300"], "expect": "ok" },
+        { "op": "get_payment", "args": ["P1"], "expect": { "status": "SETTLED" } },
+        { "op": "get_account", "args": ["ACC1"], "expect": { "balance": "700", "daily_spent": "300" } }
+      ]
+    },
+    {
+      "id": "ppa-att-get-unknown-015",
+      "description": "Reading an unknown attestation id is an error, not an empty approval",
+      "actions": [
+        { "op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok" },
+        { "op": "get_attestation", "args": ["NOPE"], "expect": "reject" }
+      ]
+    }
+  ]
+}

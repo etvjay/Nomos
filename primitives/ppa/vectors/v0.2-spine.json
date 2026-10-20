@@ -1,0 +1,33 @@
+{
+  "primitive": "ppa",
+  "version": "0.2.0",
+  "mode": "EXACT",
+  "vectors": [
+    {
+      "id": "ppa/spine-accepted-to-settle-001",
+      "description": "ACCEPTED receipt admits proposal and execute_proposal settles through send gates",
+      "steps": [
+        { "op": "initialize", "args": ["0x1111111111111111111111111111111111111111"], "expect": "ok" },
+        { "op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"1000\",\"per_tx_limit\":\"500\",\"currency\":\"USDC\"}"], "expect": "ok" },
+        { "op": "deposit", "args": ["ACC1", "1000"], "expect": "ok" },
+        { "op": "submit_decision_receipt", "args": ["{\"decision_id\":\"DEC-1\",\"source_contract\":\"0xabc000000000000000000000000000000000001\",\"question_hash\":\"sha256:q\",\"evidence_hash\":\"sha256:e\",\"decision_status\":\"ACCEPTED\",\"equivalence_mode\":\"comparative\",\"policy_version\":\"TECH-V1\",\"created_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\"}"], "expect": "ok" },
+        { "op": "admit_proposal", "args": ["{\"proposal_id\":\"PROP-1\",\"decision_id\":\"DEC-1\",\"account_id\":\"ACC1\",\"payment_id\":\"PAY-1\",\"to\":\"0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6\",\"amount\":\"100\",\"policy_version\":\"TECH-V1\"}"], "expect": "ok" },
+        { "op": "execute_proposal", "args": ["PROP-1"], "expect": "ok" },
+        { "op": "get_payment", "args": ["PAY-1"], "expect": { "status": "SETTLED" } },
+        { "op": "get_account", "args": ["ACC1"], "expect": { "balance": "900" } }
+      ]
+    },
+    {
+      "id": "ppa/spine-rejected-no-exec-002",
+      "description": "REJECTED receipt is non-actionable and cannot admit a proposal",
+      "steps": [
+        { "op": "initialize", "args": ["0x1111111111111111111111111111111111111111"], "expect": "ok" },
+        { "op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"1000\",\"per_tx_limit\":\"500\",\"currency\":\"USDC\"}"], "expect": "ok" },
+        { "op": "deposit", "args": ["ACC1", "1000"], "expect": "ok" },
+        { "op": "submit_decision_receipt", "args": ["{\"decision_id\":\"DEC-R\",\"source_contract\":\"0xabc000000000000000000000000000000000001\",\"question_hash\":\"sha256:q\",\"evidence_hash\":\"sha256:e\",\"decision_status\":\"REJECTED\",\"equivalence_mode\":\"comparative\",\"policy_version\":\"TECH-V1\",\"created_at\":\"2020-01-01T00:00:00+00:00\",\"expires_at\":\"2099-01-01T00:00:00+00:00\"}"], "expect": "ok" },
+        { "op": "get_receipt", "args": ["DEC-R"], "expect": { "actionability": "NON_ACTIONABLE" } },
+        { "op": "get_account", "args": ["ACC1"], "expect": { "balance": "1000" } }
+      ]
+    }
+  ]
+}

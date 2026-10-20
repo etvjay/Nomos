@@ -1,0 +1,14 @@
+{
+  "receipt_id": "RECEIPT-CONV-PPA-B-PUBLIC-ANN-2026-10-17",
+  "primitive": "ppa",
+  "date": "2026-10-17",
+  "convergence_mode": "EXACT",
+  "lane": "convergence-lanes/ppa/your_build.py",
+  "vectors_total": 15,
+  "vectors_passed": 15,
+  "verdict": "CONVERGED",
+  "authority_fingerprint": "sha256:24f00f6ecba7a3bbb0638c2eb46aee812b3a88471333b05a5099bd6e5f4e074a",
+  "implementation_sha256": "sha256:cbabb88b54b9be10759a62c4d18a89e7de7e84b62473624e6df724b034d0d593",
+  "source_chars": 19546,
+  "changes": "public method annotations restored for CAPABILITY parity; helpers untyped; docstrings stripped; header preserved"
+}

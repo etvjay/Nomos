@@ -1,0 +1,34 @@
+{
+  "submission_id": "",
+  "decision": "accept | reject | more_info | skip",
+  "confidence": "high | medium | low",
+  "evidence_types": [],
+  "builder_signal": false,
+  "reasoning": "",
+  "staff_reply": "",
+  "needs_parent_review": false,
+  "points": null,
+  "evidence_access": {},
+  "rubric_review": {
+    "gate_failures": [],
+    "sections": {
+      "genlayer_fit": {
+        "score": 0,
+        "reason": "",
+        "blocking_reason": ""
+      },
+      "contract_quality": {
+        "score": 0,
+        "reason": "",
+        "blocking_reason": ""
+      },
+      "engineering": {
+        "score": 0,
+        "reason": "",
+        "blocking_reason": ""
+      }
+    },
+    "extras": [],
+    "overall_reason": ""
+  }
+}

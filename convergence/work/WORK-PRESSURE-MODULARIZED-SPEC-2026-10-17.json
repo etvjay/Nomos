@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "1.0.0",
+  "workId": "WORK-PRESSURE-MODULARIZED-SPEC-2026-10-17",
+  "baseCommit": "1416a50eaae455039165d09a79ce6320e4d85e80",
+  "lane": "tooling",
+  "targets": [
+    "pressure-tests"
+  ],
+  "allowedPaths": [
+    "tests/pressure/**",
+    "convergence/work/WORK-PRESSURE-MODULARIZED-SPEC-2026-10-17.json",
+    "convergence/reports/**"
+  ],
+  "changeClass": "PATCH",
+  "authorityFingerprint": "not-applicable: test classification, not a primitive capability",
+  "capabilityVersion": "not-applicable",
+  "publicInterfaceMutationAllowed": false,
+  "problemStatement": "Six adversarial tests in tests/pressure/test_pressure_direct.py target PPA methods (delegate, dispute_payment, issue_invoice and their getters) that were gas-modularized out of the core contract to fit the Bradbury per-tx ceiling. They currently fail with AttributeError. They are not regressions, but they are an evidence-integrity gap: AGENTS.md mandates a set of adversarial questions, and six of them are unanswerable against the current core deploy. Leaving them failing misreports the repository state; deleting or migrating them would destroy the specification.",
+  "classification": "MODULARIZED_OUT_PRESSURE_SPEC",
+  "scopeRationale": "Tests only. No primitive implementation, CAPABILITY.json, capability version, or the PPA v0.3 lane is touched. The superseded v0.2 spine vectors are explicitly NOT to be migrated as part of this work.",
+  "affectedTests": [
+    {
+      "test": "test_delegation_never_widens_and_revocation_kills_spend",
+      "extension": "delegation",
+      "mandatoryProperty": "delegation narrows limits and never widens; revocation kills future spend immediately"
+    },
+    {
+      "test": "test_expired_delegation_loses_authority",
+      "extension": "delegation",
+      "mandatoryProperty": "an expired delegation confers no authority"
+    },
+    {
+      "test": "test_policy_allowlist_applies_to_delegate",
+      "extension": "delegation",
+      "mandatoryProperty": "account allowlist still binds a delegate"
+    },
+    {
+      "test": "test_dispute_refund_is_compensating_not_rewrite",
+      "extension": "dispute-refund",
+      "mandatoryProperty": "refund is a compensating entry; settled history is never rewritten; no double refund"
+    },
+    {
+      "test": "test_dispute_guards_payment_lookup_and_authority",
+      "extension": "dispute-refund",
+      "mandatoryProperty": "dispute requires an existing payment and correct authority; duplicate disputes rejected"
+    },
+    {
+      "test": "test_invoice_settles_once_through_send_gates",
+      "extension": "invoice-settlement",
+      "mandatoryProperty": "an invoice settles exactly once and only through the send gates"
+    }
+  ],
+  "acceptanceGates": [
+    "All six tests are marked skipped with an explicit reason naming MODULARIZED_OUT_PRESSURE_SPEC and the target extension",
+    "Assertion bodies are preserved verbatim \u2014 no assertion is deleted, weakened, or rewritten",
+    "The skip reason states that the negative properties remain mandatory when the extension returns",
+    "A skipped pressure test is never reported as passing behavior: the suite summary distinguishes passed, skipped, and failed",
+    "A guard test asserts that any test in tests/pressure referencing a method absent from the core contract is marked skipped rather than failing",
+    "Full repository suite re-run with honest accounting; expected result is 150 passed, 8 skipped, 0 failed",
+    "The report states plainly that pressure behavior is specified but not executable in the current core deploy",
+    "AGENTS.md-mandated adversarial questions that remain unexecutable are enumerated by name in the report"
+  ],
+  "explicitlyForbidden": [
+    "Do not restore delegate, invoice, or dispute methods to the core contract.",
+    "Do not migrate or revive the superseded v0.2 spine vectors.",
+    "Do not delete or weaken any assertion.",
+    "Do not count a skipped test as passing.",
+    "Do not widen the PPA v0.3 origin lane or the modular-split lane."
+  ],
+  "retainedAuthorityValues": {
+    "ppaAuthorityFingerprint": "sha256:34c90df60eb03170b9cbbea65c5e1d9f0e17af04e83fd68db6821881b6fd9be3",
+    "ppaImplementationSha256": "f1ba2058926828f50e0c0c9859f02a2593bc43b245bbae0b329e715e61d7a310",
+    "note": "Recorded separately and unchanged by this work. The authority fingerprint is over specification documents; the implementation hash is over source bytes. They are distinct identities and are not combined."
+  },
+  "adversarialQuestionsStillUnexecutable": [
+    "Can delegation widen account authority? (delegation extension absent)",
+    "Does an expired delegation lose authority? (delegation extension absent)",
+    "Does the account allowlist bind a delegate? (delegation extension absent)",
+    "Is a refund compensating rather than a rewrite, and single-shot? (dispute/refund extension absent)",
+    "Are dispute lookups and authority guarded? (dispute/refund extension absent)",
+    "Does an invoice settle exactly once through send gates? (invoice extension absent)"
+  ],
+  "sequencing": "Completes before WORK-PPA-SPLIT (modular split). Then: local cross-contract origin-bound proof, per-contract gas estimates, coordinated v0.3 pair deployment, adjudication producer.",
+  "dependencies": [
+    "WORK-PPA-V03-ORIGIN-2026-10-17 remains DEPLOY_BLOCKED_GAS; unaffected by this work.",
+    "WORK-VECTOR-RUNNER-HARDEN-2026-10-17 is PASS; unaffected by this work."
+  ],
+  "result": {
+    "status": "PASS",
+    "change": "tests/pressure/test_pressure_direct.py \u2014 6 tests marked @modularized_out('<extension>') with explicit reasons; assertions preserved verbatim",
+    "guard": "tests/pressure/test_pressure_surface_guard.py \u2014 5 tests, mutation-proved",
+    "suiteAfter": "155 passed, 8 skipped, 0 failed",
+    "report": "convergence/reports/PRESSURE-MODULARIZED-SPEC-REPORT.json",
+    "authorityFingerprintUnchanged": "sha256:34c90df60eb03170b9cbbea65c5e1d9f0e17af04e83fd68db6821881b6fd9be3",
+    "implementationSha256Unchanged": "f1ba2058926828f50e0c0c9859f02a2593bc43b245bbae0b329e715e61d7a310"
+  }
+}

@@ -8,7 +8,7 @@
       "name": "genlayer-dev",
       "source": {
         "source": "local",
-        "path": "../skills/genlayer-dev"
+        "path": "./skills/genlayer-dev"
       },
       "policy": {
         "installation": "AVAILABLE",

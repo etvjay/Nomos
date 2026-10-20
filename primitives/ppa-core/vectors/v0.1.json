@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "0.1.0",
+  "primitive": "ppa-core",
+  "version": "v0.1",
+  "mode": "EXACT",
+  "sender": "0x2bd806c97f0e00af1a1fc3328fa763a9269723c8",
+  "note": "Core-side ledger, policy, attestation, capital and replay gates, plus adapter-registry authentication. Cross-contract origin binding is specified separately in tests/split/.",
+  "vectors": [
+    {"id": "ppa-core/ledger-send-settles-001", "description": "deposit then send settles and conserves balance",
+     "actions": [
+      {"op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok"},
+      {"op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"1000\",\"per_tx_limit\":\"500\",\"currency\":\"USDC\"}"], "expect": "ok"},
+      {"op": "deposit", "args": ["ACC1", "1000"], "expect": "ok"},
+      {"op": "send", "args": ["ACC1", "P1", "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6", "300"], "expect": "ok"},
+      {"op": "get_payment", "args": ["P1"], "expect": {"status": "SETTLED", "amount": "300"}},
+      {"op": "get_account", "args": ["ACC1"], "expect": {"balance": "700"}}]},
+
+    {"id": "ppa-core/per-tx-limit-denied-002", "description": "amount above per_tx_limit is denied, not partially executed",
+     "actions": [
+      {"op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok"},
+      {"op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"1000\",\"per_tx_limit\":\"500\",\"currency\":\"USDC\"}"], "expect": "ok"},
+      {"op": "deposit", "args": ["ACC1", "1000"], "expect": "ok"},
+      {"op": "send", "args": ["ACC1", "P1", "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6", "900"], "expect": "ok"},
+      {"op": "get_payment", "args": ["P1"], "expect": {"status": "DENIED", "reason": "POLICY_PER_TX_LIMIT"}},
+      {"op": "get_account", "args": ["ACC1"], "expect": {"balance": "1000"}}]},
+
+    {"id": "ppa-core/capital-conservation-003", "description": "cannot spend beyond uncommitted balance",
+     "actions": [
+      {"op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok"},
+      {"op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"100000\",\"per_tx_limit\":\"5000\",\"currency\":\"USDC\"}"], "expect": "ok"},
+      {"op": "deposit", "args": ["ACC1", "100"], "expect": "ok"},
+      {"op": "send", "args": ["ACC1", "P1", "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6", "500"], "expect": "ok"},
+      {"op": "get_payment", "args": ["P1"], "expect": {"status": "DENIED", "reason": "INSUFFICIENT_COMMITMENT"}},
+      {"op": "get_account", "args": ["ACC1"], "expect": {"balance": "100"}}]},
+
+    {"id": "ppa-core/payment-replay-blocked-004", "description": "a settled payment id cannot be reused",
+     "actions": [
+      {"op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok"},
+      {"op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"1000\",\"per_tx_limit\":\"500\",\"currency\":\"USDC\"}"], "expect": "ok"},
+      {"op": "deposit", "args": ["ACC1", "1000"], "expect": "ok"},
+      {"op": "send", "args": ["ACC1", "P1", "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6", "100"], "expect": "ok"},
+      {"op": "send", "args": ["ACC1", "P1", "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6", "100"], "expect": "reject"},
+      {"op": "get_account", "args": ["ACC1"], "expect": {"balance": "900"}}]},
+
+    {"id": "ppa-core/unregistered-adapter-rejected-005", "description": "execute_proposal from an unregistered caller is REJECTED and persisted",
+     "actions": [
+      {"op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok"},
+      {"op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"1000\",\"per_tx_limit\":\"500\",\"currency\":\"USDC\"}"], "expect": "ok"},
+      {"op": "deposit", "args": ["ACC1", "1000"], "expect": "ok"},
+      {"op": "execute_proposal", "args": ["{\"proposal_id\":\"PR1\",\"decision_id\":\"D1\",\"payment_id\":\"PAY1\",\"account_id\":\"ACC1\",\"to\":\"0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6\",\"amount\":\"100\",\"policy_version\":\"TECH-V1\",\"evidence_hash\":\"sha256:e\",\"expires_at\":\"2099-01-01T00:00:00+00:00\"}"], "expect": "ok"},
+      {"op": "get_consequence", "args": ["PR1"], "expect": {"status": "REJECTED", "reason_code": "REJECTED_CALLER_NOT_REGISTERED_ADAPTER"}},
+      {"op": "get_account", "args": ["ACC1"], "expect": {"balance": "1000"}}]},
+
+    {"id": "ppa-core/revoked-adapter-rejected-006", "description": "a revoked adapter cannot execute proposals",
+     "actions": [
+      {"op": "initialize", "args": ["0x2bd806c97f0e00af1a1fc3328fa763a9269723c8"], "expect": "ok"},
+      {"op": "create_account", "args": ["ACC1", "{\"daily_limit\":\"1000\",\"per_tx_limit\":\"500\",\"currency\":\"USDC\"}"], "expect": "ok"},
+      {"op": "deposit", "args": ["ACC1", "1000"], "expect": "ok"},
+      {"op": "register_adapter", "args": ["0x1111111111111111111111111111111111111111"], "expect": "ok"},
+      {"op": "revoke_adapter", "args": ["0x1111111111111111111111111111111111111111"], "expect": "ok"},
+      {"op": "get_adapter", "args": ["0x1111111111111111111111111111111111111111"], "expect": {"status": "REVOKED"}}]}
+  ]
+}

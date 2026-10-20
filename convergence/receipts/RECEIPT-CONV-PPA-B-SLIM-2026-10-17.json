@@ -1,0 +1,15 @@
+{
+  "receipt_id": "RECEIPT-CONV-PPA-B-SLIM-2026-10-17",
+  "primitive": "ppa",
+  "date": "2026-10-17",
+  "convergence_mode": "EXACT",
+  "lane": "convergence-lanes/ppa/your_build.py",
+  "vectors_total": 15,
+  "vectors_passed": 15,
+  "verdict": "CONVERGED",
+  "authority_fingerprint": "sha256:24f00f6ecba7a3bbb0638c2eb46aee812b3a88471333b05a5099bd6e5f4e074a",
+  "implementation_sha256": "sha256:56faccfda8ba685884965d2f13061aef1b3ae8d8987494ffe22ac39e19511c17",
+  "source_chars": 19133,
+  "changes": "docstring/comment strip; method annotation strip; blank-line collapse; GenVM dependency header preserved; TreeMap storage annotations preserved",
+  "note": "Semantics unchanged vs CONFORMANT body; owned by SPEC/README/CAPABILITY"
+}

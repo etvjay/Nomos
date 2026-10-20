@@ -1,0 +1,1 @@
+../primitives/adjudicated-receipt/implementations/genlayer/adjudicated_receipt.py

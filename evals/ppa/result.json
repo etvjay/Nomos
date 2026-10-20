@@ -1,0 +1,1164 @@
+{
+  "corpus_hash": "f1543b5267bb4683",
+  "verdict": "GREEN",
+  "crit_fail": 0,
+  "major_fail": 0,
+  "results": [
+    {
+      "id": "ppa-001-deposit-send-settle",
+      "gate": "settlement",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "settled": 1800,
+        "available": 1800,
+        "committed": 0,
+        "status": "settled"
+      },
+      "actual": {
+        "settled": 1800,
+        "available": 1800,
+        "committed": 0,
+        "status": "settled"
+      }
+    },
+    {
+      "id": "ppa-002-overcommit-deny",
+      "gate": "encumbrance",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "OVERCOMMIT",
+        "settled": 0,
+        "committed": 1800
+      },
+      "actual": {
+        "status": "deny",
+        "code": "OVERCOMMIT",
+        "settled": 0,
+        "committed": 1800
+      }
+    },
+    {
+      "id": "ppa-003-replay-nonce-deny",
+      "gate": "dal",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "first": "settled",
+        "second": {
+          "status": "deny",
+          "code": "REPLAY"
+        }
+      },
+      "actual": {
+        "first": "settled",
+        "second": {
+          "status": "deny",
+          "code": "REPLAY"
+        }
+      }
+    },
+    {
+      "id": "ppa-004-policy-deny-blocks-settlement",
+      "gate": "policy",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "POLICY_DENY",
+        "settled": 0
+      },
+      "actual": {
+        "status": "deny",
+        "code": "POLICY_DENY",
+        "settled": 0
+      }
+    },
+    {
+      "id": "ppa-005-delegation-narrows-ok",
+      "gate": "daa",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "settled": 300
+      },
+      "actual": {
+        "status": "settled",
+        "settled": 300
+      }
+    },
+    {
+      "id": "ppa-006-delegation-widens-deny",
+      "gate": "daa",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "DELEGATION_CAP"
+      },
+      "actual": {
+        "status": "deny",
+        "code": "DELEGATION_CAP"
+      }
+    },
+    {
+      "id": "ppa-007-committed-vs-available",
+      "gate": "capital-commitment",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "INSUFFICIENT_AVAILABLE",
+        "available": 2000
+      },
+      "actual": {
+        "status": "deny",
+        "code": "INSUFFICIENT_AVAILABLE",
+        "available": 2000
+      }
+    },
+    {
+      "id": "ppa-008-revoked-mandate-deny",
+      "gate": "mandate-allocation",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "MANDATE_REVOKED"
+      },
+      "actual": {
+        "status": "deny",
+        "code": "MANDATE_REVOKED"
+      }
+    },
+    {
+      "id": "ppa-009-workflow-auth-missing-deny",
+      "gate": "workflow-authorization",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "WORKFLOW_AUTH_MISSING"
+      },
+      "actual": {
+        "status": "deny",
+        "code": "WORKFLOW_AUTH_MISSING"
+      }
+    },
+    {
+      "id": "ppa-010-sequential-nonces-settle",
+      "gate": "dal",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "settled_total": 800,
+        "available": 4200
+      },
+      "actual": {
+        "status": "settled",
+        "settled_total": 800,
+        "available": 4200
+      }
+    },
+    {
+      "id": "ppa-011-claim-verification-fail-deny",
+      "gate": "claim-verification",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "CLAIM_INVALID"
+      },
+      "actual": {
+        "status": "deny",
+        "code": "CLAIM_INVALID"
+      }
+    },
+    {
+      "id": "ppa-012-proof-of-payable-missing-deny",
+      "gate": "proof-of-payable",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "PROOF_MISSING"
+      },
+      "actual": {
+        "status": "deny",
+        "code": "PROOF_MISSING"
+      }
+    },
+    {
+      "id": "ppa-013-zero-amount-deny",
+      "gate": "settlement",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "INVALID_AMOUNT"
+      },
+      "actual": {
+        "status": "deny",
+        "code": "INVALID_AMOUNT"
+      }
+    },
+    {
+      "id": "ppa-014-exact-available-settles",
+      "gate": "capital-commitment",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "available": 0,
+        "committed": 1000
+      },
+      "actual": {
+        "status": "settled",
+        "available": 0,
+        "committed": 1000
+      }
+    },
+    {
+      "id": "ppa-015-delegate-then-revoke-then-send-deny",
+      "gate": "daa",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "DELEGATION_REVOKED"
+      },
+      "actual": {
+        "status": "deny",
+        "code": "DELEGATION_REVOKED"
+      }
+    },
+    {
+      "id": "ppa-016-invoice-creates-claim",
+      "gate": "claim-encumbrance",
+      "weight": "major",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "claim": "encumbered"
+      },
+      "actual": {
+        "status": "settled",
+        "claim": "encumbered"
+      }
+    },
+    {
+      "id": "ppa-017-gaia-dispute-after-settlement",
+      "gate": "gaia",
+      "weight": "major",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "settlement": "settled",
+        "dispute": "gaia_pending",
+        "balance_unchanged": true
+      },
+      "actual": {
+        "settlement": "settled",
+        "dispute": "gaia_pending",
+        "balance_unchanged": true
+      }
+    },
+    {
+      "id": "ppa-018-sub-account-isolation",
+      "gate": "ppa",
+      "weight": "major",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "INSUFFICIENT_AVAILABLE",
+        "parent_available": 4200
+      },
+      "actual": {
+        "status": "deny",
+        "code": "INSUFFICIENT_AVAILABLE",
+        "parent_available": 4200
+      }
+    },
+    {
+      "id": "ppa-019-concurrent-sends-race-safe",
+      "gate": "capital-commitment",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "total_settled": 2000,
+        "one_settled": true,
+        "one_denied": true
+      },
+      "actual": {
+        "total_settled": 2000,
+        "one_settled": true,
+        "one_denied": true
+      }
+    },
+    {
+      "id": "ppa-020-full-lifecycle-deposit-delegate-send-dispute",
+      "gate": "ppa",
+      "weight": "major",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "send": "settled",
+        "dispute": "gaia_pending",
+        "available": 8500
+      },
+      "actual": {
+        "send": "settled",
+        "dispute": "gaia_pending",
+        "available": 8500
+      }
+    },
+    {
+      "id": "ppa-021-varied-deposit-500-10pct",
+      "gate": "settlement",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "settled": 50,
+        "available": 450
+      },
+      "actual": {
+        "status": "settled",
+        "settled": 50,
+        "available": 450
+      }
+    },
+    {
+      "id": "ppa-022-varied-deposit-20000-90pct",
+      "gate": "settlement",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "settled": 18000,
+        "available": 2000
+      },
+      "actual": {
+        "status": "settled",
+        "settled": 18000,
+        "available": 2000
+      }
+    },
+    {
+      "id": "ppa-023-varied-deposit-7500-50pct",
+      "gate": "settlement",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "settled": 3750,
+        "available": 3750
+      },
+      "actual": {
+        "status": "settled",
+        "settled": 3750,
+        "available": 3750
+      }
+    },
+    {
+      "id": "ppa-024-varied-deposit-1200-50pct",
+      "gate": "settlement",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "settled": 600,
+        "available": 600
+      },
+      "actual": {
+        "status": "settled",
+        "settled": 600,
+        "available": 600
+      }
+    },
+    {
+      "id": "ppa-025-varied-deposit-15000-20pct",
+      "gate": "settlement",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "settled": 3000,
+        "available": 12000
+      },
+      "actual": {
+        "status": "settled",
+        "settled": 3000,
+        "available": 12000
+      }
+    },
+    {
+      "id": "ppa-026-per-tx-over-limit",
+      "gate": "policy",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "POLICY_PER_TX_LIMIT"
+      },
+      "actual": {
+        "status": "deny",
+        "code": "POLICY_PER_TX_LIMIT"
+      }
+    },
+    {
+      "id": "ppa-027-per-tx-exact-boundary",
+      "gate": "policy",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "settled": 500,
+        "available": 4500
+      },
+      "actual": {
+        "status": "settled",
+        "settled": 500,
+        "available": 4500
+      }
+    },
+    {
+      "id": "ppa-028-per-tx-within-limit",
+      "gate": "policy",
+      "weight": "major",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "settled": 1500,
+        "available": 6500
+      },
+      "actual": {
+        "status": "settled",
+        "settled": 1500,
+        "available": 6500
+      }
+    },
+    {
+      "id": "ppa-029-per-tx-exceed-deny",
+      "gate": "policy",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "POLICY_PER_TX_LIMIT"
+      },
+      "actual": {
+        "status": "deny",
+        "code": "POLICY_PER_TX_LIMIT"
+      }
+    },
+    {
+      "id": "ppa-030-per-tx-small-tx",
+      "gate": "policy",
+      "weight": "major",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "settled": 50,
+        "available": 2950
+      },
+      "actual": {
+        "status": "settled",
+        "settled": 50,
+        "available": 2950
+      }
+    },
+    {
+      "id": "ppa-031-daily-exceed-second-deny",
+      "gate": "policy",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "POLICY_DAILY_LIMIT"
+      },
+      "actual": {
+        "status": "deny",
+        "code": "POLICY_DAILY_LIMIT"
+      }
+    },
+    {
+      "id": "ppa-032-daily-exact-boundary",
+      "gate": "policy",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "settled": 5000,
+        "available": 15000
+      },
+      "actual": {
+        "status": "settled",
+        "settled": 5000,
+        "available": 15000
+      }
+    },
+    {
+      "id": "ppa-033-daily-over-by-one",
+      "gate": "policy",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "POLICY_DAILY_LIMIT"
+      },
+      "actual": {
+        "status": "deny",
+        "code": "POLICY_DAILY_LIMIT"
+      }
+    },
+    {
+      "id": "ppa-034-daily-within-limit",
+      "gate": "policy",
+      "weight": "major",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "settled": 999,
+        "available": 9001
+      },
+      "actual": {
+        "status": "settled",
+        "settled": 999,
+        "available": 9001
+      }
+    },
+    {
+      "id": "ppa-035-daily-three-sends-third-deny",
+      "gate": "policy",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "POLICY_DAILY_LIMIT"
+      },
+      "actual": {
+        "status": "deny",
+        "code": "POLICY_DAILY_LIMIT"
+      }
+    },
+    {
+      "id": "ppa-036-allowlist-deny-outsider",
+      "gate": "policy",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "POLICY_DENYLIST"
+      },
+      "actual": {
+        "status": "deny",
+        "code": "POLICY_DENYLIST"
+      }
+    },
+    {
+      "id": "ppa-037-allowlist-permit-recipient",
+      "gate": "policy",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "settled": 100,
+        "available": 4900
+      },
+      "actual": {
+        "status": "settled",
+        "settled": 100,
+        "available": 4900
+      }
+    },
+    {
+      "id": "ppa-038-allowlist-multiple-ok",
+      "gate": "policy",
+      "weight": "major",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "settled": 200,
+        "available": 3800
+      },
+      "actual": {
+        "status": "settled",
+        "settled": 200,
+        "available": 3800
+      }
+    },
+    {
+      "id": "ppa-039-allowlist-empty-deny",
+      "gate": "policy",
+      "weight": "major",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "POLICY_DENYLIST"
+      },
+      "actual": {
+        "status": "deny",
+        "code": "POLICY_DENYLIST"
+      }
+    },
+    {
+      "id": "ppa-040-delegation-cap-narrow-ok",
+      "gate": "daa",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "settled": 900
+      },
+      "actual": {
+        "status": "settled",
+        "settled": 900
+      }
+    },
+    {
+      "id": "ppa-041-delegation-cap-exceed-deny",
+      "gate": "daa",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "DELEGATION_CAP"
+      },
+      "actual": {
+        "status": "deny",
+        "code": "DELEGATION_CAP"
+      }
+    },
+    {
+      "id": "ppa-042-delegation-exact-cap",
+      "gate": "daa",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "settled": 500
+      },
+      "actual": {
+        "status": "settled",
+        "settled": 500
+      }
+    },
+    {
+      "id": "ppa-043-delegation-daily-exceed",
+      "gate": "daa",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "DELEGATION_CAP"
+      },
+      "actual": {
+        "status": "deny",
+        "code": "DELEGATION_CAP"
+      }
+    },
+    {
+      "id": "ppa-044-delegation-revoked-deny",
+      "gate": "daa",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "DELEGATION_REVOKED"
+      },
+      "actual": {
+        "status": "deny",
+        "code": "DELEGATION_REVOKED"
+      }
+    },
+    {
+      "id": "ppa-045-delegation-narrow-per-tx-300",
+      "gate": "daa",
+      "weight": "major",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "settled": 200
+      },
+      "actual": {
+        "status": "settled",
+        "settled": 200
+      }
+    },
+    {
+      "id": "ppa-046-replay-same-nonce-deny",
+      "gate": "dal",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "first": "settled",
+        "second": {
+          "status": "deny",
+          "code": "REPLAY"
+        }
+      },
+      "actual": {
+        "first": "settled",
+        "second": {
+          "status": "deny",
+          "code": "REPLAY"
+        }
+      }
+    },
+    {
+      "id": "ppa-047-replay-different-amount-same-nonce",
+      "gate": "dal",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "first": "settled",
+        "second": {
+          "status": "deny",
+          "code": "REPLAY"
+        }
+      },
+      "actual": {
+        "first": "settled",
+        "second": {
+          "status": "deny",
+          "code": "REPLAY"
+        }
+      }
+    },
+    {
+      "id": "ppa-048-replay-third-replays-first",
+      "gate": "dal",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "REPLAY",
+        "replayed_nonce": "n-048a"
+      },
+      "actual": {
+        "status": "deny",
+        "code": "REPLAY",
+        "replayed_nonce": "n-048a"
+      }
+    },
+    {
+      "id": "ppa-049-sequential-distinct-nonces",
+      "gate": "dal",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "settled_total": 600,
+        "available": 5400
+      },
+      "actual": {
+        "status": "settled",
+        "settled_total": 600,
+        "available": 5400
+      }
+    },
+    {
+      "id": "ppa-050-overcommit-available-1000-send-1001",
+      "gate": "encumbrance",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "OVERCOMMIT",
+        "committed": 4000
+      },
+      "actual": {
+        "status": "deny",
+        "code": "OVERCOMMIT",
+        "committed": 4000
+      }
+    },
+    {
+      "id": "ppa-051-overcommit-zero-available",
+      "gate": "encumbrance",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "OVERCOMMIT",
+        "committed": 2000
+      },
+      "actual": {
+        "status": "deny",
+        "code": "OVERCOMMIT",
+        "committed": 2000
+      }
+    },
+    {
+      "id": "ppa-052-overcommit-exact-available",
+      "gate": "encumbrance",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "available": 0,
+        "committed": 8000
+      },
+      "actual": {
+        "status": "settled",
+        "available": 0,
+        "committed": 8000
+      }
+    },
+    {
+      "id": "ppa-053-overcommit-one-over-boundary",
+      "gate": "encumbrance",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "OVERCOMMIT",
+        "committed": 8000
+      },
+      "actual": {
+        "status": "deny",
+        "code": "OVERCOMMIT",
+        "committed": 8000
+      }
+    },
+    {
+      "id": "ppa-054-overcommit-deposit-equals-send-boundary",
+      "gate": "encumbrance",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "settled": 500,
+        "available": 0
+      },
+      "actual": {
+        "status": "settled",
+        "settled": 500,
+        "available": 0
+      }
+    },
+    {
+      "id": "ppa-055-committed-15000-available-5000-exact",
+      "gate": "capital-commitment",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "available": 0,
+        "committed": 15000
+      },
+      "actual": {
+        "status": "settled",
+        "available": 0,
+        "committed": 15000
+      }
+    },
+    {
+      "id": "ppa-056-committed-15000-available-5000-over",
+      "gate": "capital-commitment",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "INSUFFICIENT_AVAILABLE",
+        "available": 5000
+      },
+      "actual": {
+        "status": "deny",
+        "code": "INSUFFICIENT_AVAILABLE",
+        "available": 5000
+      }
+    },
+    {
+      "id": "ppa-057-committed-1000-available-4000-within",
+      "gate": "capital-commitment",
+      "weight": "major",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "settled": 3999,
+        "available": 1
+      },
+      "actual": {
+        "status": "settled",
+        "settled": 3999,
+        "available": 1
+      }
+    },
+    {
+      "id": "ppa-058-committed-1000-available-4000-exact",
+      "gate": "capital-commitment",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "available": 0,
+        "committed": 1000
+      },
+      "actual": {
+        "status": "settled",
+        "available": 0,
+        "committed": 1000
+      }
+    },
+    {
+      "id": "ppa-059-committed-4999-available-1-tiny",
+      "gate": "capital-commitment",
+      "weight": "major",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "settled": 1,
+        "available": 0
+      },
+      "actual": {
+        "status": "settled",
+        "settled": 1,
+        "available": 0
+      }
+    },
+    {
+      "id": "ppa-060-sequential-three-1000-each",
+      "gate": "dal",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "settled_total": 3000,
+        "available": 7000
+      },
+      "actual": {
+        "status": "settled",
+        "settled_total": 3000,
+        "available": 7000
+      }
+    },
+    {
+      "id": "ppa-061-sequential-exceed-available",
+      "gate": "capital-commitment",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "INSUFFICIENT_AVAILABLE"
+      },
+      "actual": {
+        "status": "deny",
+        "code": "INSUFFICIENT_AVAILABLE"
+      }
+    },
+    {
+      "id": "ppa-062-sequential-pct-10-20",
+      "gate": "settlement",
+      "weight": "major",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "settled_total": 2240,
+        "available": 5760
+      },
+      "actual": {
+        "status": "settled",
+        "settled_total": 2240,
+        "available": 5760
+      }
+    },
+    {
+      "id": "ppa-063-sequential-with-commitment-boundary",
+      "gate": "capital-commitment",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "INSUFFICIENT_AVAILABLE",
+        "available": 1000
+      },
+      "actual": {
+        "status": "deny",
+        "code": "INSUFFICIENT_AVAILABLE",
+        "available": 1000
+      }
+    },
+    {
+      "id": "ppa-064-invoice-creates-claim-700",
+      "gate": "claim-encumbrance",
+      "weight": "major",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "claim": "encumbered"
+      },
+      "actual": {
+        "status": "settled",
+        "claim": "encumbered"
+      }
+    },
+    {
+      "id": "ppa-065-invoice-partial-send",
+      "gate": "claim-encumbrance",
+      "weight": "major",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "settled",
+        "claim": "encumbered"
+      },
+      "actual": {
+        "status": "settled",
+        "claim": "encumbered"
+      }
+    },
+    {
+      "id": "ppa-066-dispute-after-settlement-gaia",
+      "gate": "gaia",
+      "weight": "major",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "settlement": "settled",
+        "dispute": "gaia_pending",
+        "balance_unchanged": true
+      },
+      "actual": {
+        "settlement": "settled",
+        "dispute": "gaia_pending",
+        "balance_unchanged": true
+      }
+    },
+    {
+      "id": "ppa-067-sub-account-isolation-varied",
+      "gate": "ppa",
+      "weight": "major",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "status": "deny",
+        "code": "INSUFFICIENT_AVAILABLE",
+        "parent_available": 4500
+      },
+      "actual": {
+        "status": "deny",
+        "code": "INSUFFICIENT_AVAILABLE",
+        "parent_available": 4500
+      }
+    },
+    {
+      "id": "ppa-068-concurrent-race-safe-varied",
+      "gate": "capital-commitment",
+      "weight": "critical",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "total_settled": 3000,
+        "one_settled": true,
+        "one_denied": true
+      },
+      "actual": {
+        "total_settled": 3000,
+        "one_settled": true,
+        "one_denied": true
+      }
+    },
+    {
+      "id": "ppa-069-full-lifecycle-delegate-send-dispute",
+      "gate": "ppa",
+      "weight": "major",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "send": "settled",
+        "dispute": "gaia_pending",
+        "available": 18000
+      },
+      "actual": {
+        "send": "settled",
+        "dispute": "gaia_pending",
+        "available": 18000
+      }
+    },
+    {
+      "id": "ppa-070-workflow-invoice-dispute-mixed",
+      "gate": "ppa",
+      "weight": "major",
+      "ok": true,
+      "mism": [],
+      "expected": {
+        "send": "settled",
+        "dispute": "gaia_pending",
+        "available": 11200
+      },
+      "actual": {
+        "send": "settled",
+        "dispute": "gaia_pending",
+        "available": 11200
+      }
+    }
+  ]
+}

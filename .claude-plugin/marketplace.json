@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "genlayer-dev",
-      "source": "../skills/genlayer-dev",
+      "source": "./skills/genlayer-dev",
       "description": "Development skills for GenLayer intelligent contracts - pinned GenVM runner versions, linting, direct mode tests, and integration tests."
     }
   ]

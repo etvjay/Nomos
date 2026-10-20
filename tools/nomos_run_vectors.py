@@ -25,13 +25,66 @@ except ImportError as exc:  # pragma: no cover
     sys.exit(2)
 
 
+SUPPORTED_ACTION_KEY = "actions"
+# Historical/alternative keys seen in the wild. Named explicitly so the error
+# can say what to do instead of failing opaquely.
+MISNAMED_KEYS = {"steps": "executable action sequence"}
+
+
 def _coerce(value: object) -> str:
     return value if isinstance(value, str) else json.dumps(value)
 
 
+def _schema_failures(vector: dict) -> list[str]:
+    """Refuse any vector the runner cannot actually execute.
+
+    A vector with no executable sequence used to iterate zero times, produce
+    zero failures, and be reported PASS. That made an unexecuted vector
+    indistinguishable from a passing one, which invalidates the evidence layer
+    for every primitive that relies on this runner. See
+    WORK-VECTOR-RUNNER-HARDEN-2026-10-17.
+    """
+    vid = vector.get("id", "<no id>")
+    failures = []
+    if not isinstance(vector, dict):
+        return [f"{vid}: vector is not an object"]
+
+    seq = vector.get(SUPPORTED_ACTION_KEY)
+    if seq is None:
+        declared = sorted(k for k in vector.keys() if k not in ("id", "description"))
+        for key, meaning in MISNAMED_KEYS.items():
+            if key in vector:
+                failures.append(
+                    f"{vid}: unsupported vector key '{key}' ({meaning}); "
+                    f"this runner executes '{SUPPORTED_ACTION_KEY}' only — "
+                    f"migrate '{key}' to '{SUPPORTED_ACTION_KEY}' or record the "
+                    f"corpus as not executable by this runner"
+                )
+                return failures
+        failures.append(
+            f"{vid}: no '{SUPPORTED_ACTION_KEY}' key — nothing to execute. "
+            f"Declared keys: {declared or ['<none>']}. "
+            f"A vector without an executable sequence cannot be reported PASS."
+        )
+        return failures
+
+    if not isinstance(seq, list):
+        failures.append(f"{vid}: '{SUPPORTED_ACTION_KEY}' must be a list, got {type(seq).__name__}")
+        return failures
+    if not seq:
+        failures.append(f"{vid}: '{SUPPORTED_ACTION_KEY}' is empty — an empty executable sequence cannot be reported PASS")
+        return failures
+    for i, action in enumerate(seq):
+        if not isinstance(action, dict) or "op" not in action:
+            failures.append(f"{vid}#{i}: action is missing 'op'")
+    return failures
+
+
 def _run_vector(vm, contract, vector: dict) -> list[str]:
-    failures: list[str] = []
-    for i, action in enumerate(vector.get("actions", [])):
+    failures: list[str] = _schema_failures(vector)
+    if failures:
+        return failures
+    for i, action in enumerate(vector[SUPPORTED_ACTION_KEY]):
         op = action["op"]
         args = action.get("args", [])
         expect = action.get("expect")

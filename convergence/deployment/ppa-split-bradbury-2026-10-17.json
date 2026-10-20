@@ -1,0 +1,66 @@
+{
+  "artifact": "PPA-SPLIT-V03-BRADBURY-DEPLOY-2026-10-17",
+  "workContract": "WORK-PPA-SPLIT-V03-2026-10-17",
+  "recorded_at": "2026-10-18",
+  "status": "DEPLOYED_UNINITIALIZED \u2014 caller boundary NOT yet proven on Bradbury",
+  "deployer": "0x8311BfD717708d6E9c4933e80762cC4901F836BF",
+  "network": "testnet-bradbury (chain 4221)",
+  "consensusDeployCeiling": {
+    "provenAccepted": 16773925,
+    "rejectedAbove": 17293736,
+    "errorClass": "eth_sendRawTransaction 'gas limit too high'",
+    "note": "The 20,861,997 figure measured in BRADBURY-GAS-CEILING.json applies to PLAIN EVM TRANSFERS at 0.225 gwei, NOT to consensus addTransaction deploys at ~2.11 gwei. The ceiling is PATH-DEPENDENT. The earlier probe measured the wrong path; corrected here.",
+    "consequenceForCore": "Core estimate 16,470,225 fits under 16,773,925 with 303,700 headroom (1.84%). Core DEPLOYED, not blocked."
+  },
+  "deployments": {
+    "ppaCore": {
+      "address": "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE",
+      "addressExtraction": "NewTransaction emitter address (the created Intelligent Contract)",
+      "evmTx": "0xc85293063cbd8c435cc56f0b4fae12920f2f5de22e69926bcb689255fcd7d2e7",
+      "block": 25414526,
+      "estimate": 16470225,
+      "submitGas": 16773925,
+      "gasUsed": 15251280,
+      "evmStatus": 1,
+      "codeBytes": 300,
+      "explorer": "https://explorer-bradbury.genlayer.com/address/0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE"
+    },
+    "ppaReceiptAdapter": {
+      "address": "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+      "evmTx": "0x7132c0085635d8c971bede16e9beefa1133088e2c6ec51bae42afab41c0a3e50",
+      "block": 25414607,
+      "estimate": 8949382,
+      "submitGas": 9396851,
+      "gasUsed": 8407192,
+      "evmStatus": 1,
+      "codeBytes": 300,
+      "explorer": "https://explorer-bradbury.genlayer.com/address/0x29c88A9DBE42fa74341f7932003B6601b1D317C5"
+    },
+    "supersededDuplicate": {
+      "ppaCore": "0x9bB838626CbeA59c666E8607A964EB131857680c",
+      "evmTx": "0xd1b6d96588695a4aa98e8b8549e8828609a6643339ca4f1d29cf314749204e9b",
+      "block": 25414492,
+      "reason": "An unintended duplicate: the first deploy run's address-extraction returned null (it compared a hex string against a bytes topic0), the script reported DEPLOY_FAILED and I re-ran it, deploying Core a second time. Both are uninitialized; the second is canonical. This is my error, recorded rather than hidden."
+    }
+  },
+  "addressExtractionFinding": {
+    "newTransactionTopicIsNotTheAddress": "topics[1] was IDENTICAL (0xe3ae04d1...) across all three deploys, so it is not the created address.",
+    "actualMechanism": "The created Intelligent Contract is the EMITTER of its own NewTransaction log. Verified: each deploy's emitter differs and carries 300 bytes, matching the documented fresh-IC code size.",
+    "nearMiss": "An intermediate script printed Core's address as the Adapter's address. Not a chain fault and not recorded anywhere as a claim; caught before any state was written.",
+    "decodedTopicsAreBytes": "Bradbury returns topics/data as bytes on some paths; string comparison silently fails."
+  },
+  "notProvenYet": [
+    "caller boundary on Bradbury (Adapter -> Core sees Adapter, not the EOA)",
+    "unregistered adapter observable refusal",
+    "adapter amount widening refused by Core",
+    "bound-receipt end-to-end flow",
+    "independent state readback",
+    "convergence receipts"
+  ],
+  "sourceIdentity": {
+    "ppaCoreSha256": "1c90f6b363285e3af8ff6d78832dd9023a1de5331c00f65dac65094efe3e0f21",
+    "ppaCoreFingerprint": "sha256:4543a62c7afc4778a3b9d89be69e16a1b37fb7a5ccc3902e7d9711d0ee7a3a8e",
+    "ppaReceiptAdapterSha256": "6a826de2336866a33bc9ffc85a6e81fec1c96749aa2edcd2e9af85588e153414",
+    "ppaReceiptAdapterFingerprint": "sha256:5dda0fa0d72356dd2a0b4582fd31d344328112290d402589c09ba86db2ed6964"
+  }
+}

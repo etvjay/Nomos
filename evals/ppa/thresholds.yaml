@@ -1,0 +1,15 @@
+green: 0          # 0 critical fails = ship
+red: 1            # ≥1 critical fail = blocked
+# no yellow for money path — any critical fail is red
+# major fails are yellow only if no critical fails:
+#  - 0 critical + 0 major = green
+#  - 0 critical + ≥1 major = yellow (monitor)
+#  - ≥1 critical = red regardless of majors
+weights:
+  critical: block
+  major: warn
+# Pin these per run, log hash in PROOF.md:
+pin:
+  corpus_hash_required: true
+  policy_version_required: true
+  chain_required: false  # set to true for on-chain runs

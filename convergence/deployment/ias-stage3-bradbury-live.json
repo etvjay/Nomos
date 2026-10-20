@@ -1,0 +1,49 @@
+{
+  "artifact": "ias-stage3-bradbury-live",
+  "status": "BLOCKED",
+  "recorded_at": "2026-08-31T00:34:08Z",
+  "network": "testnet-bradbury",
+  "chain_id": 4221,
+  "contract": "0xaa808cBD0CDc71F248AcF171442a136EfCf8b555",
+  "deployment_result": "0x44ec3cb5e9581fc5c3c724d510ebccbf2530caf974c5ed543c9f05796c3a5257",
+  "bytecode_bytes": 300,
+  "deployer": "0x8311BfD717708d6E9c4933e80762cC4901F836BF",
+  "accepted_setup": [
+    {"method": "initialize", "tx": "0x2dd77f89b11896e631b15e81574a6dc333da205040357cf6a68da131e06262ff", "consensus_status": 5, "result": 1, "execution_result": 2, "validator_votes": [2, 2, 2, 2, 2]},
+    {"method": "create_account", "tx": "0x3b1e8fbfce64d73eaf706551c3087d324ea3dc86d6dba6be427bf5fd8db15ad7", "consensus_status": 5, "result": 1, "execution_result": 1, "validator_votes": [1, 1, 1, 1, 1]},
+    {"method": "deposit", "tx": "0xc9ed10834f9d1c58f4b18fe90d0102be31361c0578aa5c1f565302fb09ef5dcc", "consensus_status": 5, "result": 1, "execution_result": 1, "validator_votes": [1, 1, 1, 1, 1]},
+    {"method": "create_monitor", "tx": "0x0603d3cfebf4ae37ca777907fd65977816ac80e065ba83382e6f5e707e604a4d", "observed_status": 4, "state_readback": "LIVE-M1 persisted"},
+    {"method": "register_attestation", "tx": "0x5ed34a9456ee87bb848d49da33239e8428d21886ca9c655b81dd0a4122c3469f", "observed_status": 4, "state_readback": "LIVE-ATT-1 persisted", "validator_votes": [1, 0, 1, 1, 0]},
+    {"method": "set_kill_switch", "tx": "0x01daaf2ce6946a287350457372f98c2aba94c4f6173e06447bc3bd84ea47d231", "state_readback": "transaction finalized successfully", "consensus_status": 5, "result": 1, "execution_result": 1, "validator_votes": [1, 1, 1, 1, 1]}
+  ],
+  "state_readbacks": {
+    "account_id": "LIVE-ACC",
+    "balance": "100",
+    "status": "ACTIVE",
+    "attestation_id": "LIVE-ATT-1",
+    "attestation_status": "VALID",
+    "monitor_last_status": "",
+    "monitor_last_value": "",
+    "payment_created": false,
+    "proposal_created": false,
+    "correlation_created": false
+  },
+  "blocked_step": {
+    "method": "check_monitor",
+    "tx": "0x575d6f53fa443ec3b714de37ace4ab750ab4eb41152e89d85c56ea00dc30a20d",
+    "consensus_status": 14,
+    "result": 0,
+    "execution_result": 0,
+    "validator_votes": [0, 0, 0, 0, 0],
+    "equivalence_result": 0,
+    "state_effect": "no observation persisted; no proposal or payment"
+  },
+  "limitations": [
+    "The complete Stage 3 autonomous lifecycle was not observed on Bradbury.",
+    "The external web observation did not produce a persisted monitor result.",
+    "The deployed account uses internal accounting; external token custody was not demonstrated.",
+    "The installed genlayer_py SDK remains incompatible with Bradbury status/read response variants; raw adapters were required."
+  ],
+  "reproduction": "python /tmp/live_ias_stage3_raw.py",
+  "agent_tank_scope": "excluded"
+}

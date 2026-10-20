@@ -1,0 +1,1 @@
+../primitives/ppa-receipt-adapter/implementations/genlayer/ppa_receipt_adapter.py
