@@ -227,6 +227,19 @@
       "convergenceMode": "EXACT",
       "deployable": true,
       "role": "testnet custody extension; not part of the released PPA composition"
+    },
+    {
+      "id": "ppa-native-gen-custody",
+      "name": "PPA Native GEN Custody",
+      "status": "IMPLEMENTING",
+      "qualification": "QUALIFIED_EXTENSION",
+      "judgmentBearing": false,
+      "genlayerRequired": true,
+      "canonicalPath": "primitives/ppa-native-gen-custody",
+      "capabilityVersion": "0.1.0",
+      "convergenceMode": "EXACT",
+      "deployable": true,
+      "role": "testnet native GEN custody extension; not part of the released PPA composition"
     }
   ]
 }

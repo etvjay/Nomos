@@ -1,0 +1,313 @@
+{
+  "schemaVersion": "0.1.0",
+  "primitive": "ppa-native-gen-custody",
+  "version": "v0.1",
+  "mode": "EXACT",
+  "sender": "0x2bd806c97f0e00af1a1fc3328fa763a9269723c8",
+  "note": "Direct-mode canonical vectors for the deterministic custody surface. The direct VM has no real PPA Core and no native emit_transfer, so missing dependencies must fail closed. Core-bound success, native value emission, and child finality are covered by the glsim suite and the live Phase 1 run.",
+  "vectors": [
+    {
+      "id": "ppa-native-gen-custody/init-config-001",
+      "description": "initialize stores the immutable addresses and the GEN currency",
+      "actions": [
+        {
+          "op": "initialize",
+          "args": [
+            "0x2bd806c97f0e00af1a1fc3328fa763a9269723c8",
+            "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE",
+            "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+            "86400"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "get_config",
+          "args": [],
+          "expect": {
+            "owner": "2bd806c97f0e00af1a1fc3328fa763a9269723c8",
+            "core": "3ea36798cdb4f84befdb29fbb06aef8a1ea09ebe",
+            "adapter": "29c88a9dbe42fa74341f7932003b6601b1d317c5",
+            "currency": "GEN",
+            "max_ttl": "86400",
+            "paused": false
+          }
+        },
+        {
+          "op": "get_balance",
+          "args": [],
+          "expect": {
+            "balance": "0",
+            "total_deposited": "0",
+            "total_emitted": "0",
+            "total_refunded": "0",
+            "reconciled": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "ppa-native-gen-custody/paused-refuses-002",
+      "description": "pause blocks authorization and settlement checks without changing currency",
+      "actions": [
+        {
+          "op": "initialize",
+          "args": [
+            "0x2bd806c97f0e00af1a1fc3328fa763a9269723c8",
+            "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE",
+            "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+            "86400"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "pause",
+          "args": [],
+          "expect": {
+            "status": "PAUSED",
+            "paused": true
+          }
+        },
+        {
+          "op": "authorize",
+          "args": [
+            "PROP-PAUSED",
+            "60"
+          ],
+          "expect": {
+            "status": "REJECTED",
+            "reason_code": "REJECTED_VAULT_PAUSED"
+          }
+        },
+        {
+          "op": "preview_authorization",
+          "args": [
+            "PROP-PAUSED",
+            "60"
+          ],
+          "expect": {
+            "status": "REJECTED",
+            "reason_code": "REJECTED_VAULT_PAUSED"
+          }
+        },
+        {
+          "op": "preview_settlement",
+          "args": [
+            "PROP-PAUSED",
+            "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6",
+            "1"
+          ],
+          "expect": {
+            "status": "REJECTED",
+            "reason_code": "REJECTED_VAULT_PAUSED"
+          }
+        },
+        {
+          "op": "unpause",
+          "args": [],
+          "expect": {
+            "status": "UNPAUSED",
+            "paused": false
+          }
+        },
+        {
+          "op": "get_config",
+          "args": [],
+          "expect": {
+            "paused": false,
+            "currency": "GEN"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ppa-native-gen-custody/invalid-ttl-003",
+      "description": "TTL is positive and bounded",
+      "actions": [
+        {
+          "op": "initialize",
+          "args": [
+            "0x2bd806c97f0e00af1a1fc3328fa763a9269723c8",
+            "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE",
+            "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+            "86400"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "authorize",
+          "args": [
+            "PROP-TTL",
+            "0"
+          ],
+          "expect": {
+            "status": "REJECTED",
+            "reason_code": "REJECTED_INVALID_TTL"
+          }
+        },
+        {
+          "op": "authorize",
+          "args": [
+            "PROP-TTL",
+            "604801"
+          ],
+          "expect": {
+            "status": "REJECTED",
+            "reason_code": "REJECTED_INVALID_TTL"
+          }
+        },
+        {
+          "op": "set_max_ttl",
+          "args": [
+            "7200"
+          ],
+          "expect": {
+            "status": "TTL_UPDATED",
+            "max_ttl": "7200"
+          }
+        },
+        {
+          "op": "authorize",
+          "args": [
+            "PROP-TTL",
+            "7201"
+          ],
+          "expect": {
+            "status": "REJECTED",
+            "reason_code": "REJECTED_INVALID_TTL"
+          }
+        },
+        {
+          "op": "get_config",
+          "args": [],
+          "expect": {
+            "max_ttl": "7200"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ppa-native-gen-custody/missing-core-fails-closed-004",
+      "description": "a missing Core cannot produce an authorization or settlement",
+      "actions": [
+        {
+          "op": "initialize",
+          "args": [
+            "0x2bd806c97f0e00af1a1fc3328fa763a9269723c8",
+            "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE",
+            "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+            "86400"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "authorize",
+          "args": [
+            "PROP-MISSING",
+            "60"
+          ],
+          "expect": {
+            "status": "UNDETERMINED",
+            "reason_code": "UNDETERMINED_DEPENDENCY"
+          }
+        },
+        {
+          "op": "get_intent",
+          "args": [
+            "PROP-MISSING"
+          ],
+          "expect": {
+            "status": "UNDETERMINED",
+            "reason_code": "UNDETERMINED_DEPENDENCY"
+          }
+        },
+        {
+          "op": "preview_settlement",
+          "args": [
+            "PROP-MISSING",
+            "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6",
+            "1"
+          ],
+          "expect": {
+            "status": "REJECTED",
+            "reason_code": "REJECTED_INTENT_NOT_FOUND"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ppa-native-gen-custody/non-owner-rejected-005",
+      "description": "the default sender is not the owner and cannot pause",
+      "actions": [
+        {
+          "op": "initialize",
+          "args": [
+            "0x81b637d8fcd2c6da6359e6963113a1170de795e4",
+            "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE",
+            "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+            "86400"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "pause",
+          "args": [],
+          "expect": "reject"
+        },
+        {
+          "op": "get_config",
+          "args": [],
+          "expect": {
+            "owner": "81b637d8fcd2c6da6359e6963113a1170de795e4",
+            "paused": false
+          }
+        },
+        {
+          "op": "get_intent",
+          "args": [
+            "PROP-OWNER"
+          ],
+          "expect": {
+            "status": "NONE"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ppa-native-gen-custody/missing-intent-refusal-006",
+      "description": "settlement refuses an unknown intent without moving value",
+      "actions": [
+        {
+          "op": "initialize",
+          "args": [
+            "0x2bd806c97f0e00af1a1fc3328fa763a9269723c8",
+            "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE",
+            "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+            "86400"
+          ],
+          "expect": "ok"
+        },
+        {
+          "op": "preview_settlement",
+          "args": [
+            "PROP-NONE",
+            "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6",
+            "1"
+          ],
+          "expect": {
+            "status": "REJECTED",
+            "reason_code": "REJECTED_INTENT_NOT_FOUND"
+          }
+        },
+        {
+          "op": "get_balance",
+          "args": [],
+          "expect": {
+            "balance": "0",
+            "total_emitted": "0",
+            "reconciled": true
+          }
+        }
+      ]
+    }
+  ]
+}

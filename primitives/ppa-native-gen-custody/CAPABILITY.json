@@ -1,0 +1,188 @@
+{
+  "primitiveId": "ppa-native-gen-custody",
+  "name": "PPA Native GEN Custody",
+  "capabilityVersion": "0.1.0",
+  "status": "IMPLEMENTING",
+  "convergenceMode": "EXACT",
+  "judgmentBearing": false,
+  "scope": "Testnet-only native GEN custody. An owner-authorized, Core-bound intent lets any caller emit the exact finalized native GEN transfer to the PPA Core recipient, with no owner or caller discretion over recipient or amount. Not part of the released PPA composition.",
+  "nativeAsset": {
+    "symbol": "GEN",
+    "decimals": 18,
+    "baseUnit": "wei",
+    "tokenContract": null,
+    "custody": "The PPANativeGenCustody Intelligent Contract's ghost-contract balance.",
+    "recipientKind": "externally-owned accounts only in v0.1"
+  },
+  "publicMethods": {
+    "genlayerWrites": [
+      "initialize(owner, core_address, adapter_address, max_ttl_seconds)",
+      "deposit()",
+      "authorize(consequence_id, ttl_seconds)",
+      "settle(consequence_id, recipient, amount)",
+      "set_paused(paused)",
+      "pause()",
+      "unpause()",
+      "set_max_ttl(ttl_seconds)"
+    ],
+    "genlayerViews": [
+      "preview_authorization(consequence_id, ttl_seconds)",
+      "preview_settlement(consequence_id, recipient, amount)",
+      "get_intent(consequence_id)",
+      "get_config()",
+      "get_balance()",
+      "get_deposit(seq)",
+      "get_refund(seq)"
+    ],
+    "protocolHooks": [
+      "__on_errored_message__()"
+    ]
+  },
+  "canonicalInput": {
+    "consequence_id": "non-empty string <= 128 chars; canonical PPA Core proposal_id",
+    "ttl_seconds": "positive decimal string, <= configured max_ttl and <= 604800",
+    "recipient": "0x-prefixed 20-byte address; must equal the Core-derived recipient",
+    "amount": "positive decimal wei string; must equal the Core-derived amount",
+    "core_binding": "consequence.proposal_id, payment_id, decision_id, adapter_caller, requested_recipient, requested_amount, created_at; payment.to, payment.amount, payment.actor, payment.memo; account.status, account.rules.currency, account.rules.policy_version",
+    "amount_convention": "The PPA amount string is interpreted as native GEN base units (wei) in v0.1. No decimals-aware conversion."
+  },
+  "canonicalOutput": {
+    "AUTHORIZED": "exact Core-bound intent persisted; no native value moved",
+    "SETTLEABLE": "preview only: an AUTHORIZED intent would pass settlement checks now",
+    "PENDING_FINALITY": "exact native value transfer emitted; child success is not observable by the vault",
+    "REJECTED": "deterministic refusal persisted or returned; no native value moved",
+    "UNDETERMINED": "unavailable Core/dependency; no intent and no emit",
+    "NONE": "no record for the consequence"
+  },
+  "statusVocabulary": [
+    "NONE",
+    "AUTHORIZED",
+    "PENDING_FINALITY",
+    "EXPIRED",
+    "REJECTED",
+    "UNDETERMINED",
+    "SETTLEABLE"
+  ],
+  "reasonCodes": [
+    "REJECTED_NOT_INITIALIZED",
+    "REJECTED_VAULT_PAUSED",
+    "REJECTED_INVALID_CONSEQUENCE_ID",
+    "REJECTED_INVALID_TTL",
+    "REJECTED_INVALID_RECIPIENT",
+    "REJECTED_INVALID_AMOUNT",
+    "REJECTED_INTENT_NOT_FOUND",
+    "REJECTED_ALREADY_EMITTED",
+    "REJECTED_INTENT_EXPIRED",
+    "REJECTED_RECIPIENT_MISMATCH",
+    "REJECTED_AMOUNT_MISMATCH",
+    "REJECTED_INSUFFICIENT_CUSTODY",
+    "REJECTED_CORE_UNAVAILABLE",
+    "REJECTED_NO_CONSEQUENCE",
+    "REJECTED_CONSEQUENCE_NOT_EXECUTED",
+    "REJECTED_PAYMENT_NOT_SETTLED",
+    "REJECTED_WRONG_ADAPTER",
+    "REJECTED_PAYMENT_BINDING",
+    "REJECTED_ACCOUNT_NOT_ACTIVE",
+    "REJECTED_CURRENCY_MISMATCH",
+    "REJECTED_POLICY_VERSION",
+    "REJECTED_CORE_BINDING",
+    "UNDETERMINED_DEPENDENCY"
+  ],
+  "stateOwnership": {
+    "owns": [
+      "native GEN custody balance",
+      "Core-bound settlement intents and their status",
+      "deposit and refund ledger",
+      "owner, Core, adapter, currency, max TTL, pause configuration"
+    ],
+    "doesNotOwn": [
+      "PPA internal balances, payments, policies, consequences",
+      "PPA adjudication or receipt truth",
+      "recipient balances or child-transaction finality",
+      "gas/fee budget"
+    ]
+  },
+  "negativeBoundary": {
+    "judgmentBoundary": "NONE",
+    "noLlm": true,
+    "noWeb": true,
+    "noNondet": true,
+    "noCoreMutation": true,
+    "noOwnerSettlement": true,
+    "noOwnerWithdrawal": true,
+    "noCallerChosenRecipientOrAmount": true,
+    "noContractRecipients": true,
+    "notInReleasedComposition": true
+  },
+  "implementation": {
+    "environment": "genlayer",
+    "path": "primitives/ppa-native-gen-custody/implementations/genlayer/ppa_native_gen_custody.py",
+    "symlink": "contracts/ppa_native_gen_custody.py",
+    "deployPath": "primitives/ppa-native-gen-custody/implementations/genlayer/build/ppa_native_gen_custody.compact.py",
+    "deploySymlink": "contracts/ppa_native_gen_custody.compact.py",
+    "sourceSha256": "sha256:0292c25af78207d1d51c61031c2e05a6415b25707e6328c14ce1df1e35fe4572",
+    "artifactSha256": "sha256:fdc74a8595d9988b3b03c29d4cb1ba7281437285263e8006bfbf366ff61a9d6a"
+  },
+  "vectors": [
+    "primitives/ppa-native-gen-custody/vectors/v0.1.json"
+  ],
+  "reproduce": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "python -m pytest primitives/ppa-native-gen-custody/implementations/genlayer/tests/ -q",
+    "NOMOS_CUSTODY_PATH=contracts/ppa_native_gen_custody.compact.py python -m pytest primitives/ppa-native-gen-custody/implementations/genlayer/tests/ -q",
+    "python tools/nomos_run_vectors.py primitives/ppa-native-gen-custody/implementations/genlayer/ppa_native_gen_custody.py --vectors primitives/ppa-native-gen-custody/vectors/v0.1.json",
+    "python tools/nomos_run_vectors.py primitives/ppa-native-gen-custody/implementations/genlayer/build/ppa_native_gen_custody.compact.py --vectors primitives/ppa-native-gen-custody/vectors/v0.1.json",
+    "python tools/nomos_compact_contract.py primitives/ppa-native-gen-custody/implementations/genlayer/ppa_native_gen_custody.py primitives/ppa-native-gen-custody/implementations/genlayer/build/ppa_native_gen_custody.compact.py",
+    "genvm-lint check primitives/ppa-native-gen-custody/implementations/genlayer/ppa_native_gen_custody.py",
+    "genvm-lint check primitives/ppa-native-gen-custody/implementations/genlayer/build/ppa_native_gen_custody.compact.py"
+  ],
+  "dependencies": [
+    "ppa-core (live EXECUTED consequence/payment/GEN account)",
+    "ppa-receipt-adapter (approved adapter caller)",
+    "GenLayer native value transfer: @gl.public.write.payable, gl.message.value, self.balance, emit_transfer(on='finalized'), __on_errored_message__",
+    "py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6"
+  ],
+  "composition": {
+    "partOfReleasedPPA": false,
+    "label": "testnet native GEN custody extension",
+    "note": "The existing ppa composedUnits are unchanged. This capability is separate from ppa-custody v0.1 (NTEST ERC-20 mechanics) and must not be read as a released PPA component."
+  },
+  "unsupported": [
+    "USDC and other stablecoins",
+    "CGT",
+    "NTEST and all ERC-20 assets",
+    "bridges",
+    "Phase 2",
+    "frontend/API capability",
+    "production custody",
+    "owner emergency withdrawal",
+    "ownership transfer or upgrade",
+    "contract recipients",
+    "partial settlement",
+    "decimals-aware human-unit conversion",
+    "automatic retry after a child-transaction failure",
+    "attributing a refund to a specific intent",
+    "claiming child success from the vault status alone",
+    "migration of existing PPA composition claims"
+  ],
+  "evidence": {
+    "local": "PASS (2026-10-21): nomos_lint.py; nomos_converge.py check; genvm-lint check on readable and compact sources; 6/6 canonical vectors on both sources; 14/14 direct-VM tests on both sources (Core binding, deposit/settle accounting, replay, pause, expiry, wrong recipient/amount, insufficient custody, non-owner, wrong adapter, currency mismatch, missing consequence, refund hook, artifact freshness).",
+    "live": "NOT_IMPLEMENTED: no native GEN deployment yet"
+  },
+  "deployment": {
+    "reason": "Bradbury currently rejects the readable source deploy because its estimate (~21.7M gas) is above the node transaction gas acceptance ceiling (~16-17M at 2026-10-21). The compact artifact is a semantics-preserving deterministic build with the same public method surface and storage annotations.",
+    "generator": "tools/nomos_compact_contract.py",
+    "generatorDependency": "python-minifier==3.4.0",
+    "canonicalSource": "primitives/ppa-native-gen-custody/implementations/genlayer/ppa_native_gen_custody.py",
+    "deployArtifact": "primitives/ppa-native-gen-custody/implementations/genlayer/build/ppa_native_gen_custody.compact.py",
+    "deployArtifactSymlink": "contracts/ppa_native_gen_custody.compact.py",
+    "sourceSha256": "sha256:0292c25af78207d1d51c61031c2e05a6415b25707e6328c14ce1df1e35fe4572",
+    "artifactSha256": "sha256:fdc74a8595d9988b3b03c29d4cb1ba7281437285263e8006bfbf366ff61a9d6a",
+    "artifactBytes": 16355,
+    "gasEstimate": 13801631,
+    "observedCeilingAtBuild": "16000000 accepted / 17000000 rejected (2026-10-21); ceiling is soft and variable",
+    "verification": "The artifact passes the same 14 direct-VM tests and 6/6 canonical vectors. tests/test_compact_artifact.py fails if the artifact is stale.",
+    "notAWeakening": "No public method, status, reason code, error string, storage annotation, or check is removed or relaxed."
+  }
+}

@@ -1,0 +1,1 @@
+../primitives/ppa-native-gen-custody/implementations/genlayer/build/ppa_native_gen_custody.compact.py

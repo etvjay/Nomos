@@ -1,0 +1,66 @@
+{
+  "primitive": "ppa-native-gen-custody",
+  "capabilityVersion": "0.1.0",
+  "network": "testnet-bradbury",
+  "chainId": 4221,
+  "rpc": "https://rpc-bradbury.genlayer.com",
+  "deployer": "0x8311BfD717708d6E9c4933e80762cC4901F836BF",
+  "settler": "0xcE926f51e4575dE124FC590829792D4e157eB30B",
+  "recipient": "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6",
+  "core": "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE",
+  "adapter": "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+  "custody": {
+    "codePath": "/home/ubuntu/nomos-native-gen-custody/contracts/ppa_native_gen_custody.compact.py",
+    "readableSourcePath": "/home/ubuntu/nomos-native-gen-custody/primitives/ppa-native-gen-custody/implementations/genlayer/ppa_native_gen_custody.py",
+    "readableSourceSha256": "sha256:0292c25af78207d1d51c61031c2e05a6415b25707e6328c14ce1df1e35fe4572",
+    "artifactSha256": "sha256:fdc74a8595d9988b3b03c29d4cb1ba7281437285263e8006bfbf366ff61a9d6a",
+    "address": "0x777f4aFDd824508Bed192B0251c05aeFF4B6f6F2",
+    "deployTx": "0xf11cf11c9beea51cb112471b06884931a82bfd07ab2019ecd74a38f84befdb82",
+    "deployStatus": "FINALIZED",
+    "deployedSourceSha256": "sha256:fdc74a8595d9988b3b03c29d4cb1ba7281437285263e8006bfbf366ff61a9d6a",
+    "sourceMatchesArtifact": true,
+    "deployedSourceBytes": 16355,
+    "initializeTx": "0xd78da4afdc9b441888da2e464007c5dd058c5d5440bea086aab5c06d1a5a59a5",
+    "initializeStatus": "FINALIZED"
+  },
+  "account": {
+    "accountId": "CUSTODY-GEN-20261020A",
+    "currency": "GEN",
+    "createTx": "0x725b1ee4aa40941395fbd201f0043450704d06e20ab1cd4669e4e81f8acf4824",
+    "createStatus": "FINALIZED",
+    "coreDepositTx": "0xfb5e908b3f183a770b98c0dc5442e3ba281309affd7280fc7734f44b66476aa9",
+    "coreDepositStatus": "FINALIZED",
+    "preState": {
+      "account_id": "CUSTODY-GEN-20261020A",
+      "balance": "1000000000000000000",
+      "committed": "0",
+      "created": "2026-10-21T06:54:16Z",
+      "daily_spent": "0",
+      "daily_window_start": "2026-10-21T06:54:16Z",
+      "rules": {
+        "allowlist": [
+          "0x9f6aa7364d20cf25f054ea83f3cb950317fd34b6"
+        ],
+        "currency": "GEN",
+        "daily_limit": "1000000000000000000",
+        "per_tx_limit": "100000000000000000",
+        "policy_version": "TECH-V1"
+      },
+      "status": "ACTIVE"
+    }
+  },
+  "coreCycle": {
+    "proposalId": "PROP-CUSTODY-GEN-20261020A",
+    "decisionId": "DEC-CUSTODY-GEN-20261020A",
+    "paymentId": "PAY-CUSTODY-GEN-20261020A",
+    "amount": "50000000000000000"
+  },
+  "authorization": {},
+  "deposit": {},
+  "settlement": {},
+  "negatives": [],
+  "status": "BLOCKED",
+  "startedAt": "2026-10-21T05:01:49.677981Z",
+  "error": "Traceback (most recent call last):\n  File \"/tmp/native_gen_live.py\", line 319, in <module>\n    \"created_at\": \"2026-10-20T00:00:00Z\",\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/native_gen_live.py\", line 153, in write\n    tx = client.write_contract(\n         ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/ubuntu/nomos-venv312/lib/python3.12/site-packages/genlayer_py/client/genlayer_client.py\", line 144, in write_contract\n    return write_contract(\n           ^^^^^^^^^^^^^^^\n  File \"/home/ubuntu/nomos-venv312/lib/python3.12/site-packages/genlayer_py/contracts/actions.py\", line 124, in write_contract\n    return _send_transaction(\n           ^^^^^^^^^^^^^^^^^^\n  File \"/home/ubuntu/nomos-venv312/lib/python3.12/site-packages/genlayer_py/contracts/actions.py\", line 461, in _send_transaction\n    raise GenLayerError(\ngenlayer_py.exceptions.GenLayerError: Transaction reverted: EVM tx 0xa3d69b8fe9722582dbe3d47bbec16120bc5838bb545c068ac7cb4cfb83c1ed5a to consensus contract 0x0112Bf6e83497965A5fdD6Dad1E447a6E004271D was reverted.\n",
+  "failedAt": "2026-10-21T07:59:58.078847Z"
+}

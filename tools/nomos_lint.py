@@ -43,6 +43,7 @@ EXPECTED_PRIMITIVES = {
     "ppa-core",
     "ppa-receipt-adapter",
     "ppa-custody",
+    "ppa-native-gen-custody",
     "adjudicated-receipt",
 }
 
@@ -83,6 +84,7 @@ DETERMINISTIC_EXPECTED = {
     "ppa-core",
     "ppa-receipt-adapter",
     "ppa-custody",
+    "ppa-native-gen-custody",
 }
 
 

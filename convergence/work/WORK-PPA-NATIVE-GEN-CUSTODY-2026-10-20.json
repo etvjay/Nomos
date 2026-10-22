@@ -1,0 +1,241 @@
+{
+  "schemaVersion": "1.0.0",
+  "workId": "WORK-PPA-NATIVE-GEN-CUSTODY-2026-10-20",
+  "baseCommit": "2295afbcfce6e271cfb86817fea2265f7bd881e8",
+  "lane": "primitive",
+  "targets": [
+    "ppa-native-gen-custody"
+  ],
+  "allowedPaths": [
+    "primitives/ppa-native-gen-custody/**",
+    "contracts/ppa_native_gen_custody.py",
+    "convergence/work/WORK-PPA-NATIVE-GEN-CUSTODY-2026-10-20.json",
+    "convergence/receipts/*NATIVE-GEN-CUSTODY*",
+    "convergence/deployment/*native-gen-custody*",
+    "convergence/deployment/*native_gen_custody*",
+    "convergence/reports/*NATIVE-GEN*",
+    "nomos.manifest.json",
+    "tools/nomos_lint.py",
+    "contracts/ppa_native_gen_custody.compact.py",
+    "tools/nomos_compact_contract.py",
+    "requirements-genlayer.txt"
+  ],
+  "changeClass": "MINOR",
+  "authorityFingerprint": "sha256:686185b5b2e0e460a025773959b689efebb987a3fd89cee06a77038a670115c2",
+  "authorityFingerprintNote": "Computed with: python tools/nomos_converge.py fingerprint ppa-native-gen-custody. The fingerprint covers the new primitive authority docs, CAPABILITY.json, and vectors; it does not reuse the ppa-custody fingerprint.",
+  "capabilityVersion": "0.1.0",
+  "publicInterfaceMutationAllowed": false,
+  "status": {
+    "state": "AUTHORIZED",
+    "authorizedAt": "2026-10-20",
+    "rule": "Build a separate native-GEN custody primitive. PPA Core and the Receipt/Proposal Adapter are dependencies and must not be edited. Any need to change their public surface stops this work and requires a new Work Contract."
+  },
+  "network": {
+    "name": "GenLayer Bradbury Phase 1",
+    "rpc": "https://rpc-bradbury.genlayer.com",
+    "chainId": 4221,
+    "genesisHash": "0xef97917ce9bd9fa7d12ad6a8d81ea26c80ac1d727acc37cbb9799ae199788dc5"
+  },
+  "liveDependencies": {
+    "core": "0x3EA36798cdb4f84beFDB29FBB06aef8A1EA09ebE",
+    "receiptAdapter": "0x29c88A9DBE42fa74341f7932003B6601b1D317C5",
+    "coreAuthorityFingerprint": "sha256:4543a62c7afc4778a3b9d89be69e16a1b37fb7a5ccc3902e7d9711d0ee7a3a8e",
+    "adapterAuthorityFingerprint": "sha256:5dda0fa0d72356dd2a0b4582fd31d344328112290d402589c09ba86db2ed6964",
+    "coreMethodSurface": [
+      "get_consequence(proposal_id)",
+      "get_payment(payment_id)",
+      "get_account(account_id)"
+    ]
+  },
+  "nativeAsset": {
+    "symbol": "GEN",
+    "decimals": 18,
+    "baseUnit": "wei",
+    "tokenContract": null,
+    "custodyLocation": "The custody Intelligent Contract holds GEN on its ghost contract. self.balance is the source of truth.",
+    "valueRule": "External-message value is deducted from the custody contract balance when emitted and credited to the recipient when the child transaction activates. Protocol fees are a separate budget and must never be counted as custody value.",
+    "not": [
+      "NTEST",
+      "USDC",
+      "an ERC-20 fixture",
+      "an unidentified token",
+      "native GEN held by an EOA or a keeper"
+    ],
+    "recipientKind": "v0.1 supports externally-owned recipients only. Contract recipients require a separate capability version."
+  },
+  "architecture": {
+    "PPANativeGenCustody": "GenLayer Intelligent Contract. Receives native GEN through a payable deposit method. Reads the bound PPA Core consequence, payment, and account, derives a bounded settlement intent from Core fields, and emits a finalized external native GEN transfer to the exact Core recipient. It never accepts recipient or amount from the settlement caller without an exact match to the persisted intent and the Core consequence.",
+    "settlementAuthority": "The Core consequence is the authority. authorize() is owner-gated but cannot choose recipient or amount; every field is derived from and revalidated against the bound Core consequence. settle() is permissionless by design: any EOA may trigger it, but it can only execute an existing Core-bound intent with exactly matching recipient and amount. There is no owner/keeper settle path.",
+    "ownerBoundary": "The owner configures and pauses the vault, creates intents, and cannot execute a settlement. Non-owner calls to owner-only methods revert and mutate nothing. The owner cannot supply or override recipient/amount.",
+    "statusModel": [
+      "NONE",
+      "AUTHORIZED",
+      "PENDING_FINALITY",
+      "EXPIRED"
+    ],
+    "successObservation": "The vault cannot observe child-transaction success. A successful emit records PENDING_FINALITY and total_emitted. Final success is established by the independent child-transaction and recipient/vault balance readback, not by a vault status write. A failed child leaves the intent PENDING_FINALITY and records a refund; retry is unsupported in v0.1.",
+    "unsupported": "EOA recipients only; contract recipients, owner emergency withdrawal, partial settlement, and post-finality status writes are v0.1-unsupported.",
+    "settlementConcurrency": "Multiple Core-bound intents may be emitted over time. Each intent transitions AUTHORIZED -> PENDING_FINALITY exactly once and is replay-blocked from then on. v0.1 has no global in-flight lock, so a successful settlement cannot wedge the vault.",
+    "refundAccounting": "__on_errored_message__ records the actual refunded value in a refund ledger and increments total_refunded. It does not guess which intent failed and does not rewrite PENDING_FINALITY, because the hook does not carry the consequence id. Accounting remains exact: self.balance == total_deposited - total_emitted + total_refunded. Automatic success/failure attribution and retry are v0.1-unsupported."
+  },
+  "intentBinding": {
+    "consequence_id": "Canonical custody key. Defined as the PPA Core proposal_id. The Core consequence must return the same proposal_id.",
+    "recipient": "consequence.requested_recipient, cross-checked against payment.to",
+    "amount": "consequence.requested_amount, cross-checked against payment.amount; interpreted as GEN wei, positive integer. The amount is not converted by decimals in v0.1.",
+    "expiry": "authorization time + requested TTL; must be in the future at settle time and long enough to cover Bradbury finality",
+    "vault": "The custody contract address that holds the GEN and emits the transfer",
+    "status": "Persisted intent status; status transitions are deterministic",
+    "coreBinding": [
+      "bound Core address",
+      "consequence.status == EXECUTED",
+      "consequence.reason_code == EXECUTED",
+      "consequence.payment_status == SETTLED",
+      "consequence.adapter_caller == approved adapter",
+      "payment.status == SETTLED",
+      "payment.proposal_id, decision_id, recipient, amount, actor, memo bind to the consequence",
+      "account.status == ACTIVE",
+      "account currency == configured native currency GEN"
+    ]
+  },
+  "requiredPositiveEvidence": [
+    "Separate custody deployment: contract address, deployed bytecode readback, source hash, capability fingerprint, and initialized bound Core.",
+    "Real native GEN funding: payable deposit transaction, vault balance before/after, exact deposited amount, and a clear separation of value from gas/protocol fees.",
+    "Bounded settlement intent persisted with consequence_id, recipient, amount, expiry, vault, and status.",
+    "Core-authorized execution: the intent is derived from and revalidated against the bound PPA Core consequence; the settlement is triggered by an independent EOA, not the owner.",
+    "Finalized native transfer: identified child/emitted transaction, successful execution, recipient balance increase equal to the intended amount, and vault balance decrease equal to the intended amount. The vault records PENDING_FINALITY plus the pre/post local balance; final success comes from the independent readback.",
+    "Independent readback of custody intent, vault balance before/after, recipient balance before/after, Core consequence, settlement status, and transfer receipt."
+  ],
+  "requiredNegativeEvidence": [
+    "unauthorized caller: non-owner call to owner-only methods reverts with no state or balance mutation",
+    "wrong consequence ID: unknown or mismatched Core consequence is refused with no transfer",
+    "wrong recipient: caller-supplied or mismatched recipient cannot change the Core-bound recipient",
+    "wrong amount: caller-supplied or mismatched amount cannot change the Core-bound amount",
+    "expired intent: settlement after expiry is refused with no transfer",
+    "replayed intent: a second settle for the same consequence is refused with no transfer",
+    "paused vault: settlement while paused is refused with no transfer",
+    "insufficient vault balance: settlement with custody below the intent amount is refused with no transfer",
+    "wrong Core/settlement caller: a vault bound to a different Core, or a consequence from a non-approved adapter/settlement source, cannot settle the canonical consequence"
+  ],
+  "rejectionConditions": [
+    "the asset is NTEST, an ERC-20 fixture, or an unidentified token",
+    "the transfer was owner-triggered rather than Core-authorized",
+    "only EVM status 1 is shown without finalized GenLayer execution",
+    "the recipient balance was not independently read back",
+    "the vault balance delta is not exact",
+    "the consequence/intent was not persisted and replay-bound",
+    "the transfer bypassed expiry, pause, recipient, amount, or replay checks",
+    "the transfer succeeded but the authorization record is missing",
+    "the proof cannot separate native GEN value from gas fees",
+    "the contract address, source hash, or deployed code is not verified",
+    "the evidence relies only on the agent's receipt instead of a second chain-native read"
+  ],
+  "acceptanceGates": [
+    "python tools/nomos_lint.py",
+    "python tools/nomos_converge.py check",
+    "python tools/nomos_converge.py fingerprint ppa-native-gen-custody",
+    "python -m pytest primitives/ppa-native-gen-custody/implementations/genlayer/tests/ -q",
+    "python tools/nomos_run_vectors.py primitives/ppa-native-gen-custody/implementations/genlayer/ppa_native_gen_custody.py --vectors primitives/ppa-native-gen-custody/vectors/v0.1.json",
+    "genvm-lint check primitives/ppa-native-gen-custody/implementations/genlayer/ppa_native_gen_custody.py",
+    "live Phase 1: deploy the separate custody contract and read back deployed code and source hash",
+    "live Phase 1: deposit real GEN and read back exact vault balance delta",
+    "live Phase 1: create/prepare a Core consequence whose account currency is GEN and whose amount fits the account limits",
+    "live Phase 1: persist the Core-derived intent and verify every bound field",
+    "live Phase 1: an independent EOA triggers settle(); the owner is not the settlement caller",
+    "live Phase 1: identify the emitted/child transaction, confirm finalized execution, and read recipient and vault balances independently",
+    "live Phase 1: execute every required negative case and record refusal plus no balance mutation",
+    "no PPA Core or Receipt/Proposal Adapter change",
+    "no private key printed or committed",
+    "Foundry out/ and cache/ artifacts remain untracked if any EVM helper is added"
+  ],
+  "gasPolicy": {
+    "rule": "Estimate before any deploy or payable call. Native GEN value and protocol fees are accounted separately. Do not walk gas limits and do not weaken checks to fit a limit.",
+    "historicalObservedAcceptCeiling": 20861997,
+    "currentObservation": "2026-10-21: 16,000,000 accepted; 17,000,000 rejected (soft, variable). Readable source estimate ~21.7M; compact artifact estimate 13,801,631.",
+    "evidence": "convergence/reports/BRADBURY-GAS-CEILING.json and convergence/deployment/ppa-native-gen-custody-live-2026-10-20.json (gasBlockers)",
+    "response": "Deploy the deterministic compact artifact generated by tools/nomos_compact_contract.py. The readable source remains canonical; the artifact preserves every public method, status, reason code, error string, storage annotation, and check.",
+    "notDone": [
+      "no gas-limit walking below the estimate",
+      "no check removal or semantic relaxation"
+    ]
+  },
+  "deploymentPolicy": {
+    "sequence": [
+      "deploy PPANativeGenCustody with the bound PPA Core and approved adapter",
+      "read back deployed code and initialize/config state",
+      "fund the vault with real native GEN through the payable deposit method",
+      "create or select a GEN-denominated PPA account and execute a Core consequence",
+      "persist the Core-derived intent",
+      "trigger settle() from an independent EOA",
+      "identify the emitted child transaction and wait for finalized execution",
+      "read recipient and vault balances independently",
+      "run the negative cases"
+    ],
+    "separateFingerprints": [
+      "native GEN custody contract source fingerprint",
+      "PPA Core authority fingerprint (dependency)",
+      "PPA Receipt/Proposal Adapter authority fingerprint (dependency)",
+      "compact deploy artifact source hash (sha256:fdc74a8595d9988b3b03c29d4cb1ba7281437285263e8006bfbf366ff61a9d6a)"
+    ],
+    "noPhase2": true,
+    "noBridge": true,
+    "noUsdc": true,
+    "noNtest": true
+  },
+  "forbidden": [
+    "Do not modify PPA Core or the Receipt/Proposal Adapter.",
+    "Do not use NTEST, USDC, CGT, or any ERC-20/token fixture as the native GEN asset.",
+    "Do not give the owner, a keeper, or the settlement caller authority to choose recipient or amount.",
+    "Do not implement an owner-only or keeper-only settle shortcut.",
+    "Do not count protocol gas/fees as custody value or as part of the transferred amount.",
+    "Do not claim finalized native transfer from EVM status alone.",
+    "Do not claim native GEN custody without independent recipient and vault balance readback.",
+    "Do not reuse the ppa-custody authority fingerprint or capability version.",
+    "Do not implement a bridge, Phase 2 migration, production custody, or a frontend.",
+    "Do not print or commit private keys.",
+    "Do not merge or push without explicit approval."
+  ],
+  "dependencies": [
+    "WORK-PPA-CUSTODY-2026-10-20 - merged NTEST custody mechanics; reference only, do not extend",
+    "WORK-PPA-SPLIT-V03-2026-10-17 - PPA Core/Adapter authority",
+    "convergence/deployment/ppa-split-live-2026-10-18.json - live PPA state",
+    "GenLayer value-transfer semantics: @gl.public.write.payable, gl.message.value, emit_transfer(on='finalized'), __on_errored_message__, self.balance",
+    "GenLayer finality and child-transaction semantics on Bradbury Phase 1",
+    "genvm-linter, genlayer-test/direct mode, genlayer-py"
+  ],
+  "knownRisks": [
+    "Bradbury finality delay is materially long; expiry must cover the appeal/execution window.",
+    "A failed child transfer is refunded and recorded in the refund ledger, but v0.1 cannot attribute the refund to a specific intent because the hook does not carry the consequence id; the intent remains PENDING_FINALITY and retry is unsupported.",
+    "Permissionless settle() is safe only while every intent field is derived from and revalidated against the bound Core consequence.",
+    "The vault owner can pause and rotate configuration; owner compromise remains a custody-authority risk and must be documented.",
+    "Native GEN value is held by the ghost contract; deployment/code readback must verify the same address on both layers.",
+    "The existing PPA account must be GEN-denominated or a new GEN account must be created; USDC/NTEST accounts are not admissible."
+  ],
+  "notes": "This Work Contract starts a separate native-GEN custody route. It does not extend or reinterpret the NTEST ERC-20 custody proof. The critical distinction is that a successful native GEN transfer is insufficient: the proof must show that the PPA/Core consequence, not an owner or keeper shortcut, caused the transfer and that every custody invariant survived live execution.",
+  "currentClassification": {
+    "nativeGenCustodyMechanics": "NOT_IMPLEMENTED",
+    "ppaAuthorizedNativeSettlement": "NOT_IMPLEMENTED",
+    "externalUsdcCustody": "NOT_ESTABLISHED",
+    "erc20Custody": "NOT_PROVEN",
+    "bridgeSettlement": "NOT_IMPLEMENTED",
+    "productionCustody": "NOT_CLAIMED"
+  },
+  "targetClassification": {
+    "nativeGenCustodyMechanics": "TESTNET_OBSERVED",
+    "ppaAuthorizedNativeSettlement": "TESTNET_OBSERVED",
+    "externalUsdcCustody": "NOT_ESTABLISHED",
+    "erc20Custody": "NOT_PROVEN",
+    "bridgeSettlement": "NOT_IMPLEMENTED",
+    "productionCustody": "NOT_CLAIMED"
+  },
+  "deploymentArtifact": {
+    "readableSource": "primitives/ppa-native-gen-custody/implementations/genlayer/ppa_native_gen_custody.py",
+    "readableSourceSha256": "sha256:0292c25af78207d1d51c61031c2e05a6415b25707e6328c14ce1df1e35fe4572",
+    "artifact": "primitives/ppa-native-gen-custody/implementations/genlayer/build/ppa_native_gen_custody.compact.py",
+    "artifactSha256": "sha256:fdc74a8595d9988b3b03c29d4cb1ba7281437285263e8006bfbf366ff61a9d6a",
+    "artifactBytes": 16355,
+    "generator": "tools/nomos_compact_contract.py",
+    "generatorDependency": "python-minifier==3.4.0",
+    "deployPath": "contracts/ppa_native_gen_custody.compact.py",
+    "gasEstimate": 13801631
+  }
+}
