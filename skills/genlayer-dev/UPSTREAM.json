@@ -1,7 +1,7 @@
 {
   "source": "genlayerlabs/skills",
   "upstreamRef": "main",
-  "upstreamCommit": "195deb417c2ac4a90dd23429a0c3940bde80389a",
-  "pluginVersion": "1.1.4",
-  "syncedAt": "2026-10-03T14:36:03Z"
+  "upstreamCommit": "0ff254f01a887349e7171f46ee140e6a315e4881",
+  "pluginVersion": "1.2.0",
+  "syncedAt": "2026-11-27T16:15:09Z"
 }
